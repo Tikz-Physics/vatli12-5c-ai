@@ -769,16 +769,77 @@
             display: flex;
         }
         .gemini-modal-card {
-            background: #111a30;
-            border: 2px solid #6366f1;
-            border-radius: 14px;
-            padding: 20px;
-            max-width: 520px;
-            width: 100%;
-            box-shadow: 0 12px 36px rgba(0,0,0,0.7);
+            background: #0f172a;
+            border: 2px solid #38bdf8;
+            border-radius: 12px;
+            width: 960px;
+            max-width: 95vw;
+            max-height: 90vh;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.8), 0 0 20px rgba(56,189,248,0.2);
+            overflow: hidden;
+            color: #f1f5f9;
+        }
+        .gemini-modal-header {
+            padding: 12px 18px;
+            background: #1e293b;
+            border-bottom: 1px solid #334155;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .gemini-modal-body {
+            padding: 14px 18px;
+            overflow-y: auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            flex: 1;
+        }
+        .gemini-col-card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .gemini-key-item {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            padding: 8px 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8rem;
+            transition: all 0.2s;
+        }
+        .gemini-key-item.active {
+            border-color: #10b981;
+            background: rgba(16, 185, 129, 0.08);
+        }
+        .badge-active {
+            background: #10b981;
+            color: #042f2e;
+            font-size: 0.68rem;
+            font-weight: 800;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+        .badge-inactive {
+            background: #475569;
+            color: #f1f5f9;
+            font-size: 0.68rem;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .badge-inactive:hover {
+            background: #0284c7;
         }
         .gemini-modal-card h3 {
             color: #a5b4fc;
@@ -1220,45 +1281,93 @@
     <!-- MODAL CÀI ĐẶT GEMINI AI -->
     <div class="gemini-modal-overlay" id="modal-gemini-config">
         <div class="gemini-modal-card">
-            <h3>🤖 CÀI ĐẶT GOOGLE GEMINI AI (SOCRATES VẬT LÍ 12)</h3>
+            <div class="gemini-modal-header">
+                <div>
+                    <h3 style="margin:0; font-size:1.05rem; color:#38bdf8; display:flex; align-items:center; gap:8px;">
+                        🤖 QUẢN LÝ ĐA API KEY & CẬP NHẬT MÔ HÌNH GOOGLE GEMINI (3.8+)
+                    </h3>
+                    <div style="font-size:0.75rem; color:#94a3b8; margin-top:2px;">
+                        Lưu nhiều Key chống nghẽn tải, tự động luân chuyển và quét động Model mới nhất trực tiếp từ Google API
+                    </div>
+                </div>
+                <button class="btn-top" style="background:#475569; border:none; padding:4px 10px;" onclick="closeGeminiModal()">✕ Đóng</button>
+            </div>
             
-            <p style="font-size:0.8rem; color:#94a3b8; line-height:1.4;">
-                Tích hợp trực tiếp trí tuệ nhân tạo tạo sinh Google Gemini vào Gia sư Socrates. AI sẽ đồng hành phản biện gợi mở theo đúng tinh thần Công văn 5512.
-            </p>
+            <div class="gemini-modal-body">
+                <!-- CỘT 1: QUẢN LÝ KHO ĐA KEY (KEY POOL) -->
+                <div class="gemini-col-card">
+                    <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #334155; padding-bottom:6px;">
+                        <span style="font-size:0.85rem; font-weight:700; color:#fbbf24;">🔑 KHO LƯU TRỮ API KEY</span>
+                        <label style="font-size:0.72rem; color:#94a3b8; display:flex; align-items:center; gap:4px; cursor:pointer;">
+                            <input type="checkbox" id="chk-auto-failover" onchange="toggleAutoFailover()" checked>
+                            Tự đổi Key khi chạm hạn mức
+                        </label>
+                    </div>
 
-            <div class="gemini-input-group">
-                <label>🔑 Google Gemini API Key:</label>
-                <div style="display:flex; gap:6px;">
-                    <input type="password" id="input-gemini-key" placeholder="Dán khóa API bắt đầu bằng AIzaSy..." style="flex:1;">
-                    <button class="btn-top" onclick="toggleKeyVisibility()">👁️</button>
+                    <!-- Danh sách Key đã lưu -->
+                    <div id="gemini-keys-container" style="max-height:180px; overflow-y:auto; display:flex; flex-direction:column; gap:6px; padding-right:4px;">
+                        <!-- Render dynamic items -->
+                    </div>
+
+                    <!-- Form thêm Key mới -->
+                    <div style="background:#0f172a; border:1px dashed #475569; border-radius:6px; padding:8px; display:flex; flex-direction:column; gap:6px;">
+                        <span style="font-size:0.75rem; font-weight:700; color:#38bdf8;">➕ Thêm Key mới vào Kho:</span>
+                        <input type="text" id="input-new-key-name" placeholder="Tên gợi nhớ (VD: Key Cá nhân, Key Trường...)" style="font-size:0.75rem; padding:5px 8px;">
+                        <div style="display:flex; gap:6px;">
+                            <input type="password" id="input-new-key-val" placeholder="Dán mã API bắt đầu bằng AIzaSy..." style="flex:1; font-size:0.75rem; padding:5px 8px;">
+                            <button class="btn-top" style="padding:4px 8px;" onclick="toggleNewKeyVisibility()">👁️</button>
+                        </div>
+                        <button class="btn-top" style="background:#0284c7; border:none; padding:6px; font-weight:700;" onclick="addNewGeminiKey()">➕ Lưu Vào Kho Key</button>
+                    </div>
+
+                    <div style="font-size:0.7rem; color:#94a3b8; line-height:1.3;">
+                        👉 Lấy API Key miễn phí 100% vĩnh viễn tại: <a href="https://aistudio.google.com/app/apikey" target="_blank" style="color:#fbbf24; text-decoration:underline;">Google AI Studio</a>. Khuyến khích tạo 2-3 key dự phòng.
+                    </div>
                 </div>
-                <div style="font-size:0.72rem; color:#a5b4fc; margin-top:2px;">
-                    👉 Lấy API Key miễn phí 100% vĩnh viễn tại: <a href="https://aistudio.google.com/app/apikey" target="_blank" style="color:var(--gold); text-decoration:underline;">Google AI Studio</a>
+
+                <!-- CỘT 2: CHỌN VÀ TỰ ĐỘNG CẬP NHẬT MODEL TỪ GOOGLE -->
+                <div class="gemini-col-card">
+                    <div style="border-bottom:1px solid #334155; padding-bottom:6px; display:flex; justify-content:space-between; align-items:center;">
+                        <span style="font-size:0.85rem; font-weight:700; color:#38bdf8;">🧠 MÔ HÌNH AI (GEMINI 3.8+)</span>
+                        <span id="gemini-active-badge" style="font-size:0.72rem; color:#10b981; font-weight:700;">🟢 Sẵn sàng</span>
+                    </div>
+
+                    <div class="gemini-input-group">
+                        <label style="font-size:0.78rem;">Lựa chọn Mô hình kích hoạt:</label>
+                        <select id="select-gemini-model" onchange="changeActiveModel()" style="font-size:0.8rem; padding:6px;">
+                            <!-- Dynamic options -->
+                        </select>
+                    </div>
+
+                    <!-- Nút quét động trực tiếp từ Google API -->
+                    <button class="btn-top" style="background:#4f46e5; border:none; padding:7px; font-weight:700; display:flex; align-items:center; justify-content:center; gap:6px;" onclick="fetchGoogleModelsFromAPI()">
+                        🔄 Quét & Cập Nhật Model Mới Nhất Từ Google
+                    </button>
+
+                    <!-- Thêm Model tương lai thủ công -->
+                    <div style="background:#0f172a; border:1px dashed #475569; border-radius:6px; padding:8px; display:flex; flex-direction:column; gap:6px;">
+                        <span style="font-size:0.75rem; font-weight:700; color:#a5b4fc;">🚀 Nhập Model tương lai (Khi Google ra mắt):</span>
+                        <div style="display:flex; gap:6px;">
+                            <input type="text" id="input-custom-model" placeholder="VD: gemini-3.8-flash, gemini-4.0..." style="flex:1; font-size:0.75rem; padding:5px 8px;">
+                            <button class="btn-top" style="padding:5px 10px; background:#0284c7; border:none;" onclick="addCustomGeminiModel()">+ Thêm</button>
+                        </div>
+                    </div>
+
+                    <!-- Kết quả kiểm tra kết nối -->
+                    <div id="gemini-test-result" style="font-size:0.75rem; font-weight:700; min-height:22px; color:#38bdf8; line-height:1.3;"></div>
+
+                    <div style="display:flex; gap:6px; margin-top:auto;">
+                        <button class="btn-top" style="flex:1; background:#059669; border:none; padding:7px; font-weight:700;" onclick="testActiveGeminiConnection()">⚡ Kiểm Tra Kết Nối (Key + Model)</button>
+                    </div>
                 </div>
             </div>
 
-            <div class="gemini-input-group">
-                <label>🧠 Lựa chọn Mô hình AI (Model):</label>
-                <select id="select-gemini-model">
-                    <option value="gemini-1.5-flash" selected>gemini-1.5-flash (Khuyên dùng - Cực nhanh, chuẩn xác, miễn phí)</option>
-                    <option value="gemini-2.0-flash">gemini-2.0-flash (Mô hình thế hệ mới nhất của Google)</option>
-                    <option value="gemini-1.5-pro">gemini-1.5-pro (Suy luận chuyên sâu đa tầng)</option>
-                </select>
-            </div>
-
-            <div id="gemini-test-result" style="font-size:0.8rem; font-weight:700; min-height:20px; color:#38bdf8;"></div>
-
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:6px;">
-                <div style="display:flex; gap:6px;">
-                    <button class="btn-top" onclick="testGeminiConnection()">⚡ Kiểm Tra Kết Nối</button>
-                    <button class="btn-top" style="background:#b91c1c; border:none;" onclick="clearGeminiKey()">🗑️ Xóa Key</button>
-                </div>
-                <div style="display:flex; gap:6px;">
-                    <button class="btn-top" onclick="closeGeminiModal()">Đóng</button>
-                    <button class="btn-top gold" onclick="saveGeminiConfig()">💾 Lưu Cài Đặt</button>
-                </div>
+            <div style="padding:8px 18px; background:#1e293b; border-top:1px solid #334155; display:flex; justify-content:space-between; align-items:center;">
+                <span id="gemini-footer-status" style="font-size:0.75rem; color:#94a3b8;">Hệ thống lưu trữ cục bộ bảo mật trên máy giáo viên (LocalStorage)</span>
+                <button class="btn-top" style="background:#2563eb; border:none; padding:6px 16px; font-weight:700;" onclick="closeGeminiModal()">💾 Hoàn Tất</button>
             </div>
         </div>
+    </div>
     </div>
 
     <!-- KHÓA SCREEN DETOX -->
@@ -3038,7 +3147,328 @@ function toggleGameSound() {
         }
     }
 
-    // ==================== ENGINE GIA SƯ AI SOCRATES (GEMINI AI + FALLBACK) ====================
+    // ==================== ENGINE GIA SƯ AI SOCRATES (MULTI-KEY & GEMINI 3.8+) ====================
+    const DEFAULT_GEMINI_MODELS = [
+        'gemini-3.8-flash',
+        'gemini-3.8-pro',
+        'gemini-3.0-flash',
+        'gemini-2.5-flash',
+        'gemini-2.0-flash',
+        'gemini-2.0-flash-lite',
+        'gemini-1.5-flash',
+        'gemini-1.5-pro'
+    ];
+
+    function getGeminiConfig() {
+        const raw = localStorage.getItem('gemini_advanced_config');
+        if (raw) {
+            try {
+                return JSON.parse(raw);
+            } catch(e) { console.error('Parse config failed', e); }
+        }
+        // Tự động chuyển đổi dữ liệu cũ nếu có
+        const legacyKey = localStorage.getItem('gemini_api_key');
+        const legacyModel = localStorage.getItem('gemini_model') || 'gemini-3.8-flash';
+        const initialConfig = {
+            keys: legacyKey ? [{ id: 'key_' + Date.now(), name: 'Key Mặc định (Cá nhân)', key: legacyKey, active: true }] : [],
+            activeModel: legacyModel.includes('1.5') ? 'gemini-3.8-flash' : legacyModel,
+            models: DEFAULT_GEMINI_MODELS.slice(),
+            autoFailover: true
+        };
+        saveGeminiConfig(initialConfig);
+        return initialConfig;
+    }
+
+    function saveGeminiConfig(cfg) {
+        localStorage.setItem('gemini_advanced_config', JSON.stringify(cfg));
+        // Giữ tương thích ngược
+        const activeKeyObj = cfg.keys.find(k => k.active);
+        if (activeKeyObj) {
+            localStorage.setItem('gemini_api_key', activeKeyObj.key);
+        } else {
+            localStorage.removeItem('gemini_api_key');
+        }
+        localStorage.setItem('gemini_model', cfg.activeModel);
+    }
+
+    function getActiveGeminiKey() {
+        const cfg = getGeminiConfig();
+        const active = cfg.keys.find(k => k.active);
+        return active ? active.key : '';
+    }
+
+    function getActiveGeminiKeyObj() {
+        const cfg = getGeminiConfig();
+        return cfg.keys.find(k => k.active) || null;
+    }
+
+    function openGeminiModal() {
+        renderGeminiModalUI();
+        document.getElementById('modal-gemini-config').classList.add('active');
+    }
+
+    function closeGeminiModal() {
+        document.getElementById('modal-gemini-config').classList.remove('active');
+        updateGeminiUIState();
+    }
+
+    function renderGeminiModalUI() {
+        const cfg = getGeminiConfig();
+        
+        // 1. Render Keys
+        const container = document.getElementById('gemini-keys-container');
+        container.innerHTML = '';
+        if (cfg.keys.length === 0) {
+            container.innerHTML = '<div style="font-size:0.75rem; color:#94a3b8; font-style:italic; padding:8px; text-align:center;">Kho Key đang trống. Vui lòng thêm ít nhất 1 Key để kích hoạt AI!</div>';
+        } else {
+            cfg.keys.forEach(k => {
+                const item = document.createElement('div');
+                item.className = 'gemini-key-item' + (k.active ? ' active' : '');
+                const maskedKey = k.key.length > 12 ? (k.key.substring(0, 7) + '...' + k.key.substring(k.key.length - 4)) : k.key;
+                item.innerHTML = `
+                    <div style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:65%;">
+                        <div style="font-weight:700; color:${k.active ? '#38bdf8' : '#e2e8f0'};">${k.name}</div>
+                        <div style="font-size:0.68rem; color:#94a3b8; font-family:monospace;">${maskedKey}</div>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:6px;">
+                        ${k.active ? '<span class="badge-active">🟢 ĐANG DÙNG</span>' : `<span class="badge-inactive" onclick="switchActiveGeminiKey('${k.id}')">Dùng key này</span>`}
+                        <button style="background:none; border:none; cursor:pointer; color:#ef4444; font-size:0.85rem;" title="Xóa Key" onclick="deleteGeminiKey('${k.id}')">🗑️</button>
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        // 2. Auto-failover checkbox
+        const chk = document.getElementById('chk-auto-failover');
+        if (chk) chk.checked = !!cfg.autoFailover;
+
+        // 3. Render Models Select
+        const sel = document.getElementById('select-gemini-model');
+        sel.innerHTML = '';
+        cfg.models.forEach(m => {
+            const opt = document.createElement('option');
+            opt.value = m;
+            let tag = '';
+            if (m === 'gemini-3.8-flash') tag = ' ⭐ [Mặc định - 3.8 Mới nhất, Siêu tốc]';
+            else if (m === 'gemini-3.8-pro') tag = ' 🧠 [3.8 Chuyên sâu suy luận]';
+            else if (m === 'gemini-3.0-flash') tag = ' ⚡ [3.0 Flash Tiêu chuẩn]';
+            else if (m.includes('2.0')) tag = ' 🚀 [Thế hệ 2.0]';
+            else if (m.includes('1.5')) tag = ' 🛡️ [Thế hệ 1.5 Dự phòng]';
+            opt.innerText = m + tag;
+            if (m === cfg.activeModel) opt.selected = true;
+            sel.appendChild(opt);
+        });
+
+        const activeBadge = document.getElementById('gemini-active-badge');
+        const activeKey = getActiveGeminiKey();
+        if (activeBadge) {
+            activeBadge.innerHTML = activeKey ? `🟢 Đang dùng: ${cfg.activeModel}` : '⚪ Chưa có Key';
+            activeBadge.style.color = activeKey ? '#10b981' : '#f59e0b';
+        }
+    }
+
+    function toggleNewKeyVisibility() {
+        const inp = document.getElementById('input-new-key-val');
+        inp.type = inp.type === 'password' ? 'text' : 'password';
+    }
+
+    function toggleAutoFailover() {
+        const cfg = getGeminiConfig();
+        const chk = document.getElementById('chk-auto-failover');
+        cfg.autoFailover = chk.checked;
+        saveGeminiConfig(cfg);
+    }
+
+    function addNewGeminiKey() {
+        const nameInp = document.getElementById('input-new-key-name');
+        const valInp = document.getElementById('input-new-key-val');
+        const key = valInp.value.trim();
+        let name = nameInp.value.trim();
+        
+        if (!key) {
+            alert('Vui lòng dán mã API Key hợp lệ từ Google AI Studio!');
+            return;
+        }
+
+        const cfg = getGeminiConfig();
+        if (!name) {
+            name = `Key #${cfg.keys.length + 1} (${new Date().toLocaleDateString('vi-VN')})`;
+        }
+
+        // Nếu là key đầu tiên, tự kích hoạt
+        const isActive = cfg.keys.length === 0;
+        cfg.keys.push({
+            id: 'key_' + Date.now(),
+            name: name,
+            key: key,
+            active: isActive
+        });
+
+        saveGeminiConfig(cfg);
+        nameInp.value = '';
+        valInp.value = '';
+        renderGeminiModalUI();
+        updateGeminiUIState();
+        document.getElementById('gemini-test-result').innerHTML = `<span style="color:#10b981;">✅ Đã thêm "${name}" thành công!</span>`;
+    }
+
+    function switchActiveGeminiKey(id) {
+        const cfg = getGeminiConfig();
+        cfg.keys.forEach(k => {
+            k.active = (k.id === id);
+        });
+        saveGeminiConfig(cfg);
+        renderGeminiModalUI();
+        updateGeminiUIState();
+        const activeObj = cfg.keys.find(k => k.id === id);
+        document.getElementById('gemini-test-result').innerHTML = `<span style="color:#38bdf8;">🔄 Đã kích hoạt sử dụng: ${activeObj ? activeObj.name : id}</span>`;
+    }
+
+    function deleteGeminiKey(id) {
+        if (!confirm('Thầy có chắc chắn muốn xóa Key này khỏi Kho không?')) return;
+        const cfg = getGeminiConfig();
+        const target = cfg.keys.find(k => k.id === id);
+        cfg.keys = cfg.keys.filter(k => k.id !== id);
+        if (target && target.active && cfg.keys.length > 0) {
+            cfg.keys[0].active = true;
+        }
+        saveGeminiConfig(cfg);
+        renderGeminiModalUI();
+        updateGeminiUIState();
+        document.getElementById('gemini-test-result').innerHTML = '<span style="color:#f59e0b;">🗑️ Đã xóa Key thành công.</span>';
+    }
+
+    function changeActiveModel() {
+        const sel = document.getElementById('select-gemini-model');
+        const cfg = getGeminiConfig();
+        cfg.activeModel = sel.value;
+        saveGeminiConfig(cfg);
+        renderGeminiModalUI();
+        updateGeminiUIState();
+    }
+
+    function addCustomGeminiModel() {
+        const inp = document.getElementById('input-custom-model');
+        const val = inp.value.trim().toLowerCase();
+        if (!val) {
+            alert('Vui lòng nhập tên Model hợp lệ!');
+            return;
+        }
+        const cfg = getGeminiConfig();
+        if (!cfg.models.includes(val)) {
+            cfg.models.unshift(val);
+        }
+        cfg.activeModel = val;
+        saveGeminiConfig(cfg);
+        inp.value = '';
+        renderGeminiModalUI();
+        updateGeminiUIState();
+        document.getElementById('gemini-test-result').innerHTML = `<span style="color:#10b981;">🚀 Đã thêm và chọn Model mới: "${val}"</span>`;
+    }
+
+    async function fetchGoogleModelsFromAPI() {
+        const activeKey = getActiveGeminiKey();
+        const resBox = document.getElementById('gemini-test-result');
+        if (!activeKey) {
+            resBox.innerHTML = '<span style="color:#ef4444;">⚠️ Cần ít nhất 1 Key đang kích hoạt để quét Model từ Google!</span>';
+            return;
+        }
+        resBox.innerHTML = '<span style="color:#38bdf8;">⏳ Đang kết nối máy chủ Google AI để quét danh sách Model mới nhất...</span>';
+
+        try {
+            const url = `https://generativelanguage.googleapis.com/v1beta/models?key=${activeKey}`;
+            const resp = await fetch(url);
+            if (!resp.ok) {
+                const err = await resp.json();
+                throw new Error(err.error?.message || 'Không thể lấy dữ liệu từ Google');
+            }
+            const data = await resp.json();
+            if (data.models && Array.isArray(data.models)) {
+                const fetchedModels = data.models
+                    .filter(m => m.supportedGenerationMethods && m.supportedGenerationMethods.includes('generateContent'))
+                    .map(m => m.name.replace(/^models\//, ''))
+                    .filter(name => name.startsWith('gemini-'));
+
+                const cfg = getGeminiConfig();
+                // Gộp danh sách model mới và giữ thứ tự ưu tiên các model 3.8, 3.0, 2.5
+                const combined = Array.from(new Set([...DEFAULT_GEMINI_MODELS, ...fetchedModels, ...cfg.models]));
+                // Sắp xếp ưu tiên 3.8 lên đầu
+                combined.sort((a, b) => {
+                    if (a.includes('3.8') && !b.includes('3.8')) return -1;
+                    if (!a.includes('3.8') && b.includes('3.8')) return 1;
+                    if (a.includes('3.0') && !b.includes('3.0')) return -1;
+                    if (!a.includes('3.0') && b.includes('3.0')) return 1;
+                    return 0;
+                });
+
+                cfg.models = combined;
+                saveGeminiConfig(cfg);
+                renderGeminiModalUI();
+                resBox.innerHTML = `<span style="color:#10b981;">✅ Đã quét thành công! Tìm thấy ${fetchedModels.length} mô hình Gemini từ Google.</span>`;
+            } else {
+                resBox.innerHTML = '<span style="color:#f59e0b;">Không tìm thấy danh sách model phù hợp.</span>';
+            }
+        } catch(e) {
+            resBox.innerHTML = `<span style="color:#ef4444;">❌ Lỗi quét Model: ${e.message}</span>`;
+        }
+    }
+
+    async function testActiveGeminiConnection() {
+        const activeKey = getActiveGeminiKey();
+        const cfg = getGeminiConfig();
+        const model = cfg.activeModel || 'gemini-3.8-flash';
+        const resBox = document.getElementById('gemini-test-result');
+        if (!activeKey) {
+            resBox.innerHTML = '<span style="color:#ef4444;">⚠️ Chưa có Key nào trong Kho được kích hoạt!</span>';
+            return;
+        }
+        resBox.innerHTML = `<span style="color:#38bdf8;">⏳ Đang kiểm tra kết nối với Model [${model}]...</span>`;
+
+        try {
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${activeKey}`;
+            const payload = {
+                contents: [{ role: "user", parts: [{ text: "Xác thực kết nối: Phản hồi 1 câu ngắn chào Thầy giáo Trần Mạnh Tùng." }] }]
+            };
+            const startTime = performance.now();
+            const resp = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            const endTime = performance.now();
+            const latency = Math.round(endTime - startTime);
+            const data = await resp.json();
+            if (data.candidates && data.candidates[0]?.content?.parts[0]?.text) {
+                const aiMsg = data.candidates[0].content.parts[0].text.trim();
+                resBox.innerHTML = `<span style="color:#10b981;">✅ Kết nối thành công tới ${model}! (Độ trễ: ${latency}ms)<br>"${aiMsg}"</span>`;
+            } else {
+                resBox.innerHTML = `<span style="color:#ef4444;">❌ Lỗi từ Google: ${data.error?.message || 'Không có phản hồi hợp lệ'}</span>`;
+            }
+        } catch(e) {
+            resBox.innerHTML = `<span style="color:#ef4444;">❌ Lỗi kết nối mạng: ${e.message}</span>`;
+        }
+    }
+
+    function updateGeminiUIState() {
+        const cfg = getGeminiConfig();
+        const activeKeyObj = getActiveGeminiKeyObj();
+        const headerTag = document.getElementById('gemini-header-tag');
+        const badge = document.getElementById('socrates-engine-badge');
+        const status = document.getElementById('socrates-conn-status');
+
+        if (activeKeyObj) {
+            if (headerTag) headerTag.innerText = `🟢 ${activeKeyObj.name} (${cfg.activeModel})`;
+            if (badge) badge.innerText = `Model: ${cfg.activeModel} (${activeKeyObj.name})`;
+            if (status) status.innerHTML = `🟢 Trực tuyến (${cfg.activeModel})`;
+        } else {
+            if (headerTag) headerTag.innerText = '⚪ Chưa cài Key';
+            if (badge) badge.innerText = 'Chế độ: Socrates Offline';
+            if (status) status.innerHTML = '🟡 Ngoại tuyến (Quy chuẩn Phụ lục 2)';
+        }
+    }
+
+    // GỌI GEMINI CÓ KHẢ NĂNG TỰ ĐỘNG LUÂN CHUYỂN KEY (AUTO-FAILOVER)
     async function handleSendSocrates() {
         const inp = document.getElementById('socrates-input');
         const txt = inp.value.trim();
@@ -3050,116 +3480,82 @@ function toggleGameSound() {
         const typingId = 'socrates-typing-indicator';
         showSocratesTyping(typingId);
 
-        const apiKey = localStorage.getItem('gemini_api_key') || '';
-        const model = localStorage.getItem('gemini_model') || 'gemini-1.5-flash';
+        const cfg = getGeminiConfig();
+        const systemPrompt = SOCRATES_SYSTEM_PROMPTS[activeLesson] || SOCRATES_SYSTEM_PROMPTS['bai5'];
+        const model = cfg.activeModel || 'gemini-3.8-flash';
 
-        if (apiKey) {
-            try {
-                const systemPrompt = SOCRATES_SYSTEM_PROMPTS[activeLesson] || SOCRATES_SYSTEM_PROMPTS['bai5'];
-                const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
-                const payload = {
-                    systemInstruction: { parts: [{ text: systemPrompt }] },
-                    contents: [
-                        {
-                            role: "user",
-                            parts: [{ text: `Học sinh nhóm thảo luận: "${txt}".\nHãy phản hồi theo đúng vai trò Gia sư Socrates Vật lí nhiệt 12: ngắn gọn tối đa 3 câu, không chép giải hộ, kết thúc bằng 1 câu hỏi truy vấn vi mô.` }]
+        if (cfg.keys.length > 0) {
+            // Danh sách các key để thử (ưu tiên key đang active lên đầu)
+            const keyPool = [...cfg.keys.filter(k => k.active), ...cfg.keys.filter(k => !k.active)];
+
+            for (let i = 0; i < keyPool.length; i++) {
+                const currentKeyObj = keyPool[i];
+                try {
+                    const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${currentKeyObj.key}`;
+                    const payload = {
+                        systemInstruction: { parts: [{ text: systemPrompt }] },
+                        contents: [
+                            {
+                                role: "user",
+                                parts: [{ text: `Học sinh nhóm thảo luận: "${txt}".
+Hãy phản hồi theo đúng vai trò Gia sư Socrates Vật lí nhiệt 12: ngắn gọn tối đa 3 câu, không chép giải hộ, kết thúc bằng 1 câu hỏi truy vấn vi mô.` }]
+                            }
+                        ],
+                        generationConfig: {
+                            temperature: 0.7,
+                            topP: 0.95,
+                            maxOutputTokens: 600
                         }
-                    ],
-                    generationConfig: {
-                        temperature: 0.7,
-                        maxOutputTokens: 500
+                    };
+
+                    const resp = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (resp.ok) {
+                        const data = await resp.json();
+                        const aiText = data.candidates?.[0]?.content?.parts?.[0]?.text;
+                        if (aiText) {
+                            removeSocratesTyping(typingId);
+                            // Nếu đã chuyển key, cập nhật lại key active
+                            if (!currentKeyObj.active && cfg.autoFailover) {
+                                switchActiveGeminiKey(currentKeyObj.id);
+                                addSocratesMsg('ai', `*(Hệ thống đã tự động chuyển sang ${currentKeyObj.name} do Key trước đó nghẽn tải)*
+
+${aiText}`);
+                            } else {
+                                addSocratesMsg('ai', aiText);
+                            }
+                            return;
+                        }
+                    } else {
+                        const errData = await resp.json();
+                        console.warn(`Key ${currentKeyObj.name} gặp lỗi:`, errData);
+                        // Nếu bị lỗi 429 hoặc Resource Exhausted, tiếp tục vòng lặp sang key tiếp theo
+                        if (resp.status === 429 || errData.error?.status === 'RESOURCE_EXHAUSTED') {
+                            if (cfg.autoFailover && i < keyPool.length - 1) {
+                                console.log(`Auto-failover: Chuyển sang key dự phòng tiếp theo...`);
+                                continue;
+                            }
+                        }
                     }
-                };
-
-                const resp = await fetch(url, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-
-                removeSocratesTyping(typingId);
-
-                if (resp.ok) {
-                    const data = await resp.json();
-                    const aiText = data.candidates?.[0]?.content?.parts?.[0]?.text;
-                    if (aiText) {
-                        addSocratesMsg('ai', aiText);
-                        return;
+                } catch(netErr) {
+                    console.warn(`Lỗi mạng với Key ${currentKeyObj.name}:`, netErr);
+                    if (cfg.autoFailover && i < keyPool.length - 1) {
+                        continue;
                     }
                 }
-            } catch(e) {
-                console.warn('Gemini API call failed, falling back to offline knowledge base:', e);
             }
         }
 
-        // OFFLINE FALLBACK NẾU CHƯA CÓ KEY HOẶC MẤT MẠNG
+        // OFFLINE FALLBACK NẾU TẤT CẢ KEY ĐỀU THẤT BẠI HOẶC MẤT MẠNG
         removeSocratesTyping(typingId);
         setTimeout(() => {
             const offlineAns = getOfflineSocratesAnswer(txt, activeLesson);
             addSocratesMsg('ai', offlineAns);
         }, 400);
-    }
-
-    function getOfflineSocratesAnswer(txt, lesson) {
-        const lower = txt.toLowerCase();
-        if (lesson === 'bai5') {
-            if (lower.includes('0') || lower.includes('nhiệt độ') || lower.includes('không đổi')) {
-                return "Rất sắc sảo! Trong suốt quá trình nước đá đang nóng chảy ở 0 °C, nhiệt lượng nhận được dùng để phá vỡ liên kết tinh thể chứ không làm tăng động năng hạt. Vậy thế năng phân tử của khối chất lúc này đang tăng hay giảm?";
-            } else if (lower.includes('bám') || lower.includes('lau') || lower.includes('thấm') || lower.includes('sai số')) {
-                return "Chính xác! Nước bám ngoài viên đá sẽ làm tăng khối lượng m cân được nhưng lại không hấp thụ nhiệt nóng chảy λ, gây sai số lớn cho kết quả. Các em đã làm thao tác thấm khô như thế nào trong thí nghiệm?";
-            }
-        } else if (lesson === 'bai1') {
-            if (lower.includes('0,011') || lower.includes('thể tích') || lower.includes('rỗng')) {
-                return "Rất chuẩn! Con số 0,011% thể tích riêng chứng thực các phân tử khí ở rất xa nhau và không gian bình phần lớn là rỗng. Nhưng tại sao khi nén thể tích giảm thì áp suất khí lại tăng vọt lên thành bình?";
-            }
-        } else if (lesson === 'bai2') {
-            if (lower.includes('boyle') || lower.includes('áp suất') || lower.includes('piston')) {
-                return "Đúng rồi! Khi nén thể tích giảm, mật độ phân tử tăng làm tăng số va chạm lên mỗi đơn vị diện tích thành bình trong một giây -> áp suất p tăng. Nếu nhiệt độ tăng trong khi nén, định luật Boyle còn nghiệm đúng không?";
-            }
-        } else if (lesson === 'bai6') {
-            if (lower.includes('tân cương') || lower.includes('chè') || lower.includes('thăng hoa')) {
-                return "Tuyệt vời! Sấy thăng hoa là quá trình nước đá thăng hoa trực tiếp thành hơi trong chân không mà không qua thể lỏng, giúp tế bào chè Tân Cương không bị biến tính. Năng lượng thăng hoa này lấy từ đâu?";
-            }
-        }
-
-        return `Gia sư Socrates ghi nhận ý kiến rất tích cực của nhóm! Trong chủ đề ${activeLesson.toUpperCase()}, các em hãy nhìn sâu vào mô hình vi mô (khoảng cách hạt, chuyển động nhiệt và va chạm). Theo các em, đại lượng vi mô nào đang đóng vai trò then chốt ở đây?`;
-    }
-
-    function showSocratesTyping(id) {
-        const box = document.getElementById('socrates-chat-box');
-        const d = document.createElement('div');
-        d.id = id;
-        d.className = 'chat-msg ai typing';
-        d.innerHTML = '🤖 <em>Gia sư Socrates đang tư duy theo mô hình vi mô...</em>';
-        box.appendChild(d);
-        box.scrollTop = box.scrollHeight;
-    }
-
-    function removeSocratesTyping(id) {
-        const el = document.getElementById(id);
-        if (el) el.remove();
-    }
-
-    function sendSocratesPrompt(txt) {
-        document.getElementById('socrates-input').value = txt;
-        handleSendSocrates();
-    }
-
-    function addSocratesMsg(role, text) {
-        const box = document.getElementById('socrates-chat-box');
-        const d = document.createElement('div');
-        d.className = `chat-msg ${role}`;
-        if (role === 'ai') d.innerHTML = `🤖 <strong>Gia sư Socrates:</strong> ${text}`;
-        else if (role === 'teacher') d.innerHTML = `📢 <strong>THẦY TÙNG (LỜI NHẮC):</strong> ${text}`;
-        else d.innerHTML = `👤 <strong>Học Sinh:</strong> ${text}`;
-        box.appendChild(d);
-        box.scrollTop = box.scrollHeight;
-    }
-
-    function clearSocratesChat() {
-        const box = document.getElementById('socrates-chat-box');
-        box.innerHTML = '';
-        addSocratesMsg('ai', `Gia sư Socrates đã sẵn sàng cho bài học ${activeLesson.toUpperCase()}! Mời các em đặt câu hỏi hoặc đưa ra lập luận của nhóm.`);
     }
 
     function renderSocratesChips() {
