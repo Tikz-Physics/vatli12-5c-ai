@@ -1,0 +1,3659 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hệ Thống Dạy Học Vật Lí 12 – Quy Trình 5 Bước AI | THPT Chuyên Thái Nguyên</title>
+    <script src="qrcode.min.js"></script>
+    <script src="shared_bus.js"></script>
+    <style>
+        :root {
+            --primary: #0d47a1;
+            --primary-light: #0284c7;
+            --gold: #ffd54f;
+            --gold-dark: #ffb300;
+            --cyan: #38bdf8;
+            --emerald: #10b981;
+            --bg: #090e1c;
+            --surface: #111a30;
+            --border: #233354;
+            --text-light: #ffffff;
+            --text-muted: #94a3b8;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif; }
+        html, body {
+            background: var(--bg);
+            color: var(--text-light);
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* ==================== 1. HEADER CHÍNH (HEIGHT: 48px) ==================== */
+        header {
+            background: linear-gradient(135deg, #0a1f44 0%, #0d47a1 100%);
+            padding: 5px 16px;
+            height: 48px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--gold);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+            flex-shrink: 0;
+            z-index: 100;
+        }
+        .brand { display: flex; align-items: center; gap: 10px; }
+        .badge {
+            background: var(--gold); color: #0a1f44;
+            padding: 4px 10px; border-radius: 6px; font-weight: 900; font-size: 0.8rem;
+            letter-spacing: 0.5px; white-space: nowrap;
+        }
+        .brand h1 { font-size: 1.05rem; font-weight: 800; color: #ffffff; letter-spacing: 0.5px; }
+        .brand p { font-size: 0.76rem; color: #cbd5e1; }
+        .header-controls { display: flex; align-items: center; gap: 8px; }
+        .lesson-select {
+            background: rgba(17, 26, 48, 0.95); color: #ffffff;
+            border: 1.5px solid var(--cyan); border-radius: 6px;
+            padding: 5px 10px; font-size: 0.85rem; font-weight: 700;
+            cursor: pointer; outline: none;
+        }
+        .btn-top {
+            background: rgba(255, 255, 255, 0.15); color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 6px;
+            padding: 5px 12px; font-size: 0.82rem; font-weight: 700;
+            cursor: pointer; display: flex; align-items: center; gap: 6px;
+            transition: all 0.2s; white-space: nowrap;
+        }
+        .btn-top:hover { background: rgba(255, 255, 255, 0.25); }
+        .btn-top.gold { background: var(--gold); color: #0a1f44; border: none; font-weight: 900; }
+        .btn-top.gold:hover { background: var(--gold-dark); }
+        .btn-top.cyan { background: var(--cyan); color: #0a1f44; border: none; font-weight: 900; }
+        .btn-top.cyan:hover { background: #0284c7; color: white; }
+        .btn-top.ai-badge { background: linear-gradient(135deg, #7c3aed, #4f46e5); border: 1px solid #a78bfa; font-weight: 800; }
+        .btn-top.ai-badge:hover { filter: brightness(1.15); }
+
+        /* ==================== 2. THANH CHUYỂN CHỨC NĂNG 1 CỬA SỔ (HEIGHT: 40px) ==================== */
+        .function-nav-bar {
+            background: #0d1527;
+            border-bottom: 2px solid #1e293b;
+            display: flex;
+            gap: 4px;
+            padding: 4px 12px 0 12px;
+            height: 40px;
+            flex-shrink: 0;
+            z-index: 90;
+        }
+        .func-tab-btn {
+            background: rgba(30, 41, 59, 0.6);
+            color: #94a3b8;
+            border: none;
+            border-top: 3px solid transparent;
+            border-radius: 6px 6px 0 0;
+            padding: 6px 14px;
+            font-size: 0.88rem;
+            font-weight: 800;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        .func-tab-btn:hover {
+            background: rgba(51, 65, 85, 0.8);
+            color: #ffffff;
+        }
+        .func-tab-btn.active {
+            background: var(--surface);
+            color: var(--gold);
+            border-top: 3px solid var(--gold);
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.3);
+        }
+
+        /* ==================== 3. KHUNG CHỨA TOÀN BỘ VIEW (ZERO-SCROLL: EXACT FIT) ==================== */
+        .view-container {
+            height: calc(100vh - 88px);
+            flex: 1;
+            display: flex;
+            position: relative;
+            overflow: hidden;
+            background: var(--bg);
+        }
+        .single-view {
+            display: none;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            flex-direction: column;
+        }
+        .single-view.active {
+            display: flex;
+        }
+
+        /* ==================== VIEW 1: SẢNH QR (3 CỘT KHÔNG CUỘN) ==================== */
+        .qr-view-body {
+            flex: 1;
+            padding: 8px 10px;
+            display: grid;
+            grid-template-columns: 290px 330px 1fr;
+            gap: 10px;
+            height: 100%;
+            overflow: hidden;
+        }
+        .qr-hero-card {
+            background: linear-gradient(135deg, rgba(15,23,42,0.95) 0%, rgba(30,41,59,0.95) 100%);
+            border: 1.5px solid var(--cyan);
+            border-radius: 12px;
+            padding: 10px;
+            text-align: center;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            height: 100%;
+            overflow: hidden;
+        }
+        .real-qr-wrapper {
+            background: #ffffff;
+            padding: 6px;
+            border-radius: 10px;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+        }
+        .real-qr-wrapper svg {
+            width: 135px;
+            height: 135px;
+            display: block;
+        }
+        .qr-url-toolbar {
+            width: 100%;
+        }
+        .qr-input-row {
+            display: flex;
+            gap: 4px;
+            margin-top: 4px;
+        }
+        .qr-input-row input {
+            flex: 1;
+            background: #0b1329;
+            border: 1px solid #334155;
+            color: #ffffff;
+            padding: 5px 8px;
+            border-radius: 5px;
+            font-size: 0.78rem;
+            outline: none;
+        }
+        .btn-qr-action {
+            background: #1e293b;
+            color: var(--cyan);
+            border: 1px solid #3b82f6;
+            padding: 5px 8px;
+            border-radius: 5px;
+            font-weight: 700;
+            font-size: 0.76rem;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+        .btn-qr-action.gold {
+            background: var(--gold);
+            color: #0a1f44;
+            border: none;
+            font-weight: 900;
+        }
+        .btn-qr-action.emerald {
+            background: #059669;
+            color: white;
+            border: none;
+            font-weight: 800;
+        }
+
+        .group-config-card {
+            background: linear-gradient(135deg, rgba(17,26,48,0.95) 0%, rgba(15,23,42,0.95) 100%);
+            border: 1.5px solid var(--gold);
+            border-radius: 12px;
+            padding: 10px 12px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+            height: 100%;
+            overflow: hidden;
+        }
+        .group-config-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+            margin: 6px 0;
+        }
+        .config-field {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .config-field label {
+            font-size: 0.72rem;
+            font-weight: 800;
+            color: var(--gold);
+            text-transform: uppercase;
+        }
+        .config-field input, .config-field select {
+            background: #090e1c;
+            border: 1.5px solid #233354;
+            color: white;
+            padding: 5px 8px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            outline: none;
+        }
+        .btn-divide-action {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: #0a1f44;
+            border: none;
+            border-radius: 8px;
+            padding: 8px;
+            font-weight: 900;
+            font-size: 0.86rem;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
+            transition: all 0.2s;
+            width: 100%;
+        }
+        .btn-divide-action:hover {
+            filter: brightness(1.1);
+        }
+
+        .groups-panel {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            overflow: hidden;
+        }
+        .groups-scroll-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+            gap: 6px;
+            overflow-y: auto;
+            flex: 1;
+            padding-right: 4px;
+        }
+        .group-card {
+            background: rgba(15, 23, 42, 0.9);
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 6px 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .qr-grp-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .qr-grp-num-tag {
+            background: var(--gold);
+            color: #0a1f44;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 900;
+            font-size: 0.76rem;
+            white-space: nowrap;
+        }
+        .qr-grp-name-input {
+            background: rgba(0,0,0,0.35);
+            border: 1px dashed var(--gold);
+            color: var(--gold);
+            font-weight: 800;
+            font-size: 0.82rem;
+            border-radius: 4px;
+            padding: 2px 5px;
+            width: 100%;
+            outline: none;
+        }
+        .role-pill-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3px;
+        }
+        .role-pill {
+            background: rgba(255,255,255,0.06);
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-size: 0.68rem;
+            color: #cbd5e1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* ==================== VIEW 2: ĐIỀU KHIỂN GIÁO VIÊN (2 CỘT) ==================== */
+        .teacher-view-body {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 10px;
+            padding: 10px;
+            height: 100%;
+            overflow: hidden;
+        }
+        .teacher-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100%;
+            overflow: hidden;
+        }
+        .card-title {
+            font-size: 0.95rem;
+            font-weight: 800;
+            color: var(--gold);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 4px;
+        }
+        .btn-nav {
+            width: 100%;
+            padding: 9px;
+            border-radius: 8px;
+            font-size: 0.88rem;
+            font-weight: 900;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+        .btn-next { background: linear-gradient(135deg, #10b981, #059669); color: white; }
+        .btn-next:hover { filter: brightness(1.1); }
+        .btn-prev { background: #334155; color: #cbd5e1; }
+        .btn-detox { background: linear-gradient(135deg, #ef4444, #b91c1c); color: white; }
+        .btn-detox.unlocked { background: linear-gradient(135deg, #10b981, #047857); }
+        .teacher-timer-box {
+            background: #0a0f1d;
+            border: 1.5px solid #1e293b;
+            border-radius: 10px;
+            padding: 6px;
+            text-align: center;
+        }
+        .timer-val {
+            font-family: monospace;
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: var(--cyan);
+            line-height: 1.2;
+        }
+        .groups-status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 6px;
+            overflow-y: auto;
+            flex: 1;
+            min-height: 0;
+            padding: 4px 0;
+            align-content: start;
+        }
+        .grp-pill {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 6px;
+            padding: 6px 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.82rem;
+        }
+
+        /* ==================== VIEW 3: GIA SƯ AI SOCRATES (GEMINI AI TÍCH HỢP) ==================== */
+        .socrates-view-body {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 8px 12px;
+            gap: 6px;
+            height: 100%;
+            overflow: hidden;
+        }
+        .ai-status-bar {
+            background: linear-gradient(90deg, #1e1b4b 0%, #1e293b 100%);
+            border: 1px solid #4338ca;
+            border-radius: 8px;
+            padding: 6px 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+        }
+        .ai-status-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+            font-weight: 800;
+        }
+        .ai-chip-bar {
+            display: flex;
+            gap: 6px;
+            overflow-x: auto;
+            padding: 2px 0;
+            flex-shrink: 0;
+        }
+        .ai-chip {
+            background: rgba(56, 189, 248, 0.12);
+            border: 1px solid rgba(56, 189, 248, 0.35);
+            color: var(--cyan);
+            border-radius: 20px;
+            padding: 4px 10px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+        .ai-chip:hover {
+            background: rgba(56, 189, 248, 0.25);
+            border-color: var(--cyan);
+        }
+        .socrates-chat-box {
+            flex: 1;
+            min-height: 0;
+            background: #080c16;
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            padding: 10px 14px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .chat-msg {
+            max-width: 82%;
+            padding: 8px 12px;
+            border-radius: 10px;
+            line-height: 1.45;
+            font-size: 0.9rem;
+        }
+        .chat-msg.ai {
+            background: #1e293b;
+            color: #f1f5f9;
+            align-self: flex-start;
+            border-left: 4px solid var(--cyan);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+        .chat-msg.user {
+            background: #0d47a1;
+            color: #ffffff;
+            align-self: flex-end;
+            border-right: 4px solid var(--gold);
+        }
+        .chat-msg.teacher {
+            background: #78350f;
+            color: #fef08a;
+            align-self: center;
+            max-width: 90%;
+            border: 2px dashed var(--gold);
+            text-align: center;
+        }
+        .chat-msg.typing {
+            background: rgba(30, 41, 59, 0.7);
+            color: var(--cyan);
+            font-style: italic;
+            font-size: 0.85rem;
+        }
+        .chat-input-bar {
+            display: flex;
+            gap: 8px;
+            background: var(--surface);
+            padding: 6px 10px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            flex-shrink: 0;
+        }
+        .chat-input-bar input {
+            flex: 1;
+            background: #080c16;
+            border: 1px solid #334155;
+            color: white;
+            padding: 7px 12px;
+            border-radius: 6px;
+            font-size: 0.88rem;
+            outline: none;
+        }
+        .chat-input-bar button {
+            background: var(--gold);
+            color: #0a1f44;
+            border: none;
+            padding: 7px 16px;
+            border-radius: 6px;
+            font-weight: 900;
+            font-size: 0.88rem;
+            cursor: pointer;
+        }
+
+        /* ==================== VIEW 4: THÍ NGHIỆM SỐ BƯỚC 4 (2 CỘT) ==================== */
+        .lab-view-body {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            padding: 10px;
+            height: 100%;
+            overflow: hidden;
+        }
+        .lab-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100%;
+            overflow: hidden;
+        }
+        .step4-mode-tabs {
+            display: flex;
+            gap: 6px;
+            border-bottom: 2px solid #1e293b;
+            padding-bottom: 6px;
+        }
+        .step4-mode-btn {
+            background: #1e293b;
+            color: #94a3b8;
+            border: none;
+            padding: 5px 12px;
+            border-radius: 5px;
+            font-weight: 800;
+            font-size: 0.82rem;
+            cursor: pointer;
+        }
+        .step4-mode-btn.active {
+            background: #2563eb;
+            color: white;
+        }
+        .sim-canvas-box {
+            background: #070b14;
+            border: 1px solid #1e293b;
+            border-radius: 8px;
+            padding: 6px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            flex: 1;
+            justify-content: center;
+        }
+        .sim-canvas-box canvas {
+            background: #0a0f1d;
+            border-radius: 6px;
+            max-width: 100%;
+            height: auto;
+            max-height: 240px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+        }
+        .sim-btn {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 5px 12px;
+            border-radius: 5px;
+            font-weight: 700;
+            font-size: 0.82rem;
+            cursor: pointer;
+        }
+        .data-table-mini {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.8rem;
+            margin-top: 4px;
+        }
+        .data-table-mini th, .data-table-mini td {
+            border: 1px solid rgba(255,255,255,0.15);
+            padding: 4px 7px;
+            text-align: left;
+        }
+        .data-table-mini th {
+            background: rgba(255,255,255,0.08);
+            color: var(--cyan);
+        }
+        .data-table-mini td {
+            background: rgba(0,0,0,0.25);
+            color: #f1f5f9;
+        }
+        .btn-send-sim-ai {
+            background: linear-gradient(135deg, #7c3aed, #6d28d9);
+            color: white;
+            border: none;
+            padding: 9px 14px;
+            border-radius: 7px;
+            font-weight: 900;
+            font-size: 0.86rem;
+            cursor: pointer;
+            margin-top: 6px;
+            width: 100%;
+        }
+
+        /* ==================== VIEW 5: ĐẤU TRƯỜNG NHIỆT HỌC (2 CỘT) ==================== */
+        .arena-view-body {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 1fr 330px;
+            gap: 10px;
+            padding: 10px;
+            height: 100%;
+            overflow: hidden;
+        }
+        .arena-answers-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin: 8px 0;
+        }
+        .ans-btn {
+            background: #1e293b;
+            color: white;
+            border: 1.5px solid #334155;
+            padding: 10px 12px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.88rem;
+            cursor: pointer;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.15s;
+        }
+        .ans-btn:hover { border-color: var(--cyan); background: #26354a; }
+        .ans-btn.correct { background: #059669 !important; border-color: #34d399 !important; color: white !important; }
+        .ans-btn.wrong { background: #b91c1c !important; border-color: #f87171 !important; color: white !important; }
+        .group-score-card {
+            background: rgba(15,23,42,0.8);
+            border: 1px solid #334155;
+            border-radius: 6px;
+            padding: 5px 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.86rem;
+            margin-bottom: 4px;
+        }
+        .btn-add-pt {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.76rem;
+            font-weight: 800;
+            cursor: pointer;
+        }
+
+        /* ==================== VIEW 6: BÀN HỌC SINH (CENTERED FIT) ==================== */
+        .student-view-body {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+            gap: 10px;
+            height: 100%;
+            overflow: hidden;
+            max-width: 780px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        .student-group-config-bar {
+            background: rgba(15,23,42,0.95);
+            border: 1.5px solid var(--cyan);
+            border-radius: 10px;
+            padding: 8px 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+        }
+        .btn-buzzer-huge {
+            background: radial-gradient(circle at 40% 40%, #ef4444 0%, #991b1b 100%);
+            color: white;
+            border: 4px solid #fecaca;
+            border-radius: 16px;
+            padding: 20px;
+            font-size: 1.5rem;
+            font-weight: 900;
+            cursor: pointer;
+            box-shadow: 0 8px 24px rgba(239, 68, 68, 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            transition: all 0.15s;
+            width: 100%;
+        }
+        .btn-buzzer-huge:active {
+            transform: scale(0.97);
+        }
+
+        /* MODAL CÀI ĐẶT GEMINI AI */
+        .gemini-modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.82);
+            z-index: 10000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+        .gemini-modal-overlay.active {
+            display: flex;
+        }
+        .gemini-modal-card {
+            background: #111a30;
+            border: 2px solid #6366f1;
+            border-radius: 14px;
+            padding: 20px;
+            max-width: 520px;
+            width: 100%;
+            box-shadow: 0 12px 36px rgba(0,0,0,0.7);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .gemini-modal-card h3 {
+            color: #a5b4fc;
+            font-size: 1.15rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 1px solid #312e81;
+            padding-bottom: 8px;
+        }
+        .gemini-input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .gemini-input-group label {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #cbd5e1;
+        }
+        .gemini-input-group input, .gemini-input-group select {
+            background: #090e1c;
+            border: 1.5px solid #3730a3;
+            color: white;
+            padding: 8px 10px;
+            border-radius: 6px;
+            font-size: 0.88rem;
+            outline: none;
+        }
+
+        /* KHÓA DETOX TOÀN MÀN HÌNH */
+        .screen-detox-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.94);
+            z-index: 9999;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+        }
+        .screen-detox-overlay.active {
+            display: flex;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 1. HEADER CHÍNH -->
+    <header>
+        <div class="brand">
+            <span class="badge">THPT CHUYÊN THÁI NGUYÊN</span>
+            <div>
+                <h1>HỆ THỐNG DẠY HỌC VẬT LÍ 12 – QUY TRÌNH 5 BƯỚC AI</h1>
+                <p>Thầy giáo: Trần Mạnh Tùng – Bộ môn Vật lí | 1 Cửa Sổ Hợp Nhất</p>
+            </div>
+        </div>
+
+        <div class="header-controls">
+            <select id="header-lesson-select" class="lesson-select" onchange="onHeaderLessonChange(this.value)">
+                <option value="bai1">Bài 1: Cấu trúc chất & Động học phân tử khí</option>
+                <option value="bai2">Bài 2: Định luật Boyle (Đẳng nhiệt)</option>
+                <option value="bai3">Bài 3: Đo nhiệt dung riêng của nước</option>
+                <option value="bai4">Bài 4: Đo nhiệt hóa hơi riêng của nước</option>
+                <option value="bai5" selected>Bài 5: Đo nhiệt nóng chảy riêng nước đá (λ)</option>
+                <option value="bai6">Bài 6: Khí thực và phương trình Van der Waals</option>
+            </select>
+
+            <button class="btn-top ai-badge" id="btn-gemini-header-status" onclick="openGeminiModal()">
+                🤖 Gemini AI: <span id="gemini-header-tag">Chưa kết nối</span>
+            </button>
+
+            <button class="btn-top gold" id="btn-fullscreen-toggle" onclick="toggleFullScreen()">
+                ⛶ Toàn Màn Hình
+            </button>
+        </div>
+    </header>
+
+    <!-- 2. THANH CHUYỂN CHỨC NĂNG 1 CỬA SỔ DUY NHẤT -->
+    <nav class="function-nav-bar">
+        <button class="func-tab-btn active" id="tab-btn-qr" onclick="switchFunctionView('qr')">
+            📡 1. Sảnh QR Điểm Danh
+        </button>
+        <button class="func-tab-btn" id="tab-btn-teacher" onclick="switchFunctionView('teacher')">
+            🎛️ 2. Điều Khiển Giáo Viên
+        </button>
+        <button class="func-tab-btn" id="tab-btn-socrates" onclick="switchFunctionView('socrates')">
+            🤖 3. Gia Sư AI Socrates
+        </button>
+        <button class="func-tab-btn" id="tab-btn-lab" onclick="switchFunctionView('lab')">
+            🧪 4. Thí Nghiệm & Số Liệu
+        </button>
+        <button class="func-tab-btn" id="tab-btn-arena" onclick="switchFunctionView('arena')">
+            🎮 5. Đấu Trường Chuông Vàng
+        </button>
+        <button class="func-tab-btn" id="tab-btn-student" onclick="switchFunctionView('student')">
+            📱 6. Bàn Học Sinh
+        </button>
+    </nav>
+
+    <!-- 3. KHUNG CHỨA NỘI DUNG DUY NHẤT (ZERO-SCROLL) -->
+    <main class="view-container">
+
+        <!-- VIEW 1: SẢNH QR & CẤU HÌNH NHÓM (3 CỘT FIT-TO-SCREEN) -->
+        <section class="single-view active" id="view-qr">
+            <div class="qr-view-body">
+                <!-- CỘT 1: MÃ QR THẬT & BỘ CHỌN ĐƯỜNG LINK THÔNG MINH -->
+                <div class="qr-hero-card">
+                    <div>
+                        <div style="font-weight:800; font-size:0.98rem; color:var(--cyan);">📡 MÃ QR KẾT NỐI BÀN HỌC</div>
+                        <p style="font-size: 0.72rem; color: #94a3b8; margin-top: 2px;">Quét bằng camera điện thoại/Zalo để mở Bàn học sinh</p>
+                    </div>
+                    
+                    <div id="qr-code-display" class="real-qr-wrapper"></div>
+                    
+                    <div class="qr-url-toolbar">
+                        <div id="qr-protocol-hint" style="font-size: 0.72rem; font-weight: 700; color: #f59e0b; margin-bottom: 3px;">
+                            🌐 Link bàn học sinh:
+                        </div>
+                        <div class="qr-input-row">
+                            <input type="text" id="input-qr-target-url" value="" oninput="onQRUrlInputChange(this.value)" placeholder="IP hoặc link...">
+                            <button class="btn-qr-action gold" onclick="copyQRLink()">📋 Copy</button>
+                        </div>
+                        <div style="display:flex; gap:4px; margin-top:4px;">
+                            <button class="btn-qr-action emerald" style="flex:1;" onclick="setQRMode('lan')">📶 Wi-Fi Lớp (LAN)</button>
+                            <button class="btn-qr-action" style="flex:1;" onclick="setQRMode('online')">🌐 Web Online</button>
+                        </div>
+                        <div style="font-size: 0.7rem; color: #94a3b8; margin-top: 4px;">
+                            📶 Wi-Fi: <strong>THPT_Chuyen_TN_5G</strong> | Pass: <strong>vatli12kntt</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CỘT 2: BẢNG CẤU HÌNH CHIA NHÓM THÔNG MINH -->
+                <div class="group-config-card">
+                    <div>
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2px;">
+                            <h3 style="font-size: 1rem; color: var(--gold);">⚙️ CHIA NHÓM TỰ ĐỘNG</h3>
+                            <span id="group-divide-badge" class="badge">6 NHÓM</span>
+                        </div>
+                        <p style="font-size: 0.74rem; color: #cbd5e1; line-height: 1.25;">
+                            Phân bổ đều học sinh theo số nhóm hoặc số HS/nhóm theo ý đồ dạy học.
+                        </p>
+                    </div>
+
+                    <div class="group-config-grid">
+                        <div class="config-field">
+                            <label>👥 Sĩ số lớp (HS):</label>
+                            <input type="number" id="input-total-students" value="36" min="6" max="60" oninput="previewGroupDivision()">
+                        </div>
+                        <div class="config-field">
+                            <label>📐 Cách chia:</label>
+                            <select id="select-divide-mode" onchange="onDivideModeChange()">
+                                <option value="by_num_groups" selected>Chọn số nhóm</option>
+                                <option value="by_per_group">Theo HS/nhóm</option>
+                            </select>
+                        </div>
+                        <div class="config-field" id="box-select-num-groups">
+                            <label>🔢 Số lượng nhóm:</label>
+                            <select id="select-num-groups" onchange="previewGroupDivision()">
+                                <option value="3">3 nhóm</option>
+                                <option value="4">4 nhóm</option>
+                                <option value="5">5 nhóm</option>
+                                <option value="6" selected>6 nhóm</option>
+                                <option value="7">7 nhóm</option>
+                                <option value="8">8 nhóm</option>
+                                <option value="10">10 nhóm</option>
+                            </select>
+                        </div>
+                        <div class="config-field" id="box-select-per-group" style="display:none;">
+                            <label>👥 Số HS / nhóm:</label>
+                            <select id="select-students-per-group" onchange="previewGroupDivision()">
+                                <option value="4">4 HS / nhóm</option>
+                                <option value="5">5 HS / nhóm</option>
+                                <option value="6" selected>6 HS / nhóm</option>
+                                <option value="7">7 HS / nhóm</option>
+                                <option value="8">8 HS / nhóm</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div>
+                        <button class="btn-divide-action" onclick="autoDivideGroups()">
+                            ⚡ BẤM CHIA NHÓM TỰ ĐỘNG
+                        </button>
+                        <div id="group-divide-preview" style="font-weight:700; color:var(--cyan); font-size:0.78rem; text-align:center; margin-top:4px;">
+                            📊 Dự kiến: 6 nhóm (Bình quân 6 học sinh/nhóm)
+                        </div>
+                    </div>
+
+                    <div style="font-size:0.72rem; color:#94a3b8; border-top:1px dashed #334155; padding-top:4px;">
+                        💡 <em>Gõ trực tiếp vào ô Tên nhóm để sửa biệt danh, số thứ tự bảo lưu chuẩn mực.</em>
+                    </div>
+                </div>
+
+                <!-- CỘT 3: LƯỚI THẺ CÁC NHÓM TRONG LỚP (CO DÃN TỰ ĐỘNG) -->
+                <div class="groups-panel">
+                    <div style="font-weight:800; color:var(--gold); font-size:0.92rem; margin-bottom:4px; display:flex; justify-content:space-between; align-items:center;">
+                        <span>👥 DANH SÁCH CÁC NHÓM HỌC TẬP</span>
+                        <span style="font-size:0.74rem; color:var(--cyan);">🟢 Sẵn sàng</span>
+                    </div>
+                    <div class="groups-scroll-grid" id="dynamic-group-cards-grid">
+                        <!-- Sinh tự động bằng JS -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW 2: ĐIỀU KHIỂN GIÁO VIÊN (2 CỘT FIT-TO-SCREEN) -->
+        <section class="single-view" id="view-teacher">
+            <div class="teacher-view-body">
+                <div class="teacher-card">
+                    <div class="card-title">
+                        <span>🎯 TIẾN TRÌNH 5 BƯỚC SƯ PHẠM</span>
+                    </div>
+
+                    <div>
+                        <div id="teacher-lesson-title" style="font-size: 0.88rem; font-weight: 800; color: var(--cyan); margin-bottom: 4px;">
+                            BÀI 5: ĐO NHIỆT NÓNG CHẢY RIÊNG NƯỚC ĐÁ
+                        </div>
+                        <div id="teacher-step-tag" class="badge" style="background:#2563eb; color:white; font-size:0.85rem; padding:4px 8px;">
+                            🎯 BƯỚC 1: KHỞI ĐỘNG
+                        </div>
+                        <p id="teacher-step-guide" style="font-size: 0.78rem; color: #cbd5e1; margin-top: 6px; line-height: 1.3;">
+                            📌 <strong>Nhiệm vụ:</strong> Chiếu Sảnh QR cho học sinh quét điểm danh, phân nhóm và giao nhiệm vụ đầu giờ.
+                        </p>
+                    </div>
+
+                    <div style="display:flex; gap:6px;">
+                        <button class="btn-nav btn-prev" onclick="handleTeacherPrev()">⬅️ Bước Trước</button>
+                        <button class="btn-nav btn-next" onclick="handleTeacherNext()">Bước Tiếp ➡️</button>
+                    </div>
+
+                    <div class="teacher-timer-box">
+                        <div style="font-size:0.74rem; font-weight:700; color:#94a3b8;">⏱️ ĐỒNG HỒ ĐẾM NGƯỢC HOẠT ĐỘNG</div>
+                        <div class="timer-val" id="teacher-timer-num">05:00</div>
+                        <button class="sim-btn" style="width:100%; margin-top:4px;" id="btn-teacher-timer-run" onclick="toggleTeacherTimer()">Bắt Đầu Đếm Giờ</button>
+                    </div>
+
+                    <button class="btn-nav btn-detox" id="btn-detox-state" onclick="handleTeacherDetox()">
+                        🔒 KHÓA SCREEN DETOX
+                    </button>
+                </div>
+
+                <div class="teacher-card">
+                    <div class="card-title">
+                        <span>📊 GIÁM SÁT 6 NHÓM & PHÁT LOA CAN THIỆP</span>
+                    </div>
+
+                    <div class="groups-status-grid" id="teacher-groups-monitor-list">
+                        <!-- Sinh tự động -->
+                    </div>
+
+                    <div style="background: rgba(0,0,0,0.3); border: 1px solid #334155; border-radius: 8px; padding: 6px; display: flex; gap: 6px;">
+                        <input type="text" id="teacher-notice-input" placeholder="Gõ lời nhắc phát loa toàn lớp..." style="flex:1; background:transparent; border:none; color:white; font-size:0.82rem; outline:none;">
+                        <button class="btn-qr-action gold" onclick="sendTeacherNoticeFromHub()">📢 Phát Loa</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW 3: GIA SƯ AI SOCRATES (GEMINI AI TÍCH HỢP) -->
+        <section class="single-view" id="view-socrates">
+            <div class="socrates-view-body">
+                <div class="ai-status-bar">
+                    <div class="ai-status-left">
+                        <span>🤖 GIA SƯ SOCRATES VẬT LÍ 12</span>
+                        <span id="socrates-engine-badge" style="background:#4338ca; color:#c7d2fe; padding:2px 8px; border-radius:12px; font-size:0.75rem;">
+                            Model: gemini-1.5-flash
+                        </span>
+                        <span id="socrates-conn-status" style="color:#10b981; font-size:0.78rem;">
+                            🟢 Sẵn sàng
+                        </span>
+                    </div>
+                    <div style="display:flex; gap:6px;">
+                        <button class="btn-top" style="padding:3px 8px; font-size:0.75rem;" onclick="clearSocratesChat()">🧹 Xóa Chat</button>
+                        <button class="btn-top ai-badge" style="padding:3px 10px; font-size:0.75rem;" onclick="openGeminiModal()">🔑 Cài Đặt Gemini Key</button>
+                    </div>
+                </div>
+
+                <!-- GỢI Ý CÂU HỎI TRUY VẤN THEO BÀI HỌC -->
+                <div class="ai-chip-bar" id="socrates-chips-container">
+                    <!-- Sinh tự động theo bài học -->
+                </div>
+
+                <div class="socrates-chat-box" id="socrates-chat-box">
+                    <div class="chat-msg ai">
+                        🤖 <strong>Gia sư AI Socrates:</strong> Xin chào các em học sinh THPT Chuyên Thái Nguyên! Thầy là trợ lý gợi mở tư duy Socrates. Thầy sẽ không giải hộ bài tập mà sẽ cùng các em đi sâu vào bản chất vi mô của các hiện tượng nhiệt học. Nhóm em đang tìm tòi bài học nào?
+                    </div>
+                </div>
+
+                <div class="chat-input-bar">
+                    <input type="text" id="socrates-input" placeholder="Nhập câu trả lời hoặc câu hỏi của nhóm để đối thoại cùng Socrates AI..." onkeydown="if(event.key==='Enter') handleSendSocrates()">
+                    <button onclick="handleSendSocrates()">Gửi 💬</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW 4: THÍ NGHIỆM SỐ BƯỚC 4 -->
+        <section class="single-view" id="view-lab">
+            <div class="lab-view-body">
+                <div class="lab-card">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <span class="card-title">🧪 MÔ PHỎNG SỐ & VIDEO THỰC NGHIỆM</span>
+                        <div class="step4-mode-tabs">
+                            <button class="step4-mode-btn active" id="btn-mode-canvas" onclick="setLabMode('canvas')">Mô Phỏng</button>
+                            <button class="step4-mode-btn" id="btn-mode-video" onclick="setLabMode('video')">Video 60fps</button>
+                        </div>
+                    </div>
+
+                    <div class="sim-canvas-box" id="sim-canvas-box">
+                        <canvas id="simCanvas" width="500" height="240"></canvas>
+                        <div style="display:flex; gap:6px; margin-top:2px;">
+                            <button class="sim-btn" onclick="toggleSimulationRun()">⏯️ Chạy/Dừng</button>
+                            <button class="sim-btn" onclick="resetSimulation()">🔄 Đo Lại</button>
+                        </div>
+                    </div>
+
+                    <div class="sim-canvas-box" id="sim-video-box" style="display:none;">
+                        <canvas id="videoCanvas" width="500" height="240"></canvas>
+                        <div style="display:flex; gap:6px; margin-top:2px;">
+                            <button class="sim-btn" onclick="toggleVideoPlayback()">⏯️ Video Thực Nghiệm</button>
+                            <button class="sim-btn" onclick="resetVideoPlayback()">⏮️ Tua Đầu</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lab-card">
+                    <div class="card-title">
+                        <span>📊 BẢNG SỐ LIỆU SGK KẾT NỐI TRI THỨC</span>
+                    </div>
+
+                    <div style="overflow-y:auto; flex:1; min-height:0;">
+                        <div id="lab-data-table-container">
+                            <!-- Bảng số liệu nạp động -->
+                        </div>
+                        <div style="background: rgba(0,0,0,0.3); border-radius: 6px; padding: 6px; margin-top: 6px; font-size: 0.76rem; color: #cbd5e1;">
+                            📐 <strong>Công thức tính:</strong> <span id="lab-formula-box" style="color:var(--gold); font-weight:800;">λ = Q / m = (P · t) / m</span>
+                        </div>
+                    </div>
+
+                    <button class="btn-send-sim-ai" onclick="submitSimDataToAIHub()">
+                        📤 GỬI KẾT QUẢ SANG GIA SƯ AI (BƯỚC 2 & 3)
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW 5: ĐẤU TRƯỜNG CHUÔNG VÀNG -->
+        <section class="single-view" id="view-arena">
+            <div class="arena-view-body">
+                <div class="teacher-card">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <span class="card-title">🔔 ĐẤU TRƯỜNG CHUÔNG VÀNG VẬT LÍ 12</span>
+                        <span id="arena-round-tag" class="badge" style="background:#7c3aed; color:white;">CHẶNG 1: TIA CHỚP VI MÔ</span>
+                    </div>
+
+                    <div style="background:rgba(0,0,0,0.4); border:1px solid #334155; border-radius:10px; padding:12px; margin:6px 0;">
+                        <div id="arena-q-text" style="font-size:1.02rem; font-weight:800; color:#f1f5f9; line-height:1.4;">
+                            Câu hỏi đang được nạp...
+                        </div>
+                    </div>
+
+                    <div class="arena-answers-grid" id="arena-answers-box">
+                        <!-- 4 Đáp án A, B, C, D -->
+                    </div>
+
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <div style="display:flex; gap:6px;">
+                            <button class="btn-top" onclick="prevArenaQ()">⬅️ Câu Trước</button>
+                            <button class="btn-top" onclick="nextArenaQ()">Câu Sau ➡️</button>
+                            <button class="btn-top gold" onclick="revealArenaAns()">👁️ Hiện Đáp Án</button>
+                        </div>
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <div id="arena-timer-num" style="font-size:1.4rem; font-weight:900; color:var(--cyan); font-family:monospace;">15s</div>
+                            <button class="sim-btn" onclick="startArenaTimer()">⏱️ Đếm Giờ</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="teacher-card">
+                    <div class="card-title">
+                        <span>🏆 BẢNG XẾP HẠNG ĐIỂM SỐ CÁC NHÓM</span>
+                    </div>
+
+                    <div style="flex:1; overflow-y:auto; min-height:0; padding:4px 0;" id="arena-leaderboard-list">
+                        <!-- Sinh bảng điểm động -->
+                    </div>
+
+                    <button class="btn-divide-action" style="background:linear-gradient(135deg, #10b981, #047857); color:white;" onclick="triggerArenaFinale()">
+                        🎉 KIỂM TRA QUÁN QUÂN
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW 6: BÀN HỌC SINH -->
+        <section class="single-view" id="view-student">
+            <div class="student-view-body">
+                <div class="student-group-config-bar">
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <span style="font-weight:800; color:var(--gold); font-size:0.85rem;">NHÓM CỦA BẠN:</span>
+                        <select id="student-group-select" class="lesson-select" onchange="onStudentGroupChange(this.value)">
+                            <!-- Nạp danh sách nhóm -->
+                        </select>
+                    </div>
+
+                    <div style="display:flex; align-items:center; gap:6px;">
+                        <span style="font-size:0.8rem; color:#cbd5e1;">Tên nhóm:</span>
+                        <input type="text" id="student-group-name-input" value="Chiến Binh Nhiệt Học" style="background:#090e1c; border:1px solid var(--cyan); color:white; padding:4px 8px; border-radius:4px; font-size:0.82rem; width:160px; outline:none;">
+                        <button class="btn-qr-action gold" onclick="saveStudentGroupName()">💾 Lưu Tên</button>
+                    </div>
+                </div>
+
+                <div style="text-align:center;">
+                    <h2 id="student-desk-title" style="color:var(--cyan); font-size:1.15rem; font-weight:800;">
+                        📱 BÀN HỌC SINH – NHÓM 01: CHIẾN BINH NHIỆT HỌC
+                    </h2>
+                    <p style="color:#94a3b8; font-size:0.8rem; margin-top:2px;">
+                        Nhấn nút Chuông dưới đây để cướp quyền trả lời trong phần Đấu Trường Chuông Vàng!
+                    </p>
+                </div>
+
+                <button class="btn-buzzer-huge" onclick="handleStudentDeskBuzzer()">
+                    <span style="font-size:2.2rem;">🔔</span>
+                    <span>BẤM CHUÔNG GIÀNH QUYỀN TRẢ LỜI</span>
+                </button>
+
+                <div id="student-desk-feedback" style="font-size:0.92rem; font-weight:800; color:#10b981; min-height:24px; text-align:center;">
+                    🟢 Trạng thái: Sẵn sàng tham gia học tập
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- MODAL CÀI ĐẶT GEMINI AI -->
+    <div class="gemini-modal-overlay" id="modal-gemini-config">
+        <div class="gemini-modal-card">
+            <h3>🤖 CÀI ĐẶT GOOGLE GEMINI AI (SOCRATES VẬT LÍ 12)</h3>
+            
+            <p style="font-size:0.8rem; color:#94a3b8; line-height:1.4;">
+                Tích hợp trực tiếp trí tuệ nhân tạo tạo sinh Google Gemini vào Gia sư Socrates. AI sẽ đồng hành phản biện gợi mở theo đúng tinh thần Công văn 5512.
+            </p>
+
+            <div class="gemini-input-group">
+                <label>🔑 Google Gemini API Key:</label>
+                <div style="display:flex; gap:6px;">
+                    <input type="password" id="input-gemini-key" placeholder="Dán khóa API bắt đầu bằng AIzaSy..." style="flex:1;">
+                    <button class="btn-top" onclick="toggleKeyVisibility()">👁️</button>
+                </div>
+                <div style="font-size:0.72rem; color:#a5b4fc; margin-top:2px;">
+                    👉 Lấy API Key miễn phí 100% vĩnh viễn tại: <a href="https://aistudio.google.com/app/apikey" target="_blank" style="color:var(--gold); text-decoration:underline;">Google AI Studio</a>
+                </div>
+            </div>
+
+            <div class="gemini-input-group">
+                <label>🧠 Lựa chọn Mô hình AI (Model):</label>
+                <select id="select-gemini-model">
+                    <option value="gemini-1.5-flash" selected>gemini-1.5-flash (Khuyên dùng - Cực nhanh, chuẩn xác, miễn phí)</option>
+                    <option value="gemini-2.0-flash">gemini-2.0-flash (Mô hình thế hệ mới nhất của Google)</option>
+                    <option value="gemini-1.5-pro">gemini-1.5-pro (Suy luận chuyên sâu đa tầng)</option>
+                </select>
+            </div>
+
+            <div id="gemini-test-result" style="font-size:0.8rem; font-weight:700; min-height:20px; color:#38bdf8;"></div>
+
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:6px;">
+                <div style="display:flex; gap:6px;">
+                    <button class="btn-top" onclick="testGeminiConnection()">⚡ Kiểm Tra Kết Nối</button>
+                    <button class="btn-top" style="background:#b91c1c; border:none;" onclick="clearGeminiKey()">🗑️ Xóa Key</button>
+                </div>
+                <div style="display:flex; gap:6px;">
+                    <button class="btn-top" onclick="closeGeminiModal()">Đóng</button>
+                    <button class="btn-top gold" onclick="saveGeminiConfig()">💾 Lưu Cài Đặt</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- KHÓA SCREEN DETOX -->
+    <div class="screen-detox-overlay" id="screen-detox-overlay">
+        <h1 style="color:#ef4444; font-size:2.4rem; font-weight:900; margin-bottom:12px;">
+            🔒 CHẾ ĐỘ SCREEN DETOX ĐANG KÍCH HOẠT
+        </h1>
+        <p style="color:#ffffff; font-size:1.15rem; max-width:650px; line-height:1.6;">
+            Thầy giáo Trần Mạnh Tùng đã tạm khóa màn hình thiết bị số.<br>
+            Các em hãy dừng nhìn vào màn hình, tập trung thảo luận nhóm trực tiếp và hoàn thiện sản phẩm trên Bảng phụ A3!
+        </p>
+        <div style="margin-top:20px; font-size:0.88rem; color:#cbd5e1;">
+            Tuân thủ Thông tư 02/2025/TT-BGDĐT về An sinh số (Digital Well-being) trong giáo dục.
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC TOÀN DIỆN -->
+    <script>
+    // ==================== TRỌN BỘ SYSTEM PROMPTS SOCRATES TỪ PHỤ LỤC 2 ====================
+    const SOCRATES_SYSTEM_PROMPTS = {
+        bai1: `Bạn là "Trợ lý Phản biện Socrates - Bài 1: Cấu trúc của chất và Sự chuyển thể (Vật lí 12 - CT GDPT 2018)".
+Đối tượng: Học sinh THPT Chuyên Thái Nguyên đang học theo Quy trình 5 bước kết hợp AI.
+QUY TẮC BẮT BUỘC:
+1. TUYỆT ĐỐI KHÔNG giải thích hộ toàn bộ lý thuyết, KHÔNG cung cấp văn bản tóm tắt định nghĩa SGK.
+2. Mỗi lượt phản hồi của bạn DÀI TỐI ĐA 3 CÂU.
+3. Câu kết thúc của mỗi lượt PHẢI LÀ 01 CÂU HỎI TRUY VẤN TƯ DUY dạng vi mô (về khoảng cách phân tử, chuyển động hỗn loạn, lực tương tác phân tử, thể tích riêng phân tử chỉ chiếm 0,011% thể tích toàn bình chứng tỏ chất khí có tính rỗng tuyệt đối).`,
+
+        bai2: `Bạn là "Trợ lý Phản biện Socrates - Bài 2: Nội năng và Định luật I Nhiệt động lực học (Vật lí 12 - CT GDPT 2018)".
+QUY TẮC BẮT BUỘC:
+1. TUYỆT ĐỐI KHÔNG viết ra công thức Delta U = A + Q hoặc bảng quy ước dấu trước khi học sinh tự lập luận được.
+2. Mỗi lượt phản hồi dài KHÔNG QUÁ 3 CÂU, kết thúc bằng DUY NHẤT 1 CÂU HỎI TRUY VẤN.
+3. Không chấp nhận câu trả lời chung chung "do ma sát". Luôn buộc học sinh phải phân tích sự chuyển hóa công cơ học thành động năng phân tử vi mô làm tăng nội năng.`,
+
+        bai3: `Bạn là "Trợ lý Phản biện Socrates - Bài 3: Thang nhiệt độ và Nhiệt kế (Vật lí 12 - CT GDPT 2018)".
+QUY TẮC BẮT BUỘC:
+1. Không chép công thức đổi T = t + 273,15 trước khi học sinh nhận thức được mốc Độ không tuyệt đối 0 K.
+2. Phản hồi tối đa 3 câu, kết thúc bằng 1 câu hỏi dẫn dắt bản chất vi mô: Nhiệt độ là số đo động năng tịnh tiến trung bình của các phân tử.`,
+
+        bai4: `Bạn là "Trợ lý Phản biện Socrates - Bài 4: Thực hành đo Nhiệt dung riêng của nước (Vật lí 12 - CT GDPT 2018)".
+QUY TẮC BẮT BUỘC:
+1. Không tính hộ số liệu.
+2. Phản hồi tối đa 3 câu, kết thúc bằng 1 câu hỏi truy vấn sai số: Tại sao giá trị thực nghiệm của c nước thường lớn hơn hoặc sai lệch so với 4180 J/kg.K? (Nhiệt lượng kế và môi trường hấp thụ nhiệt).`,
+
+        bai5: `Bạn là "Trợ lý Phản biện Socrates - Bài 5: Thực hành đo Nhiệt nóng chảy riêng của nước đá (Vật lí 12 - CT GDPT 2018)".
+QUY TẮC BẮT BUỘC:
+1. Tối đa 3 câu, kết thúc bằng 1 câu hỏi vi mô sắc bén.
+2. BẪY NHẬN THỨC TRỌNG TÂM: Tại sao trong quá trình nóng chảy ở 0 °C, nhiệt độ không đổi dù vẫn liên tục nhận nhiệt lượng? (Nhiệt lượng dùng để bẻ gãy liên kết tinh thể băng, làm tăng thế năng phân tử chứ không làm tăng động năng).
+3. BẪY SAI SỐ: Tại sao phải lau khô bề mặt viên đá trước khi thả vào nhiệt lượng kế? (Tránh khối lượng nước bám làm sai lệch phép đo m).`,
+
+        bai6: `Bạn là "Trợ lý Phản biện Socrates - Bài 6: Nhiệt hóa hơi riêng và Khí thực (Vật lí 12 - CT GDPT 2018)".
+QUY TẮC BẮT BUỘC:
+1. Tối đa 3 câu, câu cuối là câu hỏi truy vấn.
+2. Bản chất vi mô của nhiệt hóa hơi riêng L: Năng lượng cần thiết để thắng hoàn toàn lực hút phân tử đưa các phân tử ra xa nhau.
+3. Ứng dụng thực tiễn Thái Nguyên: Giải thích vì sao công nghệ sấy thăng hoa chè Tân Cương trong chân không giúp búp chè giữ nguyên màu xanh diệp lục và hương cốm tự nhiên.`
+    };
+
+    const LESSON_CHIPS = {
+        bai1: [
+            "Tại sao chất khí dễ nén còn chất rắn khó nén?",
+            "Khoảng cách và lực hút giữa các phân tử?",
+            "Tại sao thể tích riêng phân tử chỉ chiếm 0,011%?",
+            "Mô hình vi mô giải thích sự bay hơi?"
+        ],
+        bai2: [
+            "Tại sao đáy bơm xe đạp nóng lên khi bơm?",
+            "Khối khí nhận công hay sinh công?",
+            "Quy ước dấu của Delta U = A + Q?",
+            "Mở van bình gas du lịch tại sao bị lạnh buốt?"
+        ],
+        bai3: [
+            "Nhiệt độ đo đại lượng vi mô nào của phân tử?",
+            "Bản chất của Độ không tuyệt đối 0 K?",
+            "Tại sao thang Kelvin không có giá trị âm?",
+            "Nguyên lí hoạt động của nhiệt kế điện tử?"
+        ],
+        bai4: [
+            "Ý nghĩa vật lí của nhiệt dung riêng c?",
+            "Tại sao c đo được lại lớn hơn 4180 J/kg.K?",
+            "Nhiệt lượng kế hấp thụ nhiệt ảnh hưởng gì?",
+            "Làm sao giảm thiểu tỏa nhiệt ra môi trường?"
+        ],
+        bai5: [
+            "Nước đá tan ở 0°C nhận nhiệt sao nhiệt độ không tăng?",
+            "Tại sao phải thấm khô nước đá trước khi đo?",
+            "Khác nhau giữa nhiệt dung riêng c và nhiệt nóng chảy riêng λ?",
+            "Nhiệt lượng nóng chảy chuyển thành động năng hay thế năng?"
+        ],
+        bai6: [
+            "Bản chất vi mô của nhiệt hóa hơi riêng L?",
+            "Tại sao hơi nước 100°C gây bỏng nặng hơn nước sôi?",
+            "Sấy thăng hoa chè Tân Cương diễn ra thế nào?",
+            "Khí thực khác khí lí tưởng ở điểm nào?"
+        ]
+    };
+
+    // ==================== TRẠNG THÁI HỆ THỐNG ====================
+    let activeLesson = 'bai5';
+    let currentStep = 1;
+    let isDetoxLocked = false;
+    let studentActiveGroup = 1;
+
+    let classroomConfig = {
+        totalStudents: 36,
+        numGroups: 6,
+        groups: [
+            { id: 1, name: "Chiến Binh Nhiệt Học", count: 6, leader: "Trưởng nhóm 01", secretary: "Thư ký 01" },
+            { id: 2, name: "Định Luật Boyle", count: 6, leader: "Trưởng nhóm 02", secretary: "Thư ký 02" },
+            { id: 3, name: "Thang Đo Kelvin", count: 6, leader: "Trưởng nhóm 03", secretary: "Thư ký 03" },
+            { id: 4, name: "Nhiệt Dung Riêng", count: 6, leader: "Trưởng nhóm 04", secretary: "Thư ký 04" },
+            { id: 5, name: "Năng Lượng Pha", count: 6, leader: "Trưởng nhóm 05", secretary: "Thư ký 05" },
+            { id: 6, name: "Khí Thực Van der Waals", count: 6, leader: "Trưởng nhóm 06", secretary: "Thư ký 06" }
+        ]
+    };
+
+    let arenaScores = { 1: 150, 2: 120, 3: 140, 4: 110, 5: 160, 6: 130 };
+
+    const simConfigs = {
+    'bai1': {
+        title: 'Thí nghiệm mô phỏng & Dữ liệu: Chuyển động Brown & Thể tích mol khí (KNTT tr. 6-9)',
+        videoTitle: 'Video mô phỏng 60fps: Chuyển động Brown và Cấu trúc vi mô chất khí',
+        durationSec: 300,
+        chapters: [
+            { time: 0, label: '00:00 - Khởi đầu (Hạt phấn hoa & phân tử nước)' },
+            { time: 90, label: '01:30 - Tăng nhiệt độ (Va đập hỗn loạn)' },
+            { time: 200, label: '03:20 - Cấu trúc rỗng của 1 mol khí' }
+        ],
+        tableHtml: `
+            <table class="data-table-mini">
+                <tr><th>Thông số thực nghiệm SGK KNTT</th><th>Giá trị đo</th></tr>
+                <tr><td>Thể tích mol khí lý tưởng ở ĐKTC <span class="math-inline"><i class="math-var">V</i><sub class="math-sub">0</sub></span></td><td><span class="math-inline">22,4<span class="math-unit">dm<sup>3</sup> = 0,0224 m<sup>3</sup></span></span></td></tr>
+                <tr><td>Hằng số Avogadro <span class="math-inline"><i class="math-var">N</i><sub class="math-sub">A</sub></span></td><td><span class="math-inline">6,022 &times; 10<sup class="math-sup">23</sup><span class="math-unit">hạt/mol</span></span></td></tr>
+                <tr><td>Bán kính phân tử khí ước lượng <span class="math-inline"><i class="math-var">r</i></span></td><td><span class="math-inline">&approx; 10<sup class="math-sup">-10</sup><span class="math-unit">m (0,1 nm)</span></span></td></tr>
+                <tr><td>Thể tích thực của <span class="math-inline"><i class="math-var">N</i><sub class="math-sub">A</sub></span> phân tử <span class="math-inline"><i class="math-var">V</i><sub class="math-sub">thực</sub> = <span class="math-frac"><span class="num">4</span><span class="den">3</span></span>&pi;<i class="math-var">r</i><sup>3</sup><i class="math-var">N</i><sub class="math-sub">A</sub></span></td><td><strong style="color:#2563eb;" class="math-inline">&approx; 2,5 &times; 10<sup class="math-sup">-6</sup><span class="math-unit">m<sup>3</sup> = 0,0025 dm<sup>3</sup></span></strong></td></tr>
+                <tr><td>Tỉ lệ thể tích riêng phân tử chiếm chỗ</td><td><strong style="color:#2563eb;">0,011% &lt; 0,05%</strong> (Cực kỳ rỗng)</td></tr>
+            </table>
+        `,
+        calcHtml: `
+            <div class="math-box">
+                Thể tích riêng các phân tử chiếm <strong>chưa đầy 0,05%</strong> bình chứa.<br>
+                Khoảng cách trung bình giữa các phân tử khí gấp <strong>hơn 10 lần</strong> kích thước hạt.<br>
+                <span style="color:#64748b;">&rArr; Khẳng định tính <em>rỗng tuyệt đối</em> của chất khí và giải thích tại sao chất khí rất dễ nén so với chất lỏng và chất rắn.</span>
+            </div>
+        `,
+        promptMsg: "Nhóm đã quan sát mô phỏng chuyển động Brown và tính toán thể tích 1 mol khí ĐKTC: V_thực của phân tử chỉ chiếm 0,011% (< 0,05%) thể tích bình chứa. Nhóm kết luận chất khí có cấu trúc cực kỳ rỗng và khoảng cách phân tử rất lớn!"
+    },
+    'bai2': {
+        title: 'Thí nghiệm mô phỏng & Dữ liệu: Xilanh pít-tông & Định luật I NĐLH (KNTT tr. 10-14)',
+        videoTitle: 'Video mô phỏng 60fps: Biến đổi Nội năng trong Xilanh nén dãn',
+        durationSec: 300,
+        chapters: [
+            { time: 0, label: '00:00 - Trạng thái ban đầu' },
+            { time: 60, label: '01:00 - Nén khí đoạn nhiệt (A > 0, Nóng lên)' },
+            { time: 150, label: '02:30 - Cấp nhiệt & Dãn nở (Q = +150J, A = -90J)' },
+            { time: 240, label: '04:00 - Xịt khí đoạn nhiệt (Lạnh buốt)' }
+        ],
+        tableHtml: `
+            <table class="data-table-mini">
+                <tr><th>Trường hợp khảo sát xilanh khí</th><th>Công <span class="math-inline"><i class="math-var">A</i></span></th><th>Nhiệt <span class="math-inline"><i class="math-var">Q</i></span></th><th>Biến thiên <span class="math-inline">&Delta;<i class="math-var">U</i> = <i class="math-var">A</i> + <i class="math-var">Q</i></span></th></tr>
+                <tr><td>1. Nén khí đoạn nhiệt nhanh</td><td><span class="math-inline">+80<span class="math-unit">J</span></span></td><td><span class="math-inline">0<span class="math-unit">J</span></span></td><td><span class="math-inline">+80<span class="math-unit">J</span> (Khí nóng lên)</span></td></tr>
+                <tr><td>2. Nhận nhiệt &amp; Dãn nở (KNTT)</td><td><span class="math-inline">-90<span class="math-unit">J</span></span></td><td><span class="math-inline">+150<span class="math-unit">J</span></span></td><td><strong style="color:#2e7d32;" class="math-inline">+60 J (Khí vẫn nóng lên)</strong></td></tr>
+                <tr><td>3. Xịt khí dãn nở đoạn nhiệt</td><td><span class="math-inline">-120<span class="math-unit">J</span></span></td><td><span class="math-inline">0<span class="math-unit">J</span></span></td><td><span class="math-inline">-120<span class="math-unit">J</span> (Khí lạnh buốt)</span></td></tr>
+            </table>
+        `,
+        calcHtml: `
+            <div class="calc-input-row">
+                <span>Nhập <span class="math-inline"><i class="math-var">Q</i> (J):</span></span> <input type="number" id="sim-inp-q" value="150" oninput="recalcBai2()">
+                <span>Nhập <span class="math-inline"><i class="math-var">A</i> (J):</span></span> <input type="number" id="sim-inp-a" value="-90" oninput="recalcBai2()">
+            </div>
+            <div class="math-box" id="sim-res-du">
+                &rArr; Biến thiên nội năng: <span class="math-inline">&Delta;<i class="math-var">U</i> = <i class="math-var">A</i> + <i class="math-var">Q</i> = (-90) + (+150) = <strong>+60 J</strong></span> (Khí nhận năng lượng tổng thể &gt; 0, nhiệt độ tăng).
+            </div>
+        `,
+        promptMsg: "Nhóm đã kiểm chứng Định luật I trên mô phỏng xilanh khí: Khi nhận nhiệt lượng Q = +150 J và sinh công A = -90 J đẩy pít-tông, Delta U = +60 J > 0 nên khối khí vẫn nóng lên dù dãn nở sinh công!"
+    },
+    'bai3': {
+        title: 'Thí nghiệm mô phỏng & Dữ liệu: Hiệu chuẩn Thang đo Celsius & Kelvin (KNTT tr. 15-19)',
+        videoTitle: 'Video mô phỏng 60fps: Hiệu chuẩn nhiệt kế thủy ngân chưa chia độ',
+        durationSec: 300,
+        chapters: [
+            { time: 0, label: '00:00 - Bình đá tan (0,0°C, L0 = 4,0 cm)' },
+            { time: 100, label: '01:40 - Bình hơi nước sôi (100,0°C, L100 = 24,0 cm)' },
+            { time: 200, label: '03:20 - Đo chất lỏng X (Lx = 12,0 cm)' }
+        ],
+        tableHtml: `
+            <table class="data-table-mini">
+                <tr><th>Mốc nhiệt độ hiệu chuẩn</th><th>Chiều dài cột <span class="math-inline"><i class="math-var">L</i></span></th><th>Nhiệt độ Celsius <span class="math-inline"><i class="math-var">t</i></span></th><th>Thang Kelvin <span class="math-inline"><i class="math-var">T</i></span></th></tr>
+                <tr><td>Nước đá đang tan ở 1 atm</td><td><span class="math-inline"><i class="math-var">L</i><sub class="math-sub">0</sub> = 4,0<span class="math-unit">cm</span></span></td><td><span class="math-inline">0,0&deg;C</span></td><td><span class="math-inline">273,15<span class="math-unit">K</span></span></td></tr>
+                <tr><td>Hơi nước sôi ở 1 atm</td><td><span class="math-inline"><i class="math-var">L</i><sub class="math-sub">100</sub> = 24,0<span class="math-unit">cm</span></span></td><td><span class="math-inline">100,0&deg;C</span></td><td><span class="math-inline">373,15<span class="math-unit">K</span></span></td></tr>
+                <tr><td>Chất lỏng đo X</td><td><span class="math-inline"><i class="math-var">L</i><sub class="math-sub">x</sub> = 12,0<span class="math-unit">cm</span></span></td><td><strong style="color:#0284c7;">40,0&deg;C</strong></td><td><strong style="color:#0284c7;">313,15 K</strong></td></tr>
+            </table>
+        `,
+        calcHtml: `
+            <div class="calc-input-row">
+                <span>Cột đo <span class="math-inline"><i class="math-var">L</i><sub class="math-sub">x</sub> (cm):</span></span> <input type="number" id="sim-inp-lx" value="12.0" step="0.5" oninput="recalcBai3()">
+                <span id="sim-res-bai3" style="font-weight:700; color:#0284c7;">&rArr; t = 40,0&deg;C = 313,15 K</span>
+            </div>
+            <div class="math-box">
+                Công thức nội suy tuyến tính: <span class="math-inline"><i class="math-var">t</i> = <span class="math-frac"><span class="num"><i class="math-var">L</i><sub class="math-sub">x</sub> - <i class="math-var">L</i><sub class="math-sub">0</sub></span><span class="den"><i class="math-var">L</i><sub class="math-sub">100</sub> - <i class="math-var">L</i><sub class="math-sub">0</sub></span></span> &times; 100&deg;C</span>.<br>
+                Chuyển sang thang Kelvin: <span class="math-inline"><i class="math-var">T</i> (K) = <i class="math-var">t</i> (&deg;C) + 273,15</span>.
+            </div>
+        `,
+        promptMsg: "Nhóm đã hoàn thành hiệu chuẩn nhiệt kế thủy ngân chưa chia độ: L0 = 4,0 cm, L100 = 24,0 cm, Lx = 12,0 cm. Dùng phép nội suy tuyến tính tính ra t = 40,0°C = 313,15 K!"
+    },
+    'bai4': {
+        title: 'Thí nghiệm mô phỏng & Dữ liệu: Nhiệt lượng kế đo Nhiệt dung riêng (Hình 4.1 & Bảng 4.1 KNTT)',
+        videoTitle: 'Video mô phỏng 60fps: Thí nghiệm Nhiệt lượng kế đo Nhiệt dung riêng của nước',
+        durationSec: 400,
+        chapters: [
+            { time: 0, label: '00:00 - Chuẩn bị 0,20 kg nước vào bình xốp' },
+            { time: 100, label: '01:40 - Bật nguồn P = 15,0 W, khuấy đều' },
+            { time: 350, label: '05:50 - Kết thúc đun (tăng 6,5°C, Q = 6000 J)' }
+        ],
+        tableHtml: `
+            <table class="data-table-mini">
+                <tr><th>Đại lượng thực nghiệm Hình 4.1 SGK KNTT</th><th>Giá trị đo</th></tr>
+                <tr><td>Khối lượng nước <span class="math-inline"><i class="math-var">m</i></span></td><td><span class="math-inline">0,20<span class="math-unit">kg</span></span></td></tr>
+                <tr><td>Công suất oát kế <span class="math-inline"><i class="math-var">P</i></span></td><td><span class="math-inline">15,0<span class="math-unit">W</span></span></td></tr>
+                <tr><td>Thời gian đun <span class="math-inline"><i class="math-var">&tau;</i></span></td><td><span class="math-inline">400<span class="math-unit">s</span></span></td></tr>
+                <tr><td>Độ tăng nhiệt độ <span class="math-inline">&Delta;<i class="math-var">t</i></span></td><td><span class="math-inline">6,5&deg;C (từ 20,0&deg;C lên 26,5&deg;C)</span></td></tr>
+                <tr><td>Nhiệt lượng cấp <span class="math-inline"><i class="math-var">Q</i> = <i class="math-var">P</i> &times; <i class="math-var">&tau;</i></span></td><td><span class="math-inline">6000<span class="math-unit">J</span></span></td></tr>
+                <tr><td>Nhiệt dung riêng <span class="math-inline"><i class="math-var">c</i><sub class="math-sub">TN</sub> = <span class="math-frac"><span class="num"><i class="math-var">Q</i></span><span class="den"><i class="math-var">m</i> &times; &Delta;<i class="math-var">t</i></span></span></span></td><td><strong style="color:#d97706;" class="math-inline">&approx; 4615 J/(kg&middot;K)</strong></td></tr>
+                <tr><td>Sai số so với chuẩn Bảng 4.1 (<span class="math-inline">4180<span class="math-unit">J/(kg&middot;K)</span></span>)</td><td><strong style="color:#d97706;">+10,4%</strong> (Nhiệt vỏ bình &amp; que khuấy)</td></tr>
+            </table>
+        `,
+        calcHtml: `
+            <div class="math-box">
+                <span class="math-inline"><i class="math-var">Q</i> = 15,0 &times; 400 = 6000<span class="math-unit">J</span> &rArr; <i class="math-var">c</i><sub class="math-sub">TN</sub> = <span class="math-frac"><span class="num">6000</span><span class="den">0,20 &times; 6,5</span></span> &approx; <strong>4615 J/(kg&middot;K)</strong></span>.<br>
+                Độ sai lệch: <span class="math-inline"><i class="math-var">&delta;</i> = <span class="math-frac"><span class="num">4615 - 4180</span><span class="den">4180</span></span> &times; 100% &approx; <strong>+10,4%</strong></span> (do dây nung chia sẻ nhiệt lượng làm nóng vỏ bình và que khuấy).
+            </div>
+        `,
+        promptMsg: "Nhóm đã mô phỏng bộ đo Hình 4.1 SGK KNTT: m = 0,20 kg, P = 15,0 W, tau = 400 s, Delta_t = 6,5°C. Tính được c_TN ≈ 4615 J/kg.K, lệch +10,4% so với chuẩn 4180 J/kg.K do nhiệt lượng bị vỏ bình và que khuấy hấp thụ!"
+    },
+    'bai5': {
+        title: 'Thí nghiệm mô phỏng & Dữ liệu: Nhiệt nóng chảy riêng nước đá (Hình 5.1 & Bảng 5.2 KNTT)',
+        videoTitle: 'Video mô phỏng 60fps: Quá trình nóng chảy đẳng nhiệt 0,0°C & Điểm gãy uốn M',
+        durationSec: 600,
+        chapters: [
+            { time: 0, label: '00:00 - Cân 0,250 kg đá vụn 0°C' },
+            { time: 120, label: '02:00 - Đun đẳng nhiệt 0,0°C (Đá tan)' },
+            { time: 480, label: '08:00 - Gần điểm M (Mẩu đá cuối cùng)' },
+            { time: 600, label: '10:00 - Điểm gãy M (Đá vừa tan hết)' }
+        ],
+        tableHtml: `
+            <table class="data-table-mini">
+                <tr><th>Đại lượng thực nghiệm Bảng 5.2 KNTT tr. 26</th><th>Số liệu đo</th></tr>
+                <tr><td>Khối lượng nước đá ban đầu <span class="math-inline"><i class="math-var">m</i></span></td><td><span class="math-inline">0,250<span class="math-unit">kg (250 g)</span></span></td></tr>
+                <tr><td>Công suất trung bình oát kế <span class="math-inline"><span class="math-over"><i class="math-var">P</i></span></span></td><td><span class="math-inline">14,24<span class="math-unit">W</span></span></td></tr>
+                <tr><td>Thời gian đến khi đá vừa tan hết <span class="math-inline"><i class="math-var">&tau;</i><sub class="math-sub">M</sub></span></td><td><span class="math-inline">600<span class="math-unit">s (10 phút)</span></span></td></tr>
+                <tr><td>Nhiệt lượng cung cấp <span class="math-inline"><i class="math-var">Q</i> = <span class="math-over"><i class="math-var">P</i></span> &times; <i class="math-var">&tau;</i><sub class="math-sub">M</sub></span></td><td><span class="math-inline">8544<span class="math-unit">J</span></span></td></tr>
+                <tr><td>Nhiệt nóng chảy riêng <span class="math-inline"><i class="math-var">&lambda;</i><sub class="math-sub">TN</sub> = <span class="math-frac"><span class="num"><i class="math-var">Q</i></span><span class="den"><i class="math-var">m</i></span></span></span></td><td><strong style="color:#2563eb;" class="math-inline">3,42 &times; 10<sup class="math-sup">5</sup><span class="math-unit">J/kg</span></strong></td></tr>
+                <tr><td>Giá trị chuẩn Bảng 5.1 KNTT</td><td><span class="math-inline">3,34 &times; 10<sup class="math-sup">5</sup><span class="math-unit">J/kg</span></span></td></tr>
+                <tr><td>Sai số tương đối <span class="math-inline"><i class="math-var">&delta;</i>%</span></td><td><strong style="color:#2563eb;">+2,3%</strong></td></tr>
+            </table>
+        `,
+        calcHtml: `
+            <div class="math-box">
+                <span class="math-inline"><i class="math-var">&lambda;</i><sub class="math-sub">TN</sub> = <span class="math-frac"><span class="num">8544</span><span class="den">0,250</span></span> = 34176<span class="math-unit">J/kg</span> &approx; <strong>3,42 &times; 10<sup class="math-sup">5</sup><span class="math-unit">J/kg</span></strong></span>.<br>
+                Độ sai lệch: <span class="math-inline"><i class="math-var">&delta;</i> = <span class="math-frac"><span class="num">3,42 - 3,34</span><span class="den">3,34</span></span> &times; 100% = <strong>+2,3%</strong></span> (do nhiệt dung que khuấy/vỏ bình và đá tan tự nhiên trước khi bật điện).
+            </div>
+        `,
+        promptMsg: "Nhóm đã hoàn thành mô phỏng Hình 5.1 và tính toán Bảng 5.2 SGK KNTT: m = 0,250 kg, P_tb = 14,24 W, tau_M = 600 s, Q = 8544 J. Tính được lambda_TN = 3,42.10^5 J/kg, lệch +2,3% so với bảng chuẩn 3,34.10^5 J/kg. Nhóm đã ghi nhận xét và sẵn sàng giải trình sai số cùng AI!"
+    },
+    'bai6': {
+        title: 'Thí nghiệm mô phỏng & Dữ liệu: Đo vi sai Nhiệt hoá hơi riêng của nước (Hình 6.1 & Bảng 6.2 KNTT)',
+        videoTitle: 'Video mô phỏng 60fps: Phương pháp đo vi sai khối lượng nước sôi bốc hơi trên cân điện tử',
+        durationSec: 420,
+        chapters: [
+            { time: 0, label: '00:00 - Nước sôi sùng sục ở 100,0°C' },
+            { time: 120, label: '02:00 - Thời điểm tau_P (m_P = 118,0 g)' },
+            { time: 300, label: '05:00 - Hóa hơi đều đặn' },
+            { time: 420, label: '07:00 - Thời điểm tau_Q (m_Q = 116,0 g)' }
+        ],
+        tableHtml: `
+            <table class="data-table-mini">
+                <tr><th>Đại lượng đo vi sai Bảng 6.2 KNTT tr. 28-29</th><th>Giá trị đo</th></tr>
+                <tr><td>Công suất ấm đun <span class="math-inline"><span class="math-over"><i class="math-var">P</i></span></span></td><td><span class="math-inline">15,0<span class="math-unit">W</span></span></td></tr>
+                <tr><td>Thời điểm <span class="math-inline"><i class="math-var">&tau;</i><sub class="math-sub">P</sub> = 120<span class="math-unit">s</span></span>, khối lượng <span class="math-inline"><i class="math-var">m</i><sub class="math-sub">P</sub></span></td><td><span class="math-inline">0,1180<span class="math-unit">kg (118,0 g)</span></span></td></tr>
+                <tr><td>Thời điểm <span class="math-inline"><i class="math-var">&tau;</i><sub class="math-sub">Q</sub> = 420<span class="math-unit">s</span></span>, khối lượng <span class="math-inline"><i class="math-var">m</i><sub class="math-sub">Q</sub></span></td><td><span class="math-inline">0,1160<span class="math-unit">kg (116,0 g)</span></span></td></tr>
+                <tr><td>Khoảng thời gian vi sai <span class="math-inline">&Delta;<i class="math-var">&tau;</i> = <i class="math-var">&tau;</i><sub class="math-sub">Q</sub> - <i class="math-var">&tau;</i><sub class="math-sub">P</sub></span></td><td><span class="math-inline">300<span class="math-unit">s (5 phút)</span></span></td></tr>
+                <tr><td>Khối lượng hóa hơi <span class="math-inline">&Delta;<i class="math-var">m</i> = <i class="math-var">m</i><sub class="math-sub">P</sub> - <i class="math-var">m</i><sub class="math-sub">Q</sub></span></td><td><span class="math-inline">0,0020<span class="math-unit">kg (2,0 g)</span></span></td></tr>
+                <tr><td>Nhiệt hóa hơi riêng <span class="math-inline"><i class="math-var">L</i><sub class="math-sub">TN</sub> = <span class="math-frac"><span class="num"><i class="math-var">P</i> &times; &Delta;<i class="math-var">&tau;</i></span><span class="den">&Delta;<i class="math-var">m</i></span></span></span></td><td><strong style="color:#059669;" class="math-inline">2,25 &times; 10<sup class="math-sup">6</sup><span class="math-unit">J/kg</span></strong></td></tr>
+                <tr><td>Giá trị chuẩn Bảng 6.1 KNTT</td><td><span class="math-inline">2,26 &times; 10<sup class="math-sup">6</sup><span class="math-unit">J/kg</span></span></td></tr>
+                <tr><td>Sai số tương đối <span class="math-inline"><i class="math-var">&delta;</i>%</span></td><td><strong style="color:#059669;">-0,44% (Rất chính xác)</strong></td></tr>
+            </table>
+        `,
+        calcHtml: `
+            <div class="math-box">
+                <span class="math-inline"><i class="math-var">Q</i> = 15,0 &times; 300 = 4500<span class="math-unit">J</span> &rArr; <i class="math-var">L</i><sub class="math-sub">TN</sub> = <span class="math-frac"><span class="num">4500</span><span class="den">0,0020</span></span> = <strong>2,25 &times; 10<sup class="math-sup">6</sup><span class="math-unit">J/kg</span></strong></span>.<br>
+                Phương pháp đo vi sai triệt tiêu hoàn toàn nhiệt lượng hao phí làm nóng ấm đun lúc ban đầu!
+            </div>
+        `,
+        promptMsg: "Nhóm đã hoàn thành mô phỏng phép đo vi sai trên cân điện tử theo Bảng 6.2 SGK KNTT: P_tb = 15,0 W, Delta_tau = 300 s, Delta_m = 2,0 g. Tính được L_TN = 2,25.10^6 J/kg, lệch chỉ -0,44% so với bảng chuẩn 2,26.10^6 J/kg. Nhóm đã sẵn sàng giải trình ưu điểm phép đo vi sai cùng AI!"
+    }
+};
+
+    let simState = {
+    running: false,
+    timer: 0,
+    temp: 0,
+    particles: [],
+    customVal: 0
+};
+
+    function initSimulationUI() {
+    const cfg = simConfigs[activeLesson] || simConfigs['bai5'];
+    document.getElementById('sim-active-title').innerText = cfg.title;
+    document.getElementById('sim-data-title').innerText = `📊 ${cfg.title} – Dữ liệu KNTT:`;
+    document.getElementById('sim-data-table-container').innerHTML = cfg.tableHtml;
+    document.getElementById('sim-calc-container').innerHTML = cfg.calcHtml;
+
+    initCanvasControls();
+    initLabVideoPlayer();
+    startCanvasSimulation('sim-canvas');
+}
+
+function initCanvasControls() {
+    const box = document.getElementById('sim-custom-controls');
+    box.innerHTML = `
+        <button class="sim-btn sim-btn-primary" onclick="toggleSimRun()">▶ Bắt đầu / Tạm dừng</button>
+        <button class="sim-btn sim-btn-danger" onclick="resetSimRun()">🔄 Đặt lại</button>
+        <span style="color:#94a3b8; font-size:0.8rem; display:flex; align-items:center; margin-left:8px;" id="sim-status-label">
+            ⏱️ Đang chạy mô phỏng
+        </span>
+    `;
+}
+
+function toggleSimRun() {
+    simState.running = !simState.running;
+    const lbl = document.getElementById('sim-status-label');
+    if (lbl) lbl.innerText = simState.running ? '⏱️ Đang chạy mô phỏng' : '⏸️ Tạm dừng';
+}
+
+function resetSimRun() {
+    simState.running = true;
+    simState.timer = 0;
+    simState.temp = 0;
+    const lbl = document.getElementById('sim-status-label');
+    if (lbl) lbl.innerText = '⏱️ Đang chạy mô phỏng';
+}
+
+function startCanvasSimulation(canvasId) {
+    const canvas = document.getElementById(canvasId);
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+
+    if (simAnimationId) cancelAnimationFrame(simAnimationId);
+
+    // Khởi tạo hạt nếu là bài 1
+    if (activeLesson === 'bai1' && simState.particles.length === 0) {
+        simState.particles = [];
+        for (let i = 0; i < 35; i++) {
+            simState.particles.push({
+                x: 40 + Math.random() * (canvas.width - 80),
+                y: 30 + Math.random() * (canvas.height - 60),
+                vx: (Math.random() - 0.5) * 2.5,
+                vy: (Math.random() - 0.5) * 2.5
+            });
+        }
+        simState.pollen = { x: canvas.width / 2, y: canvas.height / 2, vx: 0, vy: 0 };
+    }
+
+    simState.running = true;
+
+    function render() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        if (activeLesson === 'bai1') {
+            drawBai1(ctx, canvas);
+        } else if (activeLesson === 'bai2') {
+            drawBai2(ctx, canvas);
+        } else if (activeLesson === 'bai3') {
+            drawBai3(ctx, canvas);
+        } else if (activeLesson === 'bai4') {
+            drawBai4(ctx, canvas);
+        } else if (activeLesson === 'bai5') {
+            drawBai5(ctx, canvas);
+        } else if (activeLesson === 'bai6') {
+            drawBai6(ctx, canvas);
+        }
+
+        if (simState.running) {
+            simState.timer += 0.05;
+        }
+
+        simAnimationId = requestAnimationFrame(render);
+    }
+    render();
+}
+
+function drawBai1(ctx, canvas) {
+    ctx.fillStyle = '#0f172a';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.fillStyle = '#94a3b8';
+    ctx.font = '12px sans-serif';
+    ctx.fillText('Mô phỏng chuyển động Brown (Hình 1.1 SGK KNTT)', 12, 20);
+
+    // Vẽ hạt phấn hoa lớn
+    const p = simState.pollen || { x: canvas.width / 2, y: canvas.height / 2 };
+    if (simState.running) {
+        p.x += (Math.random() - 0.5) * 1.5;
+        p.y += (Math.random() - 0.5) * 1.5;
+        if (p.x < 50) p.x = 50;
+        if (p.x > canvas.width - 50) p.x = canvas.width - 50;
+        if (p.y < 50) p.y = 50;
+        if (p.y > canvas.height - 50) p.y = canvas.height - 50;
+    }
+
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, 16, 0, Math.PI * 2);
+    ctx.fillStyle = '#f59e0b';
+    ctx.fill();
+    ctx.strokeStyle = '#d97706';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    ctx.fillStyle = '#1e293b';
+    ctx.font = 'bold 10px sans-serif';
+    ctx.fillText('Phấn hoa', p.x - 22, p.y + 3);
+
+    // Vẽ các phân tử nước
+    ctx.fillStyle = '#38bdf8';
+    simState.particles.forEach(pt => {
+        if (simState.running) {
+            pt.x += pt.vx;
+            pt.y += pt.vy;
+            if (pt.x < 10 || pt.x > canvas.width - 10) pt.vx *= -1;
+            if (pt.y < 10 || pt.y > canvas.height - 10) pt.vy *= -1;
+        }
+        ctx.beginPath();
+        ctx.arc(pt.x, pt.y, 3.5, 0, Math.PI * 2);
+        ctx.fill();
+    });
+}
+
+function drawBai2(ctx, canvas) {
+    ctx.fillStyle = '#0f172a';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.fillStyle = '#94a3b8';
+    ctx.font = '12px sans-serif';
+    ctx.fillText('Mô phỏng Xilanh khí Pít-tông & Định luật I (ΔU = A + Q)', 12, 20);
+
+    // Vẽ xilanh
+    ctx.strokeStyle = '#cbd5e1';
+    ctx.lineWidth = 4;
+    ctx.strokeRect(80, 50, 280, 140);
+
+    // Pít-tông di động
+    let px = 220 + Math.sin(simState.timer * 2) * 35;
+    ctx.fillStyle = '#64748b';
+    ctx.fillRect(px, 52, 20, 136);
+
+    // Cần pít-tông
+    ctx.fillStyle = '#94a3b8';
+    ctx.fillRect(px + 20, 110, 120, 20);
+
+    // Khí bên trong
+    ctx.fillStyle = 'rgba(56, 189, 248, 0.2)';
+    ctx.fillRect(82, 52, px - 82, 136);
+
+    // Bếp nhiệt bên dưới
+    ctx.fillStyle = '#ef4444';
+    ctx.font = 'bold 14px sans-serif';
+    ctx.fillText('🔥 Bếp truyền nhiệt Q = +150 J', 120, 225);
+
+    ctx.fillStyle = '#e2e8f0';
+    ctx.font = '12px sans-serif';
+    ctx.fillText('Khí dãn nở sinh công A = -90 J', px - 40, 42);
+    ctx.fillText('=> ΔU = +60 J (Khí nóng lên)', 140, 125);
+}
+
+function drawBai3(ctx, canvas) {
+    ctx.fillStyle = '#0f172a';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.fillStyle = '#94a3b8';
+    ctx.font = '12px sans-serif';
+    ctx.fillText('Mô phỏng Hiệu chuẩn nhiệt kế thủy ngân (Nội suy tuyến tính)', 12, 20);
+
+    // Thước đo cm
+    ctx.fillStyle = '#334155';
+    ctx.fillRect(50, 40, 360, 35);
+    ctx.fillStyle = '#e2e8f0';
+    ctx.font = '11px monospace';
+    for (let i = 0; i <= 30; i += 5) {
+        ctx.fillText(i + 'cm', 60 + i * 9.5, 62);
+    }
+
+    // 3 cột nhiệt kế
+    drawThermometer(ctx, 90, 85, '0°C (Đá tan)', 'L0 = 4,0 cm', 38, '#94a3b8');
+    drawThermometer(ctx, 220, 85, 'Chất lỏng X', 'Lx = 12,0 cm => 40°C', 114, '#38bdf8');
+    drawThermometer(ctx, 350, 85, '100°C (Hơi sôi)', 'L100 = 24,0 cm', 228, '#ef4444');
+}
+
+function drawThermometer(ctx, x, y, labelTop, labelBot, h, color) {
+    ctx.strokeStyle = '#cbd5e1';
+    ctx.lineWidth = 3;
+    ctx.strokeRect(x, y, 22, 130);
+
+    ctx.fillStyle = color;
+    ctx.fillRect(x + 2, y + 130 - h / 2, 18, h / 2);
+
+    ctx.fillStyle = '#f8fafc';
+    ctx.font = '10px sans-serif';
+    ctx.fillText(labelTop, x - 18, y - 8);
+    ctx.fillText(labelBot, x - 25, y + 150);
+}
+
+function drawBai4(ctx, canvas) {
+    ctx.fillStyle = '#0f172a';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.fillStyle = '#94a3b8';
+    ctx.font = '12px sans-serif';
+    ctx.fillText('Mô phỏng Nhiệt lượng kế đo Nhiệt dung riêng c (Hình 4.1 SGK KNTT)', 12, 20);
+
+    // Bình xốp nhiệt lượng kế
+    ctx.strokeStyle = '#94a3b8';
+    ctx.lineWidth = 4;
+    ctx.strokeRect(90, 50, 160, 150);
+
+    // Nước bên trong
+    ctx.fillStyle = 'rgba(56, 189, 248, 0.4)';
+    ctx.fillRect(92, 90, 156, 108);
+
+    // Dây nung điện trở
+    ctx.strokeStyle = simState.running ? '#ef4444' : '#64748b';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(130, 60);
+    ctx.lineTo(130, 160);
+    ctx.lineTo(150, 170);
+    ctx.lineTo(170, 160);
+    ctx.lineTo(170, 60);
+    ctx.stroke();
+
+    // Que khuấy
+    ctx.strokeStyle = '#cbd5e1';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(195, 45);
+    ctx.lineTo(195, 175);
+    ctx.lineTo(210, 175);
+    ctx.stroke();
+
+    // Bảng đồng hồ oát kế & nhiệt kế bên phải
+    ctx.fillStyle = '#1e293b';
+    ctx.fillRect(280, 50, 160, 150);
+    ctx.strokeStyle = '#475569';
+    ctx.strokeRect(280, 50, 160, 150);
+
+    ctx.fillStyle = '#f59e0b';
+    ctx.font = 'bold 12px sans-serif';
+    ctx.fillText('⚡ Oát kế: P = 15,0 W', 290, 80);
+
+    let curTemp = 20.0 + Math.min(6.5, (simState.timer / 10) * 6.5);
+    ctx.fillStyle = '#38bdf8';
+    ctx.fillText(`🌡️ Nhiệt độ t: ${curTemp.toFixed(1)} °C`, 290, 115);
+
+    let curTime = Math.min(400, Math.floor(simState.timer * 40));
+    ctx.fillStyle = '#10b981';
+    ctx.fillText(`⏱️ Thời gian: ${curTime} s / 400s`, 290, 150);
+
+    ctx.fillStyle = '#e2e8f0';
+    ctx.font = '10px sans-serif';
+    ctx.fillText('Q = 6000 J => c_TN ≈ 4615', 290, 185);
+}
+
+function drawBai5(ctx, canvas) {
+    ctx.fillStyle = '#0f172a';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.fillStyle = '#94a3b8';
+    ctx.font = '12px sans-serif';
+    ctx.fillText('Mô phỏng Nhiệt lượng kế đo λ đá tan (Hình 5.1 & Bảng 5.2 KNTT)', 12, 20);
+
+    // Cốc nhiệt lượng kế
+    ctx.strokeStyle = '#94a3b8';
+    ctx.lineWidth = 4;
+    ctx.strokeRect(60, 50, 150, 150);
+
+    // Nước đá vụn tan
+    ctx.fillStyle = '#e0f2fe';
+    ctx.fillRect(62, 100, 146, 98);
+
+    // Các viên đá vụn
+    ctx.fillStyle = '#bae6fd';
+    ctx.fillRect(75, 115, 25, 20);
+    ctx.fillRect(115, 130, 30, 25);
+    ctx.fillRect(155, 120, 25, 20);
+
+    // Dây nung điện trở đỏ
+    ctx.strokeStyle = '#ef4444';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(110, 55);
+    ctx.lineTo(110, 165);
+    ctx.lineTo(135, 165);
+    ctx.lineTo(135, 55);
+    ctx.stroke();
+
+    // Nhiệt kế điện tử luôn chỉ 0,0°C
+    ctx.fillStyle = '#0284c7';
+    ctx.fillRect(170, 45, 12, 140);
+    ctx.fillStyle = '#22c55e';
+    ctx.font = 'bold 13px monospace';
+    ctx.fillText('0,0 °C', 65, 42);
+
+    // Đồ thị nhiệt độ t - tau bên phải (Đi ngang ở 0°C đến điểm M)
+    ctx.fillStyle = '#1e293b';
+    ctx.fillRect(240, 50, 200, 150);
+    ctx.strokeStyle = '#475569';
+    ctx.strokeRect(240, 50, 200, 150);
+
+    ctx.fillStyle = '#94a3b8';
+    ctx.font = '10px sans-serif';
+    ctx.fillText('Đồ thị (t - τ): Giai đoạn đá tan 0°C', 246, 68);
+
+    // Trục tọa độ
+    ctx.strokeStyle = '#64748b';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(255, 175);
+    ctx.lineTo(425, 175); // Trục tau
+    ctx.moveTo(255, 175);
+    ctx.lineTo(255, 80);  // Trục t
+    ctx.stroke();
+
+    // Đường biểu diễn: Đi ngang ở 0°C đến điểm M (600s), sau đó dốc lên
+    ctx.strokeStyle = '#f59e0b';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(255, 160);
+    ctx.lineTo(365, 160); // Đi ngang
+    ctx.lineTo(415, 100); // Dốc lên sau M
+    ctx.stroke();
+
+    // Điểm M
+    ctx.fillStyle = '#ef4444';
+    ctx.beginPath();
+    ctx.arc(365, 160, 4, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillText('M (600s - Đá vừa tan hết)', 270, 192);
+
+    ctx.fillStyle = '#22c55e';
+    ctx.fillText('Q = 8544 J => λ = 3,42·10⁵ J/kg (+2,3%)', 245, 148);
+}
+
+function drawBai6(ctx, canvas) {
+    ctx.fillStyle = '#0f172a';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.fillStyle = '#94a3b8';
+    ctx.font = '12px sans-serif';
+    ctx.fillText('Mô phỏng Đo vi sai Nhiệt hoá hơi riêng L bằng cân điện tử (Hình 6.1 KNTT)', 12, 20);
+
+    // Cân điện tử
+    ctx.fillStyle = '#334155';
+    ctx.fillRect(90, 170, 160, 40);
+    ctx.strokeStyle = '#64748b';
+    ctx.strokeRect(90, 170, 160, 40);
+
+    // Màn hình LED cân điện tử
+    ctx.fillStyle = '#020617';
+    ctx.fillRect(115, 180, 110, 22);
+    ctx.fillStyle = '#22c55e';
+    ctx.font = 'bold 13px monospace';
+
+    let curMass = 118.0 - Math.min(2.0, (simState.timer / 10) * 2.0);
+    ctx.fillText(`${curMass.toFixed(1)} g`, 145, 196);
+
+    // Ấm đun đặt trên cân
+    ctx.strokeStyle = '#94a3b8';
+    ctx.lineWidth = 3;
+    ctx.strokeRect(110, 80, 120, 90);
+
+    // Hơi nước bốc lên mù mịt
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+    for (let i = 0; i < 4; i++) {
+        let sy = 70 - ((simState.timer * 30 + i * 20) % 50);
+        ctx.beginPath();
+        ctx.arc(135 + i * 20, sy, 8, 0, Math.PI * 2);
+        ctx.fill();
+    }
+
+    // Bảng thông số đo vi sai bên phải
+    ctx.fillStyle = '#1e293b';
+    ctx.fillRect(280, 50, 160, 150);
+    ctx.strokeStyle = '#475569';
+    ctx.strokeRect(280, 50, 160, 150);
+
+    ctx.fillStyle = '#f59e0b';
+    ctx.font = 'bold 11px sans-serif';
+    ctx.fillText('ĐO VI SAI BẢNG 6.2 KNTT:', 286, 75);
+
+    ctx.fillStyle = '#e2e8f0';
+    ctx.font = '11px sans-serif';
+    ctx.fillText('• P = 15,0 W', 286, 98);
+    ctx.fillText('• Δτ = 420 - 120 = 300 s', 286, 120);
+    ctx.fillText('• Δm = 118,0 - 116,0 = 2,0 g', 286, 142);
+
+    ctx.fillStyle = '#34d399';
+    ctx.font = 'bold 11px sans-serif';
+    ctx.fillText('=> L_TN = 2,25·10⁶ J/kg (-0,44%)', 286, 175);
+}
+
+function recalcBai3() {
+    const lx = parseFloat(document.getElementById('sim-inp-lx').value) || 12.0;
+    const t = ((lx - 4.0) / (24.0 - 4.0)) * 100.0;
+    const kelvin = t + 273.15;
+    document.getElementById('sim-res-bai3').innerText = `=> t = ${t.toFixed(1)}°C = ${kelvin.toFixed(2)} K`;
+}
+
+function sendSimResultToAI() {
+    const cfg = simConfigs[activeLesson] || simConfigs['bai5'];
+    
+    // 1. Chuyển ngay về Tab 1: Đối thoại
+    switchStudentTab('chat');
+
+    // 2. Tự động điền và gửi kết quả mô phỏng
+    const msgText = `[BƯỚC 4: KIỂM CHỨNG & SỐ LIỆU] ${cfg.promptMsg}`;
+    
+    const userMsg = {
+        sender: 'user',
+        text: `<strong>Nhóm 0${studentActiveGroup} [Báo cáo Bước 4]:</strong> ${msgText}`
+    };
+
+    if (!groupData[studentActiveGroup]) groupData[studentActiveGroup] = [];
+    groupData[studentActiveGroup].push(userMsg);
+    renderStudentChat();
+    renderDashboardCards();
+    emitSync('STUDENT_MSG', { group: studentActiveGroup, msg: userMsg });
+
+    // 3. AI Socrates phản hồi chất vấn sai số thực nghiệm sau 600ms
+    setTimeout(() => {
+        let aiInterrogation = '';
+        if (activeLesson === 'bai1') {
+            aiInterrogation = 'Con số 0,011% thể tích riêng chứng thực mô hình phân tử chất khí rất rỗng. Nhưng tại sao khi nén thể tích khí giảm thì áp suất khí lại tăng vọt lên thành bình?';
+        } else if (activeLesson === 'bai2') {
+            aiInterrogation = 'Rất chuẩn xác! ΔU = +60 J chứng minh nội năng khí tăng. Hãy giải thích rõ: Khi nén khí thực hiện công, phần cơ năng đó đã biến đổi thành dạng năng lượng nào ở cấp độ vi mô?';
+        } else if (activeLesson === 'bai3') {
+            aiInterrogation = 'Nội suy t = 40,0°C rất chính xác dựa trên độ nở dài tuyến tính. Nhưng nếu chất lỏng dãn nở phi tuyến tính ở nhiệt độ cao, sai số phép đo sẽ xuất hiện ở đâu?';
+        } else if (activeLesson === 'bai4') {
+            aiInterrogation = 'Bảng 4.1 SGK KNTT ghi c_chuẩn = 4180 J/(kg·K). Kết quả đo của nhóm bạn lệch tới +10,4%! Hãy giải trình xem nhiệt lượng do dây nung tỏa ra đã bị chia sẻ cho những bộ phận nào khác ngoài nước?';
+        } else if (activeLesson === 'bai5') {
+            aiInterrogation = 'Bảng 5.1 SGK KNTT ghi λ_chuẩn = 3,34·10⁵ J/kg. Kết quả nhóm bạn tính ra lệch +2,3%. Trong 10 phút đun, nhiệt lượng dây nung đã bị chia sẻ cho vỏ bình thế nào, và hiện tượng đá tan tự nhiên trước khi bật điện ảnh hưởng ra sao?';
+        } else if (activeLesson === 'bai6') {
+            aiInterrogation = 'Sai số chỉ là -0,44%, cực kỳ chính xác! Hãy giải thích rõ tại sao phương pháp đo vi sai khối lượng bay hơi Δm giữa hai thời điểm khi nước đang sôi sùng sục lại triệt tiêu được sai số do nhiệt hao phí làm nóng ấm đun lúc ban đầu?';
+        }
+
+        const aiMsg = {
+            sender: 'ai',
+            text: `<strong>🤖 Gia sư Socrates (Chất vấn Bước 4):</strong> ${aiInterrogation}`
+        };
+
+        groupData[studentActiveGroup].push(aiMsg);
+        renderStudentChat();
+        renderDashboardCards();
+        emitSync('AI_MSG', { group: studentActiveGroup, msg: aiMsg });
+    }, 600);
+}
+
+    let currentStep4Mode = 'canvas'; // 'canvas', 'video', 'split'
+let labVideoPlaying = false;
+let labVideoTime = 0; // seconds
+let labVideoSpeed = 1;
+let labVideoReqId = null;
+
+function setStep4Mode(mode) {
+    currentStep4Mode = mode;
+    const btnCanvas = document.getElementById('btn-mode-canvas');
+    const btnVideo = document.getElementById('btn-mode-video');
+    const btnSplit = document.getElementById('btn-mode-split');
+    const canvasBox = document.getElementById('sim-canvas-box');
+    const videoBox = document.getElementById('sim-video-box');
+    const mediaCol = document.getElementById('sim-media-column');
+
+    btnCanvas.className = 'step4-mode-btn' + (mode === 'canvas' ? ' active' : '');
+    btnVideo.className = 'step4-mode-btn' + (mode === 'video' ? ' video-active' : '');
+    btnSplit.className = 'step4-mode-btn' + (mode === 'split' ? ' split-active' : '');
+
+    if (mode === 'canvas') {
+        canvasBox.style.display = 'flex';
+        videoBox.style.display = 'none';
+        mediaCol.className = '';
+        if (labVideoPlaying) toggleLabVideoPlay();
+    } else if (mode === 'video') {
+        canvasBox.style.display = 'none';
+        videoBox.style.display = 'flex';
+        mediaCol.className = '';
+        renderLabVideoFrame();
+    } else if (mode === 'split') {
+        canvasBox.style.display = 'flex';
+        videoBox.style.display = 'flex';
+        mediaCol.className = 'split-sim-view';
+        renderLabVideoFrame();
+    }
+}
+
+function toggleSimExternalVideo() {
+    const bar = document.getElementById('video-external-bar');
+    bar.style.display = (bar.style.display === 'flex') ? 'none' : 'flex';
+}
+
+function loadExternalVideo() {
+    const url = document.getElementById('video-external-url').value.trim();
+    if (!url) return;
+    const embedBox = document.getElementById('video-embed-box');
+    const iframe = document.getElementById('video-embed-iframe');
+    const canvas = document.getElementById('lab-video-canvas');
+
+    let embedUrl = url;
+    if (url.includes('youtube.com/watch?v=')) {
+        const id = url.split('watch?v=')[1].split('&')[0];
+        embedUrl = `https://www.youtube.com/embed/${id}?autoplay=1`;
+    } else if (url.includes('youtu.be/')) {
+        const id = url.split('youtu.be/')[1].split('?')[0];
+        embedUrl = `https://www.youtube.com/embed/${id}?autoplay=1`;
+    }
+
+    iframe.src = embedUrl;
+    embedBox.style.display = 'block';
+    canvas.style.display = 'none';
+    setStep4Mode('video');
+}
+
+/* ĐỘNG CƠ RENDER VIDEO THÍ NGHIỆM ĐỘNG HỌC 60FPS CHÂN THỰC TRÊN CANVAS */
+function initLabVideoPlayer() {
+    const cfg = simConfigs[activeLesson] || simConfigs['bai5'];
+    const maxDur = cfg.durationSec || 600;
+    const slider = document.getElementById('lab-video-slider');
+    slider.max = maxDur;
+    slider.value = 0;
+    labVideoTime = 0;
+    labVideoPlaying = false;
+    updateLabVideoTimeLabel(0, maxDur);
+
+    // Build chapter buttons
+    const chapRow = document.getElementById('lab-video-chapters');
+    chapRow.innerHTML = '';
+    (cfg.chapters || []).forEach(ch => {
+        const b = document.createElement('button');
+        b.className = 'chap-btn';
+        b.innerText = ch.label;
+        b.onclick = () => {
+            labVideoTime = ch.time;
+            slider.value = ch.time;
+            renderLabVideoFrame();
+        };
+        chapRow.appendChild(b);
+    });
+
+    renderLabVideoFrame();
+}
+
+function updateLabVideoTimeLabel(t, total) {
+    const fmt = (s) => {
+        const m = Math.floor(s / 60);
+        const sec = Math.floor(s % 60);
+        return (m < 10 ? '0' : '') + m + ':' + (sec < 10 ? '0' : '') + sec;
+    };
+    const lbl = document.getElementById('lab-video-time');
+    if (lbl) lbl.innerText = `${fmt(t)} / ${fmt(total)}`;
+}
+
+function toggleLabVideoPlay() {
+    labVideoPlaying = !labVideoPlaying;
+    const btn = document.getElementById('btn-lab-video-play');
+    if (labVideoPlaying) {
+        btn.innerHTML = '⏸ Tạm Dừng';
+        btn.style.background = '#e11d48';
+        lastTimestamp = performance.now();
+        loopLabVideo();
+    } else {
+        btn.innerHTML = '▶ Phát Video';
+        btn.style.background = '#8b5cf6';
+        if (labVideoReqId) cancelAnimationFrame(labVideoReqId);
+    }
+}
+
+let lastTimestamp = 0;
+function loopLabVideo() {
+    if (!labVideoPlaying) return;
+    const now = performance.now();
+    const dt = (now - lastTimestamp) / 1000;
+    lastTimestamp = now;
+
+    const cfg = simConfigs[activeLesson] || simConfigs['bai5'];
+    const maxDur = cfg.durationSec || 600;
+
+    labVideoTime += dt * labVideoSpeed * 8; // Tốc độ diễn biến thí nghiệm
+    if (labVideoTime >= maxDur) {
+        labVideoTime = maxDur;
+        toggleLabVideoPlay();
+    }
+
+    const slider = document.getElementById('lab-video-slider');
+    if (slider) slider.value = labVideoTime;
+
+    updateLabVideoTimeLabel(labVideoTime, maxDur);
+    renderLabVideoFrame();
+
+    labVideoReqId = requestAnimationFrame(loopLabVideo);
+}
+
+function onVideoScrub(val) {
+    labVideoTime = parseFloat(val);
+    const cfg = simConfigs[activeLesson] || simConfigs['bai5'];
+    updateLabVideoTimeLabel(labVideoTime, cfg.durationSec || 600);
+    renderLabVideoFrame();
+}
+
+function seekLabVideo(sec) {
+    const cfg = simConfigs[activeLesson] || simConfigs['bai5'];
+    const maxDur = cfg.durationSec || 600;
+    labVideoTime = Math.max(0, Math.min(maxDur, labVideoTime + sec));
+    const slider = document.getElementById('lab-video-slider');
+    if (slider) slider.value = labVideoTime;
+    updateLabVideoTimeLabel(labVideoTime, maxDur);
+    renderLabVideoFrame();
+}
+
+function resetLabVideo() {
+    labVideoTime = 0;
+    const slider = document.getElementById('lab-video-slider');
+    if (slider) slider.value = 0;
+    const cfg = simConfigs[activeLesson] || simConfigs['bai5'];
+    updateLabVideoTimeLabel(0, cfg.durationSec || 600);
+    renderLabVideoFrame();
+}
+
+function setLabVideoSpeed(spd) {
+    labVideoSpeed = spd;
+    ['btn-vspd-1', 'btn-vspd-15', 'btn-vspd-2'].forEach(id => {
+        const b = document.getElementById(id);
+        if (b) b.style.background = '#1e293b';
+    });
+    if (spd === 1 && document.getElementById('btn-vspd-1')) document.getElementById('btn-vspd-1').style.background = '#8b5cf6';
+    if (spd === 2 && document.getElementById('btn-vspd-15')) document.getElementById('btn-vspd-15').style.background = '#8b5cf6';
+    if (spd === 4 && document.getElementById('btn-vspd-2')) document.getElementById('btn-vspd-2').style.background = '#8b5cf6';
+}
+
+function renderLabVideoFrame() {
+    const canvas = document.getElementById('lab-video-canvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width;
+    const H = canvas.height;
+
+    // Nền phòng thí nghiệm chất lượng cao
+    const bgGrad = ctx.createLinearGradient(0, 0, 0, H);
+    bgGrad.addColorStop(0, '#0f172a');
+    bgGrad.addColorStop(0.7, '#1e293b');
+    bgGrad.addColorStop(1, '#0f172a');
+    ctx.fillStyle = bgGrad;
+    ctx.fillRect(0, 0, W, H);
+
+    // Mặt bàn thí nghiệm đá hoa cương
+    ctx.fillStyle = '#334155';
+    ctx.fillRect(0, H - 35, W, 35);
+    ctx.strokeStyle = '#64748b';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(0, H - 35);
+    ctx.lineTo(W, H - 35);
+    ctx.stroke();
+
+    // Tiêu đề Video & Badge 60fps
+    ctx.fillStyle = '#38bdf8';
+    ctx.font = 'bold 11px system-ui, sans-serif';
+    const cfg = simConfigs[activeLesson] || simConfigs['bai5'];
+    ctx.fillText(cfg.videoTitle || 'VIDEO THÍ NGHIỆM MÔ PHỎNG ĐỘNG HỌC 60FPS', 12, 18);
+
+    ctx.fillStyle = '#22c55e';
+    ctx.fillRect(W - 65, 8, 55, 16);
+    ctx.fillStyle = '#052e16';
+    ctx.font = 'bold 9px monospace';
+    ctx.fillText('● 60 FPS', W - 58, 20);
+
+    // VẼ HÌNH ẢNH THÍ NGHIỆM CHI TIẾT THEO BÀI
+    if (activeLesson === 'bai5') {
+        drawVideoBai5(ctx, W, H);
+    } else if (activeLesson === 'bai4') {
+        drawVideoBai4(ctx, W, H);
+    } else if (activeLesson === 'bai6') {
+        drawVideoBai6(ctx, W, H);
+    } else if (activeLesson === 'bai2') {
+        drawVideoBai2(ctx, W, H);
+    } else if (activeLesson === 'bai3') {
+        drawVideoBai3(ctx, W, H);
+    } else {
+        drawVideoBai1(ctx, W, H);
+    }
+}
+
+function drawVideoBai5(ctx, W, H) {
+    const t = labVideoTime; // 0 -> 600s
+    const progress = Math.min(1, t / 600);
+
+    // 1. Bình nhiệt lượng kế xốp
+    ctx.fillStyle = '#e2e8f0';
+    ctx.fillRect(40, 60, 150, 165);
+    ctx.strokeStyle = '#94a3b8';
+    ctx.lineWidth = 3;
+    ctx.strokeRect(40, 60, 150, 165);
+
+    // Lòng bình xốp
+    ctx.fillStyle = '#0f172a';
+    ctx.fillRect(48, 68, 134, 150);
+
+    // Mực nước bên trong (dâng lên khi đá tan)
+    const waterHeight = 40 + progress * 70;
+    ctx.fillStyle = 'rgba(56, 189, 248, 0.7)';
+    ctx.fillRect(48, 218 - waterHeight, 134, waterHeight);
+
+    // Mẩu nước đá vụn (tan dần biến mất ở t = 600s)
+    if (progress < 1) {
+        const iceAlpha = 1 - progress * 0.95;
+        const iceScale = 1 - progress * 0.85;
+        ctx.fillStyle = `rgba(224, 242, 254, ${iceAlpha})`;
+        ctx.strokeStyle = `rgba(186, 230, 253, ${iceAlpha})`;
+        ctx.lineWidth = 1.5;
+
+        // Vẽ 3 viên đá
+        const ice1X = 65, ice1Y = 210 - waterHeight + 10;
+        ctx.fillRect(ice1X, ice1Y, 24 * iceScale, 20 * iceScale);
+        ctx.strokeRect(ice1X, ice1Y, 24 * iceScale, 20 * iceScale);
+
+        const ice2X = 100, ice2Y = 210 - waterHeight + 5;
+        ctx.fillRect(ice2X, ice2Y, 28 * iceScale, 22 * iceScale);
+        ctx.strokeRect(ice2X, ice2Y, 28 * iceScale, 22 * iceScale);
+
+        const ice3X = 140, ice3Y = 210 - waterHeight + 12;
+        ctx.fillRect(ice3X, ice3Y, 20 * iceScale, 18 * iceScale);
+        ctx.strokeRect(ice3X, ice3Y, 20 * iceScale, 18 * iceScale);
+    }
+
+    // Dây nung đỏ rực
+    ctx.strokeStyle = (t > 0 && progress < 1) ? '#ef4444' : '#64748b';
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    ctx.moveTo(85, 45);
+    ctx.lineTo(85, 195);
+    ctx.lineTo(105, 195);
+    ctx.lineTo(105, 45);
+    ctx.stroke();
+
+    // Que khuấy cơ học
+    ctx.strokeStyle = '#cbd5e1';
+    ctx.lineWidth = 5;
+    ctx.beginPath();
+    ctx.moveTo(150, 40);
+    ctx.lineTo(150, 200);
+    ctx.stroke();
+
+    // Tia nhiệt đối lưu đỏ phát ra khi nung
+    if (t > 0 && progress < 1 && Math.sin(Date.now() / 150) > 0) {
+        ctx.strokeStyle = 'rgba(239, 68, 68, 0.4)';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.arc(95, 195, 16, Math.PI, 2 * Math.PI);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(95, 195, 26, Math.PI, 2 * Math.PI);
+        ctx.stroke();
+    }
+
+    // 2. Bảng đồng hồ oát kế & Cảm biến Vernier
+    ctx.fillStyle = '#1e293b';
+    ctx.fillRect(210, 50, 255, 95);
+    ctx.strokeStyle = '#475569';
+    ctx.lineWidth = 1.5;
+    ctx.strokeRect(210, 50, 255, 95);
+
+    // Màn hình LCD oát kế P
+    ctx.fillStyle = '#020617';
+    ctx.fillRect(220, 60, 110, 36);
+    ctx.fillStyle = '#22c55e';
+    ctx.font = 'bold 15px monospace';
+    ctx.fillText('14.24 W', 232, 84);
+    ctx.fillStyle = '#94a3b8';
+    ctx.font = '9px system-ui';
+    ctx.fillText('CÔNG SUẤT DÂY NUNG', 222, 105);
+
+    // Màn hình LCD nhiệt độ Vernier
+    ctx.fillStyle = '#020617';
+    ctx.fillRect(345, 60, 110, 36);
+    ctx.fillStyle = (progress < 1) ? '#00e5ff' : '#f59e0b';
+    ctx.font = 'bold 15px monospace';
+    const tempVal = (progress < 1) ? ' 0.0 °C' : `+${((t - 600) * 0.035).toFixed(1)} °C`;
+    ctx.fillText(tempVal, 357, 84);
+    ctx.fillStyle = '#94a3b8';
+    ctx.font = '9px system-ui';
+    ctx.fillText('NHIỆT KẾ CẢM BIẾN', 347, 105);
+
+    // Banner trạng thái giai đoạn
+    ctx.fillStyle = '#0f172a';
+    ctx.fillRect(210, 155, 255, 68);
+    ctx.strokeStyle = '#334155';
+    ctx.strokeRect(210, 155, 255, 68);
+
+    ctx.fillStyle = '#ffd54f';
+    ctx.font = 'bold 11px system-ui';
+    if (progress < 1) {
+        ctx.fillText('📍 GIAI ĐOẠN 2: NÓNG CHẢY ĐẲNG NHIỆT', 218, 172);
+        ctx.fillStyle = '#e2e8f0';
+        ctx.font = '10px system-ui';
+        ctx.fillText('• Nhiệt kế đứng yên ở 0,0°C suốt 600s.', 218, 190);
+        ctx.fillText('• Q dùng phá vỡ mạng tinh thể, không tăng Ek.', 218, 206);
+    } else {
+        ctx.fillStyle = '#4ade80';
+        ctx.fillText('⭐ ĐIỂM GÃY UỐN M (tau_M = 600s)', 218, 172);
+        ctx.fillStyle = '#e2e8f0';
+        ctx.font = '10px system-ui';
+        ctx.fillText('• Toàn bộ đá vừa tan hết thành nước!', 218, 190);
+        ctx.fillText('• Q = 8544 J => lambda = 3,42·10⁵ J/kg (+2,3%)', 218, 206);
+    }
+}
+
+function drawVideoBai4(ctx, W, H) {
+    const t = labVideoTime;
+    const progress = Math.min(1, t / 400);
+
+    // Bình nhiệt lượng kế đun nước
+    ctx.fillStyle = '#e2e8f0';
+    ctx.fillRect(50, 60, 140, 160);
+    ctx.strokeStyle = '#94a3b8';
+    ctx.lineWidth = 3;
+    ctx.strokeRect(50, 60, 140, 160);
+
+    ctx.fillStyle = '#0f172a';
+    ctx.fillRect(58, 68, 124, 145);
+
+    // Nước màu xanh đối lưu
+    ctx.fillStyle = 'rgba(14, 165, 233, 0.75)';
+    ctx.fillRect(58, 100, 124, 113);
+
+    // Bọt khí sôi đối lưu
+    if (t > 0 && Math.sin(Date.now() / 100) > 0) {
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+        ctx.beginPath();
+        ctx.arc(85, 170 - (Date.now() % 300) / 5, 3, 0, 2*Math.PI);
+        ctx.arc(120, 190 - ((Date.now() + 100) % 300) / 5, 2.5, 0, 2*Math.PI);
+        ctx.fill();
+    }
+
+    // Dây nung
+    ctx.strokeStyle = (t > 0) ? '#ef4444' : '#64748b';
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    ctx.moveTo(90, 45); ctx.lineTo(90, 195);
+    ctx.lineTo(110, 195); ctx.lineTo(110, 45);
+    ctx.stroke();
+
+    // Bảng đồng hồ
+    ctx.fillStyle = '#1e293b';
+    ctx.fillRect(210, 55, 255, 90);
+    ctx.fillStyle = '#22c55e';
+    ctx.font = 'bold 15px monospace';
+    ctx.fillText('15.00 W', 230, 85);
+    ctx.fillStyle = '#f59e0b';
+    const temp = (20.0 + progress * 6.5).toFixed(1);
+    ctx.fillText(`${temp} °C`, 350, 85);
+    ctx.fillStyle = '#94a3b8';
+    ctx.font = '9px system-ui';
+    ctx.fillText('OÁT KẾ P = 15,0 W', 228, 105);
+    ctx.fillText('NHIỆT KẾ (20°C -> 26,5°C)', 340, 105);
+
+    // Banner
+    ctx.fillStyle = '#0f172a';
+    ctx.fillRect(210, 155, 255, 65);
+    ctx.fillStyle = '#38bdf8';
+    ctx.font = 'bold 11px system-ui';
+    ctx.fillText('📊 ĐO NHIỆT DUNG RIÊNG CỦA NƯỚC', 218, 175);
+    ctx.fillStyle = '#e2e8f0';
+    ctx.font = '10px system-ui';
+    ctx.fillText(`• Nhiệt lượng dây nung cấp: Q = ${(15.0 * t).toFixed(0)} J`, 218, 195);
+    ctx.fillText('• c_TN ≈ 4615 J/(kg·K) (Sai số +10,4% do vỏ bình)', 218, 210);
+}
+
+function drawVideoBai6(ctx, W, H) {
+    const t = labVideoTime;
+    const progress = Math.min(1, t / 420);
+
+    // Cân điện tử Ohaus
+    ctx.fillStyle = '#cbd5e1';
+    ctx.fillRect(50, 150, 140, 70);
+    ctx.fillStyle = '#020617';
+    ctx.fillRect(70, 170, 100, 30);
+    ctx.fillStyle = '#22c55e';
+    ctx.font = 'bold 14px monospace';
+
+    // Số chỉ cân giảm dần từ 118.0g xuống 116.0g
+    let massVal = 118.0;
+    if (t >= 120) {
+        massVal = 118.0 - Math.min(2.0, (t - 120) / 300 * 2.0);
+    }
+    ctx.fillText(`${massVal.toFixed(1)} g`, 95, 191);
+
+    // Ấm đun bốc hơi đặt trên cân
+    ctx.fillStyle = '#64748b';
+    ctx.fillRect(75, 80, 90, 70);
+    // Hơi nước bốc lên mù mịt
+    if (Math.sin(Date.now() / 80) > 0) {
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+        ctx.beginPath();
+        ctx.arc(100, 65 - (Date.now() % 200) / 4, 8, 0, 2*Math.PI);
+        ctx.arc(130, 50 - ((Date.now() + 80) % 200) / 4, 12, 0, 2*Math.PI);
+        ctx.fill();
+    }
+
+    // Bảng thông số vi sai
+    ctx.fillStyle = '#1e293b';
+    ctx.fillRect(210, 55, 255, 95);
+    ctx.fillStyle = '#38bdf8';
+    ctx.font = 'bold 12px system-ui';
+    ctx.fillText('ĐO VI SAI KHỐI LƯỢNG HÓA HƠI', 220, 75);
+    ctx.fillStyle = '#e2e8f0';
+    ctx.font = '10px monospace';
+    ctx.fillText('tau_P = 120s  => m_P = 118,0 g', 220, 95);
+    ctx.fillText('tau_Q = 420s  => m_Q = 116,0 g', 220, 112);
+    ctx.fillStyle = '#4ade80';
+    ctx.fillText('Delta_m = 2,0 g | Delta_tau = 300 s', 220, 130);
+
+    ctx.fillStyle = '#0f172a';
+    ctx.fillRect(210, 160, 255, 60);
+    ctx.fillStyle = '#fbbf24';
+    ctx.font = 'bold 11px system-ui';
+    ctx.fillText('✨ ƯU ĐIỂM PHÉP ĐO VI SAI', 220, 180);
+    ctx.fillStyle = '#cbd5e1';
+    ctx.font = '10px system-ui';
+    ctx.fillText('L = 2,25·10⁶ J/kg (Lệch -0,44% cực kỳ chuẩn)', 220, 198);
+}
+
+function drawVideoBai2(ctx, W, H) {
+    const t = labVideoTime;
+    ctx.fillStyle = '#e2e8f0';
+    ctx.font = 'bold 13px system-ui';
+    ctx.fillText('MÔ PHỎNG PÍT-TÔNG BIẾN ĐỔI NỘI NĂNG (ĐỊNH LUẬT I)', 60, 50);
+
+    // Xilanh
+    ctx.strokeStyle = '#94a3b8';
+    ctx.lineWidth = 4;
+    ctx.strokeRect(60, 80, 220, 100);
+
+    // Pít-tông
+    const pistonX = 140 + Math.sin(t * 0.8) * 35;
+    ctx.fillStyle = '#64748b';
+    ctx.fillRect(pistonX, 82, 18, 96);
+    ctx.fillRect(pistonX + 18, 122, 100, 16);
+
+    // Khí bên trong
+    ctx.fillStyle = (Math.sin(t * 0.8) < 0) ? 'rgba(239, 68, 68, 0.4)' : 'rgba(56, 189, 248, 0.4)';
+    ctx.fillRect(64, 84, pistonX - 64, 92);
+
+    ctx.fillStyle = '#f8fafc';
+    ctx.font = '11px monospace';
+    ctx.fillText(`Delta_U = A + Q = +60 J`, 300, 120);
+    ctx.fillText('Khí nhận nhiệt Q = +150 J', 300, 140);
+    ctx.fillText('Khí sinh công A = -90 J', 300, 160);
+}
+
+function drawVideoBai3(ctx, W, H) {
+    ctx.fillStyle = '#38bdf8';
+    ctx.font = 'bold 12px system-ui';
+    ctx.fillText('HIỆU CHUẨN NHIỆT KẾ THỦY NGÂN CHƯA CHIA ĐỘ', 80, 45);
+
+    // 3 ống nhiệt kế
+    const xs = [90, 220, 350];
+    const heights = [50, 150, 100];
+    const labels = ['Bình đá tan (0°C)', 'Nước sôi (100°C)', 'Chất lỏng X (40°C)'];
+
+    xs.forEach((x, i) => {
+        ctx.strokeStyle = '#cbd5e1';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(x, 70, 20, 130);
+        ctx.fillStyle = '#ef4444';
+        ctx.fillRect(x + 2, 200 - heights[i], 16, heights[i]);
+        ctx.fillStyle = '#94a3b8';
+        ctx.font = '9px system-ui';
+        ctx.fillText(labels[i], x - 15, 218);
+    });
+}
+
+function drawVideoBai1(ctx, W, H) {
+    ctx.fillStyle = '#fbbf24';
+    ctx.font = 'bold 12px system-ui';
+    ctx.fillText('CHUYỂN ĐỘNG BROWN & CẤU TRÚC RỖNG PHÂN TỬ KHÍ', 80, 45);
+
+    // Vòng chứa phân tử
+    ctx.strokeStyle = '#475569';
+    ctx.strokeRect(60, 65, 360, 140);
+
+    // Hạt phấn hoa vàng
+    const px = 240 + Math.sin(Date.now() / 400) * 20;
+    const py = 135 + Math.cos(Date.now() / 350) * 15;
+    ctx.fillStyle = '#f59e0b';
+    ctx.beginPath();
+    ctx.arc(px, py, 14, 0, 2*Math.PI);
+    ctx.fill();
+
+    // Các phân tử nước xanh va đập
+    ctx.fillStyle = '#38bdf8';
+    for (let i = 0; i < 25; i++) {
+        const mx = 80 + (i * 37 + (Date.now() / 15) * (i % 3 + 1)) % 320;
+        const my = 75 + (i * 29 + (Date.now() / 20) * ((i % 4) + 1)) % 120;
+        ctx.beginPath();
+        ctx.arc(mx, my, 3, 0, 2*Math.PI);
+        ctx.fill();
+    }
+}
+
+    // Fullscreen helper
+    function toggleFullScreen() {
+        if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen().catch(err => console.warn(err));
+        } else {
+            if (document.exitFullscreen) document.exitFullscreen();
+        }
+    }
+
+    // Lesson switcher helper
+    function onSelectLessonChange(val) {
+        activeLesson = val;
+        MASTER_BUS.updateMasterState({ activeLesson: val });
+        initSimulationUI();
+    }
+
+    // Submit sim data to AI
+    let gameSoundEnabled = true;
+let audioCtx = null;
+
+function getAudioContext() {
+    if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+    }
+    return audioCtx;
+}
+
+// BỘ TẠO ÂM THANH TỔNG HỢP WEB AUDIO API (100% OFFLINE, ZERO FILE NGOÀI)
+function playTone(freq, type, duration, delay = 0) {
+    if (!gameSoundEnabled) return;
+    try {
+        const ctx = getAudioContext();
+        setTimeout(() => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = type;
+            osc.frequency.setValueAtTime(freq, ctx.currentTime);
+            gain.gain.setValueAtTime(0.2, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start();
+            osc.stop(ctx.currentTime + duration);
+        }, delay);
+    } catch(e) {}
+}
+
+function playSoundTick() {
+    playTone(800, 'triangle', 0.08);
+}
+function playSoundCorrect() {
+    playTone(523.25, 'sine', 0.15, 0);   // C5
+    playTone(659.25, 'sine', 0.15, 100); // E5
+    playTone(783.99, 'sine', 0.35, 200); // G5
+}
+function playSoundWrong() {
+    playTone(220, 'sawtooth', 0.25, 0);
+    playTone(180, 'sawtooth', 0.3, 150);
+}
+function playSoundFanfare() {
+    const melody = [523.25, 523.25, 523.25, 659.25, 783.99, 1046.50];
+    const delays = [0, 150, 300, 450, 650, 900];
+    melody.forEach((freq, i) => playTone(freq, 'triangle', 0.35, delays[i]));
+}
+function playSoundBuzzer() {
+    playTone(440, 'square', 0.2, 0);
+    playTone(880, 'square', 0.3, 100);
+}
+
+function toggleGameSound() {
+    gameSoundEnabled = !gameSoundEnabled;
+    const btn = document.getElementById('btn-toggle-sound');
+    if (btn) btn.innerText = gameSoundEnabled ? '🔊 Âm thanh: BẬT' : '🔇 Âm thanh: TẮT';
+}
+    const gameQuestionBanks = {
+    bai1: [
+        {
+            round: "⚡ CHẶNG 1: TIA CHỚP VI MÔ",
+            q: "Trong mô hình động học phân tử về cấu tạo chất, các phân tử chất khí chuyển động như thế nào?",
+            opts: ["Dao động quanh vị trí cân bằng cố định", "Chuyển động hỗn loạn không ngừng về mọi phía", "Chuyển động thẳng đều cùng tốc độ", "Đứng yên khi nhiệt độ thấp"],
+            ans: 1,
+            exp: "Chính xác! Các phân tử chất khí chuyển động hỗn loạn không ngừng về mọi phía; nhiệt độ càng cao phân tử chuyển động càng nhanh."
+        },
+        {
+            round: "🔬 CHẶNG 2: MẮT XÍCH THỰC NGHIỆM",
+            q: "Ở ĐKTC, 1 mol khí chiếm thể tích 22,4 dm³. Thể tích thực của bản thân các phân tử khí chiếm tỉ lệ khoảng:",
+            opts: ["Khoảng 50% thể tích bình", "Dưới 0,05% thể tích bình (khoảng 0,011%)", "Khoảng 10% thể tích bình", "Gần 100% thể tích bình"],
+            ans: 1,
+            exp: "Chuẩn xác! Thể tích riêng phân tử chiếm chưa tới 0,05% thể tích bình, chứng minh tính rỗng tuyệt đối của chất khí và giải thích vì sao chất khí rất dễ nén."
+        },
+        {
+            round: "🤖 CHẶNG 3: BẪY NHẬN THỨC SOCRATES",
+            q: "Phát biểu nào sau đây là SAI khi nói về cấu trúc của chất?",
+            opts: ["Muối ăn là chất rắn kết tinh có cấu trúc tinh thể xác định", "Khi nén khí, khoảng cách giữa các phân tử giảm và kích thước từng phân tử cũng bị co nhỏ lại", "Thủy tinh là chất rắn vô định hình không có nhiệt độ nóng chảy xác định", "Lực tương tác phân tử gồm cả lực hút và lực đẩy"],
+            ans: 1,
+            exp: "Chính xác! Đây là phát biểu sai. Khi nén chất khí, kích thước bản thân từng phân tử không đổi, chỉ có khoảng cách trung bình giữa chúng bị thu hẹp lại."
+        },
+        {
+            round: "🏆 CHẶNG 4: VỀ ĐÍCH THỰC TIỄN",
+            q: "Công nghệ sấy thăng hoa chế biến chè đặc sản Tân Cương - Thái Nguyên ứng dụng quá trình chuyển thể nào?",
+            opts: ["Nóng chảy từ rắn sang lỏng rồi bay hơi", "Thăng hoa trực tiếp từ thể rắn (nước đóng băng) sang thể hơi ở áp suất thấp", "Ngưng tụ hơi nước trong không khí", "Hóa hơi thông thường bằng cách đun sôi"],
+            ans: 1,
+            exp: "Rất xuất sắc! Sấy thăng hoa giúp nước đá thăng hoa trực tiếp thành hơi ở điều kiện chân không, bảo toàn nguyên vẹn diệp lục và hương cốm chè Tân Cương!"
+        }
+    ],
+    bai2: [
+        {
+            round: "⚡ CHẶNG 1: TIA CHỚP VI MÔ",
+            q: "Nội năng của một vật trong nhiệt động lực học là:",
+            opts: ["Tổng động năng và thế năng của toàn bộ vật chuyển động so với mặt đất", "Tổng động năng và thế năng tương tác của các phân tử cấu tạo nên vật", "Chỉ gồm động năng nhiệt của các phân tử", "Năng lượng bức xạ phát ra từ vật"],
+            ans: 1,
+            exp: "Đúng! Nội năng U = Eđ + Et là tổng động năng chuyển động nhiệt và thế năng tương tác của các phân tử cấu tạo nên vật."
+        },
+        {
+            round: "🔬 CHẶNG 2: MẮT XÍCH THỰC NGHIỆM",
+            q: "Một khối khí nhận nhiệt lượng 150 J từ nguồn nhiệt, đồng thời dãn nở đẩy pít-tông sinh công 90 J. Độ biến thiên nội năng là:",
+            opts: ["ΔU = +240 J", "ΔU = -60 J", "ΔU = +60 J", "ΔU = -240 J"],
+            ans: 2,
+            exp: "Chính xác! Theo Định luật I NĐLH: ΔU = A + Q = (-90) + (+150) = +60 J > 0, nội năng của khí tăng."
+        },
+        {
+            round: "🤖 CHẶNG 3: BẪY NHẬN THỨC SOCRATES",
+            q: "Nếu xilanh hoàn toàn không có ma sát và ta nén khí thật nhanh, nhiệt độ khối khí bên trong sẽ:",
+            opts: ["Không đổi vì không có ma sát tỏa nhiệt", "Tăng lên vì công nén chuyển hóa làm tăng động năng phân tử khí", "Giảm xuống vì thể tích bị thu nhỏ", "Luôn bằng nhiệt độ môi trường"],
+            ans: 1,
+            exp: "Chuẩn xác! Bơm xe đạp nóng lên không phải do ma sát, mà do công nén khí đã làm tăng động năng nhiệt của các phân tử khí."
+        },
+        {
+            round: "🏆 CHẶNG 4: VỀ ĐÍCH THỰC TIỄN",
+            q: "Khi mở van xịt mạnh bình gas du lịch mini, thân bình lạnh buốt và ngưng tụ một lớp sương giá là do:",
+            opts: ["Gas bên trong nhận nhiệt từ môi trường", "Khối khí dãn nở nhanh sinh công chống áp suất ngoài làm nội năng giảm mạnh", "Vỏ bình tự tỏa nhiệt làm lạnh", "Khí gas phản ứng hóa học thu nhiệt"],
+            ans: 1,
+            exp: "Xuất sắc! Khí dãn nở sinh công cực nhanh (quá trình gần đoạn nhiệt), nội năng giảm mạnh khiến nhiệt độ tụt sâu ngưng tụ sương giá."
+        }
+    ],
+    bai3: [
+        {
+            round: "⚡ CHẶNG 1: TIA CHỚP VI MÔ",
+            q: "Nhiệt độ là đại lượng vật lí đặc trưng cho:",
+            opts: ["Động năng chuyển động nhiệt trung bình của các phân tử", "Số lượng phân tử có trong vật", "Kích thước của các nguyên tử", "Nhiệt lượng vật trao đổi"],
+            ans: 0,
+            exp: "Đúng! Nhiệt độ tỉ lệ thuận với động năng chuyển động nhiệt trung bình của các phân tử cấu tạo nên vật."
+        },
+        {
+            round: "🔬 CHẶNG 2: MẮT XÍCH THỰC NGHIỆM",
+            q: "Nhiệt kế thủy ngân chưa chia độ có L₀ = 4,0 cm (ở 0°C) và L₁₀₀ = 24,0 cm (ở 100°C). Chiều dài Lx = 12,0 cm ứng với nhiệt độ:",
+            opts: ["t = 30,0°C", "t = 40,0°C = 313,15 K", "t = 50,0°C = 323,15 K", "t = 60,0°C"],
+            ans: 1,
+            exp: "Chính xác! t = ((12,0 - 4,0)/(24,0 - 4,0)) * 100 = 40,0°C. Đổi sang Kelvin: T = 40,0 + 273,15 = 313,15 K."
+        },
+        {
+            round: "🤖 CHẶNG 3: BẪY NHẬN THỨC SOCRATES",
+            q: "Mốc 'Độ không tuyệt đối' (0 K ≈ -273,15°C) có ý nghĩa vật lí là gì?",
+            opts: ["Nhiệt độ nước đá bắt đầu đóng băng", "Nhiệt độ thấp nhất lý thuyết mà mọi chuyển động nhiệt của phân tử đều ngừng lại", "Nhiệt độ đo được khi thủy ngân đóng băng", "Nhiệt độ tại tâm của Mặt Trăng"],
+            ans: 1,
+            exp: "Chuẩn xác! Ở 0 K, động năng nhiệt phân tử bằng 0. Không thể hạ nhiệt độ thấp hơn trạng thái mọi phân tử đã ngừng chuyển động nhiệt."
+        },
+        {
+            round: "🏆 CHẶNG 4: VỀ ĐÍCH THỰC TIỄN",
+            q: "Cảm biến nhiệt hồng ngoại đo trán từ xa không tiếp xúc trong y tế hoạt động dựa trên nguyên tắc nào?",
+            opts: ["Thu nhận bức xạ điện từ hồng ngoại do cơ thể người phát ra phụ thuộc nhiệt độ", "Chiếu tia X xuyên qua trán", "Đo độ ẩm bốc hơi của da trán", "Đo điện trở tiếp xúc giữa da và không khí"],
+            ans: 0,
+            exp: "Xuất sắc! Mọi vật có nhiệt độ > 0 K đều phát xạ hồng ngoại, cơ thể người phát xạ bức xạ cực đại phụ thuộc vào thân nhiệt."
+        }
+    ],
+    bai4: [
+        {
+            round: "⚡ CHẶNG 1: TIA CHỚP VI MÔ",
+            q: "Đơn vị đo chuẩn của nhiệt dung riêng trong hệ SI là:",
+            opts: ["J/kg", "J/(kg·K)", "J·K/kg", "W/(kg·K)"],
+            ans: 1,
+            exp: "Chính xác! c = Q / (m.Δt), đơn vị là J/(kg·K)."
+        },
+        {
+            round: "🔬 CHẶNG 2: MẮT XÍCH THỰC NGHIỆM",
+            q: "Trong thí nghiệm nhiệt lượng kế điện trở (Hình 4.1 SGK KNTT), kết quả c_TN đo được lớn hơn giá trị chuẩn +10,4% chủ yếu do:",
+            opts: ["Dây nung bị giảm công suất", "Nhiệt lượng do dây nung tỏa ra bị vỏ bình, que khuấy và môi trường hấp thụ một phần", "Cân điện tử đo khối lượng nước bị thừa", "Nhiệt kế điện tử chạy quá nhanh"],
+            ans: 1,
+            exp: "Đúng! Nhiệt lượng dây nung bị chia sẻ cho vỏ bình và que khuấy khiến Δt của nước nhỏ hơn lý thuyết, làm c_TN bị đội lên."
+        },
+        {
+            round: "🤖 CHẶNG 3: BẪY NHẬN THỨC SOCRATES",
+            q: "Buổi trưa hè ở bãi cát ven hồ Núi Cốc, cát nóng bỏng rát chân trong khi nước hồ mát lạnh là vì:",
+            opts: ["Nước nhận ít bức xạ mặt trời hơn cát", "Nhiệt dung riêng của cát nhỏ hơn nhiều so với nhiệt dung riêng của nước", "Nước phản xạ toàn phần nhiệt lượng", "Cát giữ nhiệt tốt hơn nước"],
+            ans: 1,
+            exp: "Chuẩn xác! Cát có c nhỏ nên cùng nhận nhiệt Q thì nhiệt độ cát tăng vọt; nước có c rất lớn (4180 J/kg·K) nên nhiệt độ tăng rất chậm."
+        },
+        {
+            round: "🏆 CHẶNG 4: VỀ ĐÍCH THỰC TIỄN",
+            q: "Nước được chọn làm chất lỏng làm mát trong két tản nhiệt xe máy, ô tô và trạm biến áp Thái Nguyên vì:",
+            opts: ["Nước rẻ tiền và không cháy", "Nước có nhiệt dung riêng rất lớn (4180 J/kg·K) giúp hấp thụ lượng nhiệt lớn mà ít tăng nhiệt độ", "Nước có khối lượng riêng nhẹ nhất", "Nước sôi ở nhiệt độ trên 300°C"],
+            ans: 1,
+            exp: "Rất xuất sắc! Nhờ c rất lớn, nước tuần hoàn giải nhiệt hấp thụ nhiệt lượng khổng lồ bảo vệ động cơ an toàn."
+        }
+    ],
+    bai5: [
+        {
+            round: "⚡ CHẶNG 1: TIA CHỚP VI MÔ",
+            q: "Trong suốt quá trình nước đá đang nóng chảy ở 0°C, nhiệt lượng mà bếp cung cấp dùng để làm gì?",
+            opts: ["Làm tăng vận tốc chuyển động nhiệt của phân tử nước", "Làm tăng thế năng tương tác phân tử để phá vỡ mạng tinh thể băng đá", "Làm giảm nhiệt độ của khối đá", "Làm thay đổi electron nguyên tử"],
+            ans: 1,
+            exp: "Chính xác! Động năng phân tử không đổi nên nhiệt độ đứng yên ở 0°C; nhiệt lượng dùng để tăng thế năng phá vỡ liên kết mạng tinh thể."
+        },
+        {
+            round: "🔬 CHẶNG 2: MẮT XÍCH THỰC NGHIỆM",
+            q: "Trên đồ thị nhiệt độ theo thời gian Bảng 5.2 SGK KNTT, điểm gãy uốn M tại thời điểm τ_M = 600 s báo hiệu điều gì?",
+            opts: ["Nước bắt đầu sôi", "Toàn bộ khối nước đá trong nhiệt lượng kế vừa tan hết thành nước lỏng", "Biến áp bị ngắt điện", "Dây nung bị cháy đứt"],
+            ans: 1,
+            exp: "Chuẩn xác! Điểm M đánh dấu toàn bộ 0,250 kg đá đã tan hoàn toàn thành nước, sau điểm M nhiệt lượng mới làm tăng nhiệt độ của nước."
+        },
+        {
+            round: "🤖 CHẶNG 3: BẪY NHẬN THỨC SOCRATES",
+            q: "Giá trị đo thực nghiệm λ_TN = 3,42·10⁵ J/kg lệch +2,3% so với bảng chuẩn. Để giảm sai số do đá tan tự nhiên, giải pháp là:",
+            opts: ["Tăng gấp đôi công suất dây nung", "Đo lượng đá tan tự nhiên trong cùng khoảng thời gian để trừ đi khối lượng hiệu chỉnh", "Đun đá trong bóng tối", "Đổ thêm nước nóng vào trước"],
+            ans: 1,
+            exp: "Rất chuẩn xác! Đo vi sai lượng đá tan tự nhiên trước khi bật điện giúp loại bỏ khối lượng tan không do dây nung cấp nhiệt."
+        },
+        {
+            round: "🏆 CHẶNG 4: VỀ ĐÍCH THỰC TIỄN",
+            q: "Tại sao vào mùa đông khi băng tuyết tan, không khí lại rét buốt hơn rất nhiều so với khi tuyết đang rơi?",
+            opts: ["Vì gió thổi mạnh hơn", "Vì quá trình băng tuyết tan hấp thụ một nhiệt lượng khổng lồ (Q = λ.m) từ không khí xung quanh", "Vì nước đá tan làm tăng độ ẩm", "Vì bầu trời nhiều mây hơn"],
+            ans: 1,
+            exp: "Xuất sắc! Với λ = 3,34·10⁵ J/kg, mỗi kg tuyết tan 'hút' tới 334.000 J từ không khí xung quanh làm nhiệt độ môi trường giảm sâu."
+        }
+    ],
+    bai6: [
+        {
+            round: "⚡ CHẶNG 1: TIA CHỚP VI MÔ",
+            q: "Nhiệt hoá hơi riêng của nước (2,26·10⁶ J/kg) lớn gấp gần 7 lần nhiệt nóng chảy riêng của nước đá là vì:",
+            opts: ["Nhiệt độ sôi 100°C cao hơn 0°C", "Hóa hơi đòi hỏi thắng hoàn toàn lực hút phân tử và thực hiện công dãn nở thể tích tăng hơn 1600 lần", "Phân tử hơi nước chuyển động chậm hơn", "Nước sôi tạo nhiều bọt khí"],
+            ans: 1,
+            exp: "Đúng! Khi hóa hơi, liên kết phân tử bị phá vỡ hoàn toàn và thể tích dãn nở hơn 1600 lần chống áp suất khí quyển."
+        },
+        {
+            round: "🔬 CHẶNG 2: MẮT XÍCH THỰC NGHIỆM",
+            q: "Trong thí nghiệm đo vi sai Bảng 6.2 SGK KNTT: P = 15,0 W, trong Δτ = 300 s khối lượng nước giảm Δm = 2,0 g. Nhiệt hoá hơi riêng đo được là:",
+            opts: ["L_TN = 4,5·10⁵ J/kg", "L_TN = 2,25·10⁶ J/kg", "L_TN = 2,26·10⁶ J/kg", "L_TN = 3,00·10⁶ J/kg"],
+            ans: 1,
+            exp: "Chính xác! Q = 15,0 * 300 = 4500 J. L_TN = 4500 / 0,0020 = 2,25·10⁶ J/kg (sai số chỉ -0,44% so với 2,26·10⁶)."
+        },
+        {
+            round: "🤖 CHẶNG 3: BẪY NHẬN THỨC SOCRATES",
+            q: "Vì sao phương pháp đo vi sai giữa 2 mốc thời gian khi nước đang sôi sùng sục lại triệt tiêu được nhiệt hao phí làm nóng ấm đun?",
+            opts: ["Vì ấm đun và nước đã ổn định ở 100°C, toàn bộ công suất điện trong Δτ chỉ dùng để làm hóa hơi nước", "Vì cân điện tử tự động trừ hao", "Vì hơi nước không thoát ra ngoài", "Vì ấm đun được bọc nhôm"],
+            ans: 0,
+            exp: "Chuẩn xác! Ở trạng thái sôi ổn định, nhiệt độ không tăng thêm, không tốn nhiệt lượng để làm nóng ấm hay nước nữa."
+        },
+        {
+            round: "🏆 CHẶNG 4: VỀ ĐÍCH THỰC TIỄN",
+            q: "Khi chạy bền dưới trời nắng gắt mùa hè ở Thái Nguyên, cơ chế hạ nhiệt bảo vệ cơ thể người hiệu quả nhất là:",
+            opts: ["Bức xạ nhiệt qua mắt", "Sự bay hơi của mồ hôi trên da hấp thụ nhiệt hoá hơi L khổng lồ từ cơ thể", "Dẫn nhiệt qua tóc", "Đối lưu không khí trong phổi"],
+            ans: 1,
+            exp: "Rất xuất sắc! Mỗi gam mồ hôi bay hơi mang đi khoảng 2400 J nhiệt lượng, giúp duy trì thân nhiệt 37°C an toàn."
+        }
+    ]
+};
+
+    // ==================== FULLSCREEN CONTROLLER ====================
+    function toggleFullScreen() {
+        if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.mozFullScreenElement && !document.msFullscreenElement) {
+            const el = document.documentElement;
+            if (el.requestFullscreen) el.requestFullscreen();
+            else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+            else if (el.mozRequestFullScreen) el.mozRequestFullScreen();
+            else if (el.msRequestFullscreen) el.msRequestFullscreen();
+        } else {
+            if (document.exitFullscreen) document.exitFullscreen();
+            else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+            else if (document.mozCancelFullScreen) document.mozCancelFullScreen();
+            else if (document.msExitFullscreen) document.msExitFullscreen();
+        }
+    }
+
+    function updateFullscreenButtonState() {
+        const btn = document.getElementById('btn-fullscreen-toggle');
+        if (!btn) return;
+        const isFull = document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement;
+        if (isFull) {
+            btn.innerHTML = '🗗 Thu Nhỏ';
+            btn.className = 'btn-top cyan';
+        } else {
+            btn.innerHTML = '⛶ Toàn Màn Hình';
+            btn.className = 'btn-top gold';
+        }
+    }
+
+    document.addEventListener('fullscreenchange', updateFullscreenButtonState);
+    document.addEventListener('webkitfullscreenchange', updateFullscreenButtonState);
+    document.addEventListener('mozfullscreenchange', updateFullscreenButtonState);
+    document.addEventListener('MSFullscreenChange', updateFullscreenButtonState);
+
+    // ==================== BỘ SINH MÃ QR THÔNG MINH ====================
+    const DEFAULT_LAN_IP = '192.168.1.7';
+    const DEFAULT_ONLINE_URL = 'https://tikz-physics.github.io/vatli12-5c-ai/index.html?view=student';
+
+    function renderRealQRCode(url) {
+        const isFile = window.location.protocol === 'file:';
+        if (!url) {
+            if (isFile) {
+                url = `http://${DEFAULT_LAN_IP}:8080/index.html?view=student`;
+            } else {
+                url = window.location.href.split('#')[0];
+                if (!url.includes('view=student')) {
+                    url += (url.includes('?') ? '&' : '?') + 'view=student';
+                }
+            }
+        }
+
+        const container = document.getElementById('qr-code-display');
+        const input = document.getElementById('input-qr-target-url');
+        const hint = document.getElementById('qr-protocol-hint');
+
+        if (input && input.value !== url) input.value = url;
+        if (hint) {
+            if (isFile && url.startsWith('file:')) {
+                hint.innerHTML = '⚠️ <em>Đang chọn file:// (Điện thoại không vào được). Hãy chọn Wi-Fi Lớp hoặc Web Online:</em>';
+                hint.style.color = '#ef4444';
+            } else if (url.startsWith('http://192.168.') || url.startsWith('http://10.') || url.startsWith('http://172.')) {
+                hint.innerHTML = '📶 <strong>Chế độ Wi-Fi Phòng Học (Mạng LAN):</strong>';
+                hint.style.color = '#10b981';
+            } else {
+                hint.innerHTML = '🌐 <strong>Chế độ Web Trực Tuyến (Mọi mạng 4G/Wi-Fi):</strong>';
+                hint.style.color = 'var(--cyan)';
+            }
+        }
+
+        if (!container) return;
+
+        try {
+            if (typeof qrcode !== 'undefined') {
+                const qr = qrcode(0, 'M');
+                qr.addData(url);
+                qr.make();
+                container.innerHTML = qr.createSvgTag(4, 4);
+            } else {
+                container.innerHTML = '<div style="color:#ef4444; padding:10px;">Đang nạp bộ giải mã QR...</div>';
+            }
+        } catch(e) {
+            console.error("QR Error:", e);
+            container.innerHTML = `<div style="color:#ef4444; padding:10px; font-size:0.8rem;">Lỗi sinh QR: ${e.message}</div>`;
+        }
+    }
+
+    function setQRMode(mode) {
+        let targetUrl = '';
+        if (mode === 'lan') {
+            targetUrl = `http://${DEFAULT_LAN_IP}:8080/index.html?view=student`;
+        } else if (mode === 'online') {
+            targetUrl = DEFAULT_ONLINE_URL;
+        }
+        const input = document.getElementById('input-qr-target-url');
+        if (input) input.value = targetUrl;
+        renderRealQRCode(targetUrl);
+    }
+
+    let qrDebounceTimer = null;
+    function onQRUrlInputChange(val) {
+        clearTimeout(qrDebounceTimer);
+        qrDebounceTimer = setTimeout(() => {
+            renderRealQRCode(val.trim());
+        }, 300);
+    }
+
+    function copyQRLink() {
+        const input = document.getElementById('input-qr-target-url');
+        if (!input) return;
+        const url = input.value;
+        if (navigator.clipboard) {
+            navigator.clipboard.writeText(url).then(() => {
+                alert('✅ Đã sao chép liên kết vào bộ nhớ tạm:\n' + url);
+            }).catch(() => {
+                prompt('Sao chép liên kết tại đây:', url);
+            });
+        } else {
+            prompt('Sao chép liên kết tại đây:', url);
+        }
+    }
+
+    // ==================== CẤU HÌNH & TÍCH HỢP GEMINI AI ====================
+    function openGeminiModal() {
+        const key = localStorage.getItem('gemini_api_key') || '';
+        const model = localStorage.getItem('gemini_model') || 'gemini-1.5-flash';
+        document.getElementById('input-gemini-key').value = key;
+        document.getElementById('select-gemini-model').value = model;
+        document.getElementById('gemini-test-result').innerText = '';
+        document.getElementById('modal-gemini-config').classList.add('active');
+    }
+
+    function closeGeminiModal() {
+        document.getElementById('modal-gemini-config').classList.remove('active');
+    }
+
+    function toggleKeyVisibility() {
+        const inp = document.getElementById('input-gemini-key');
+        inp.type = inp.type === 'password' ? 'text' : 'password';
+    }
+
+    function saveGeminiConfig() {
+        const key = document.getElementById('input-gemini-key').value.trim();
+        const model = document.getElementById('select-gemini-model').value;
+        localStorage.setItem('gemini_api_key', key);
+        localStorage.setItem('gemini_model', model);
+        updateGeminiUIState();
+        closeGeminiModal();
+        alert('✅ Đã lưu cấu hình Google Gemini AI thành công!');
+    }
+
+    function clearGeminiKey() {
+        localStorage.removeItem('gemini_api_key');
+        document.getElementById('input-gemini-key').value = '';
+        updateGeminiUIState();
+        alert('🗑️ Đã xóa Google Gemini API Key. Hệ thống chuyển về chế độ Socrates Offline.');
+    }
+
+    function updateGeminiUIState() {
+        const key = localStorage.getItem('gemini_api_key');
+        const model = localStorage.getItem('gemini_model') || 'gemini-1.5-flash';
+        const headerTag = document.getElementById('gemini-header-tag');
+        const badge = document.getElementById('socrates-engine-badge');
+        const status = document.getElementById('socrates-conn-status');
+
+        if (key) {
+            if (headerTag) headerTag.innerText = '🟢 Đã kết nối';
+            if (badge) badge.innerText = `Model: ${model} (Google AI)`;
+            if (status) status.innerHTML = '🟢 Trực tuyến (Gemini AI)';
+        } else {
+            if (headerTag) headerTag.innerText = '⚪ Chưa cài Key';
+            if (badge) badge.innerText = 'Chế độ: Socrates Offline';
+            if (status) status.innerHTML = '🟡 Ngoại tuyến (Quy chuẩn Phụ lục 2)';
+        }
+    }
+
+    async function testGeminiConnection() {
+        const key = document.getElementById('input-gemini-key').value.trim();
+        const model = document.getElementById('select-gemini-model').value;
+        const resBox = document.getElementById('gemini-test-result');
+        if (!key) {
+            resBox.innerHTML = '<span style="color:#ef4444;">⚠️ Vui lòng nhập API Key trước khi kiểm tra!</span>';
+            return;
+        }
+        resBox.innerHTML = '<span style="color:#38bdf8;">⏳ Đang gửi yêu cầu kiểm tra tới máy chủ Google Gemini...</span>';
+
+        try {
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`;
+            const payload = {
+                contents: [{ role: "user", parts: [{ text: "Xin chào, phản hồi ngắn gọn 1 câu để xác thực kết nối!" }] }]
+            };
+            const resp = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            const data = await resp.json();
+            if (data.candidates && data.candidates[0]?.content?.parts[0]?.text) {
+                resBox.innerHTML = '<span style="color:#10b981;">✅ Kết nối thành công tới Gemini AI! Sẵn sàng giảng dạy.</span>';
+            } else {
+                resBox.innerHTML = `<span style="color:#ef4444;">❌ Lỗi: ${data.error?.message || 'Không nhận được phản hồi hợp lệ'}</span>`;
+            }
+        } catch(e) {
+            resBox.innerHTML = `<span style="color:#ef4444;">❌ Lỗi kết nối mạng: ${e.message}</span>`;
+        }
+    }
+
+    // ==================== ENGINE GIA SƯ AI SOCRATES (GEMINI AI + FALLBACK) ====================
+    async function handleSendSocrates() {
+        const inp = document.getElementById('socrates-input');
+        const txt = inp.value.trim();
+        if (!txt) return;
+
+        addSocratesMsg('user', txt);
+        inp.value = '';
+
+        const typingId = 'socrates-typing-indicator';
+        showSocratesTyping(typingId);
+
+        const apiKey = localStorage.getItem('gemini_api_key') || '';
+        const model = localStorage.getItem('gemini_model') || 'gemini-1.5-flash';
+
+        if (apiKey) {
+            try {
+                const systemPrompt = SOCRATES_SYSTEM_PROMPTS[activeLesson] || SOCRATES_SYSTEM_PROMPTS['bai5'];
+                const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+                const payload = {
+                    systemInstruction: { parts: [{ text: systemPrompt }] },
+                    contents: [
+                        {
+                            role: "user",
+                            parts: [{ text: `Học sinh nhóm thảo luận: "${txt}".\nHãy phản hồi theo đúng vai trò Gia sư Socrates Vật lí nhiệt 12: ngắn gọn tối đa 3 câu, không chép giải hộ, kết thúc bằng 1 câu hỏi truy vấn vi mô.` }]
+                        }
+                    ],
+                    generationConfig: {
+                        temperature: 0.7,
+                        maxOutputTokens: 500
+                    }
+                };
+
+                const resp = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                removeSocratesTyping(typingId);
+
+                if (resp.ok) {
+                    const data = await resp.json();
+                    const aiText = data.candidates?.[0]?.content?.parts?.[0]?.text;
+                    if (aiText) {
+                        addSocratesMsg('ai', aiText);
+                        return;
+                    }
+                }
+            } catch(e) {
+                console.warn('Gemini API call failed, falling back to offline knowledge base:', e);
+            }
+        }
+
+        // OFFLINE FALLBACK NẾU CHƯA CÓ KEY HOẶC MẤT MẠNG
+        removeSocratesTyping(typingId);
+        setTimeout(() => {
+            const offlineAns = getOfflineSocratesAnswer(txt, activeLesson);
+            addSocratesMsg('ai', offlineAns);
+        }, 400);
+    }
+
+    function getOfflineSocratesAnswer(txt, lesson) {
+        const lower = txt.toLowerCase();
+        if (lesson === 'bai5') {
+            if (lower.includes('0') || lower.includes('nhiệt độ') || lower.includes('không đổi')) {
+                return "Rất sắc sảo! Trong suốt quá trình nước đá đang nóng chảy ở 0 °C, nhiệt lượng nhận được dùng để phá vỡ liên kết tinh thể chứ không làm tăng động năng hạt. Vậy thế năng phân tử của khối chất lúc này đang tăng hay giảm?";
+            } else if (lower.includes('bám') || lower.includes('lau') || lower.includes('thấm') || lower.includes('sai số')) {
+                return "Chính xác! Nước bám ngoài viên đá sẽ làm tăng khối lượng m cân được nhưng lại không hấp thụ nhiệt nóng chảy λ, gây sai số lớn cho kết quả. Các em đã làm thao tác thấm khô như thế nào trong thí nghiệm?";
+            }
+        } else if (lesson === 'bai1') {
+            if (lower.includes('0,011') || lower.includes('thể tích') || lower.includes('rỗng')) {
+                return "Rất chuẩn! Con số 0,011% thể tích riêng chứng thực các phân tử khí ở rất xa nhau và không gian bình phần lớn là rỗng. Nhưng tại sao khi nén thể tích giảm thì áp suất khí lại tăng vọt lên thành bình?";
+            }
+        } else if (lesson === 'bai2') {
+            if (lower.includes('boyle') || lower.includes('áp suất') || lower.includes('piston')) {
+                return "Đúng rồi! Khi nén thể tích giảm, mật độ phân tử tăng làm tăng số va chạm lên mỗi đơn vị diện tích thành bình trong một giây -> áp suất p tăng. Nếu nhiệt độ tăng trong khi nén, định luật Boyle còn nghiệm đúng không?";
+            }
+        } else if (lesson === 'bai6') {
+            if (lower.includes('tân cương') || lower.includes('chè') || lower.includes('thăng hoa')) {
+                return "Tuyệt vời! Sấy thăng hoa là quá trình nước đá thăng hoa trực tiếp thành hơi trong chân không mà không qua thể lỏng, giúp tế bào chè Tân Cương không bị biến tính. Năng lượng thăng hoa này lấy từ đâu?";
+            }
+        }
+
+        return `Gia sư Socrates ghi nhận ý kiến rất tích cực của nhóm! Trong chủ đề ${activeLesson.toUpperCase()}, các em hãy nhìn sâu vào mô hình vi mô (khoảng cách hạt, chuyển động nhiệt và va chạm). Theo các em, đại lượng vi mô nào đang đóng vai trò then chốt ở đây?`;
+    }
+
+    function showSocratesTyping(id) {
+        const box = document.getElementById('socrates-chat-box');
+        const d = document.createElement('div');
+        d.id = id;
+        d.className = 'chat-msg ai typing';
+        d.innerHTML = '🤖 <em>Gia sư Socrates đang tư duy theo mô hình vi mô...</em>';
+        box.appendChild(d);
+        box.scrollTop = box.scrollHeight;
+    }
+
+    function removeSocratesTyping(id) {
+        const el = document.getElementById(id);
+        if (el) el.remove();
+    }
+
+    function sendSocratesPrompt(txt) {
+        document.getElementById('socrates-input').value = txt;
+        handleSendSocrates();
+    }
+
+    function addSocratesMsg(role, text) {
+        const box = document.getElementById('socrates-chat-box');
+        const d = document.createElement('div');
+        d.className = `chat-msg ${role}`;
+        if (role === 'ai') d.innerHTML = `🤖 <strong>Gia sư Socrates:</strong> ${text}`;
+        else if (role === 'teacher') d.innerHTML = `📢 <strong>THẦY TÙNG (LỜI NHẮC):</strong> ${text}`;
+        else d.innerHTML = `👤 <strong>Học Sinh:</strong> ${text}`;
+        box.appendChild(d);
+        box.scrollTop = box.scrollHeight;
+    }
+
+    function clearSocratesChat() {
+        const box = document.getElementById('socrates-chat-box');
+        box.innerHTML = '';
+        addSocratesMsg('ai', `Gia sư Socrates đã sẵn sàng cho bài học ${activeLesson.toUpperCase()}! Mời các em đặt câu hỏi hoặc đưa ra lập luận của nhóm.`);
+    }
+
+    function renderSocratesChips() {
+        const container = document.getElementById('socrates-chips-container');
+        if (!container) return;
+        const chips = LESSON_CHIPS[activeLesson] || LESSON_CHIPS['bai5'];
+        container.innerHTML = '';
+        chips.forEach(chip => {
+            const btn = document.createElement('button');
+            btn.className = 'ai-chip';
+            btn.innerText = `💡 ${chip}`;
+            btn.onclick = () => sendSocratesPrompt(chip);
+            container.appendChild(btn);
+        });
+    }
+
+    // ==================== QUẢN LÝ VÀ CHIA NHÓM ĐỘNG ====================
+    function onDivideModeChange() {
+        const mode = document.getElementById('select-divide-mode').value;
+        const boxNum = document.getElementById('box-select-num-groups');
+        const boxPer = document.getElementById('box-select-per-group');
+        if (mode === 'by_num_groups') {
+            boxNum.style.display = 'block';
+            boxPer.style.display = 'none';
+        } else {
+            boxNum.style.display = 'none';
+            boxPer.style.display = 'block';
+        }
+        previewGroupDivision();
+    }
+
+    function previewGroupDivision() {
+        const total = parseInt(document.getElementById('input-total-students').value) || 36;
+        const mode = document.getElementById('select-divide-mode').value;
+        let nGroups = 6;
+        if (mode === 'by_num_groups') {
+            nGroups = parseInt(document.getElementById('select-num-groups').value) || 6;
+        } else {
+            const perGroup = parseInt(document.getElementById('select-students-per-group').value) || 6;
+            nGroups = Math.max(2, Math.min(10, Math.ceil(total / perGroup)));
+        }
+        const avg = (total / nGroups).toFixed(1);
+        const prevEl = document.getElementById('group-divide-preview');
+        if (prevEl) {
+            prevEl.innerText = `📊 Dự kiến: ${nGroups} nhóm (Bình quân ${avg} HS/nhóm)`;
+        }
+    }
+
+    function autoDivideGroups() {
+        const total = parseInt(document.getElementById('input-total-students').value) || 36;
+        const mode = document.getElementById('select-divide-mode').value;
+        let nGroups = 6;
+
+        if (mode === 'by_num_groups') {
+            nGroups = parseInt(document.getElementById('select-num-groups').value) || 6;
+        } else {
+            const perGroup = parseInt(document.getElementById('select-students-per-group').value) || 6;
+            nGroups = Math.max(2, Math.min(10, Math.ceil(total / perGroup)));
+        }
+
+        classroomConfig.totalStudents = total;
+        classroomConfig.numGroups = nGroups;
+
+        const baseCount = Math.floor(total / nGroups);
+        let remainder = total % nGroups;
+
+        const DEFAULT_GROUP_NAMES = [
+            "Chiến Binh Nhiệt Học", "Định Luật Boyle", "Thang Đo Kelvin",
+            "Nhiệt Dung Riêng", "Năng Lượng Pha", "Khí Thực Van der Waals",
+            "Động Học Phân Tử", "Áp Suất Vi Mô", "Sấy Thăng Hoa", "Chuyên Lí Thái Nguyên"
+        ];
+
+        const newGroups = [];
+        for (let i = 1; i <= nGroups; i++) {
+            const oldGrp = classroomConfig.groups.find(g => g.id === i);
+            const name = oldGrp ? oldGrp.name : (DEFAULT_GROUP_NAMES[i - 1] || `Biệt Đội Vật Lí ${i}`);
+            const count = baseCount + (remainder > 0 ? 1 : 0);
+            if (remainder > 0) remainder--;
+
+            if (arenaScores[i] === undefined) {
+                arenaScores[i] = 150;
+            }
+
+            newGroups.push({
+                id: i,
+                name: name,
+                count: count,
+                leader: `Trưởng nhóm 0${i}`,
+                secretary: `Thư ký 0${i}`
+            });
+        }
+
+        classroomConfig.groups = newGroups;
+
+        const badge = document.getElementById('group-divide-badge');
+        if (badge) badge.innerText = `${nGroups} NHÓM`;
+
+        renderAllGroupViews();
+        alert(`✅ Đã chia lớp thành ${nGroups} nhóm thành công (Tổng ${total} học sinh)!`);
+    }
+
+    function updateGroupName(groupId, newName) {
+        newName = (newName || '').trim();
+        if (!newName) return;
+        const grp = classroomConfig.groups.find(g => g.id === groupId);
+        if (grp) {
+            grp.name = newName;
+            renderAllGroupViews();
+        }
+    }
+
+    function renderAllGroupViews() {
+        renderQRCards();
+        renderTeacherGroups();
+        renderArenaLeaderboard();
+        renderStudentGroupOptions();
+    }
+
+    function renderQRCards() {
+        const grid = document.getElementById('dynamic-group-cards-grid');
+        if (!grid) return;
+        grid.innerHTML = '';
+
+        classroomConfig.groups.forEach(g => {
+            const card = document.createElement('div');
+            card.className = 'group-card';
+            card.innerHTML = `
+                <div class="qr-grp-header">
+                    <span class="qr-grp-num-tag">NHÓM 0${g.id}</span>
+                    <input type="text" class="qr-grp-name-input" value="${g.name}" onchange="updateGroupName(${g.id}, this.value)" title="Bấm để đổi tên">
+                </div>
+                <div style="font-size:0.72rem; color:#94a3b8; font-weight:700;">
+                    👥 Sĩ số: <strong style="color:var(--cyan);">${g.count} học sinh</strong>
+                </div>
+                <div class="role-pill-list">
+                    <div class="role-pill">👑 Trưởng nhóm</div>
+                    <div class="role-pill">📝 Thư ký A3</div>
+                    <div class="role-pill">💻 Kỹ thuật số</div>
+                    <div class="role-pill">⚖️ Phản biện</div>
+                </div>
+            `;
+            grid.appendChild(card);
+        });
+    }
+
+    function renderTeacherGroups() {
+        const list = document.getElementById('teacher-groups-monitor-list');
+        if (!list) return;
+        list.innerHTML = '';
+        classroomConfig.groups.forEach(g => {
+            const pill = document.createElement('div');
+            pill.className = 'grp-pill';
+            pill.innerHTML = `
+                <span><strong>Nhóm 0${g.id}:</strong> ${g.name} (${g.count} HS)</span>
+                <span style="color:#10b981; font-weight:700;">🟢 Hoạt động</span>
+            `;
+            list.appendChild(pill);
+        });
+    }
+
+    function renderArenaLeaderboard() {
+        const list = document.getElementById('arena-leaderboard-list');
+        if (!list) return;
+        list.innerHTML = '';
+        classroomConfig.groups.forEach(g => {
+            const row = document.createElement('div');
+            row.className = 'group-score-card';
+            row.innerHTML = `
+                <span><strong>Nhóm 0${g.id}:</strong> ${g.name}</span>
+                <div style="display:flex; align-items:center; gap:6px;">
+                    <strong style="color:var(--cyan); font-family:monospace;">${arenaScores[g.id] || 0} đ</strong>
+                    <button class="btn-add-pt" onclick="addArenaPoint(${g.id}, 10)">+10 đ</button>
+                </div>
+            `;
+            list.appendChild(row);
+        });
+    }
+
+    function addArenaPoint(grp, pts) {
+        arenaScores[grp] = (arenaScores[grp] || 0) + pts;
+        playSoundCorrect();
+        renderArenaLeaderboard();
+    }
+
+    function renderStudentGroupOptions() {
+        const sel = document.getElementById('student-group-select');
+        if (!sel) return;
+        const curVal = parseInt(sel.value) || studentActiveGroup;
+        sel.innerHTML = '';
+        classroomConfig.groups.forEach(g => {
+            const opt = document.createElement('option');
+            opt.value = g.id;
+            opt.innerText = `Nhóm 0${g.id}: ${g.name}`;
+            if (g.id === curVal) opt.selected = true;
+            sel.appendChild(opt);
+        });
+
+        onStudentGroupChange(sel.value || 1);
+    }
+
+    function onStudentGroupChange(val) {
+        studentActiveGroup = parseInt(val) || 1;
+        const grp = classroomConfig.groups.find(g => g.id === studentActiveGroup);
+        if (grp) {
+            document.getElementById('student-desk-title').innerText = `📱 BÀN HỌC SINH – NHÓM 0${grp.id}: ${grp.name.toUpperCase()}`;
+            document.getElementById('student-group-name-input').value = grp.name;
+        }
+    }
+
+    function saveStudentGroupName() {
+        const input = document.getElementById('student-group-name-input');
+        const newName = input.value.trim();
+        if (!newName) return;
+        updateGroupName(studentActiveGroup, newName);
+        alert(`✅ Đã lưu tên mới cho Nhóm 0${studentActiveGroup}: "${newName}"`);
+    }
+
+    // ==================== ĐIỀU HƯỚNG 1 CỬA SỔ DUY NHẤT ====================
+    function switchFunctionView(viewName) {
+        document.querySelectorAll('.single-view').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.func-tab-btn').forEach(btn => btn.classList.remove('active'));
+
+        const targetView = document.getElementById('view-' + viewName);
+        const targetBtn = document.getElementById('tab-btn-' + viewName);
+
+        if (targetView) targetView.classList.add('active');
+        if (targetBtn) targetBtn.classList.add('active');
+
+        if (viewName === 'qr') {
+            renderRealQRCode();
+        } else if (viewName === 'socrates') {
+            renderSocratesChips();
+        } else if (viewName === 'lab') {
+            initSimulationUI();
+        } else if (viewName === 'arena') {
+            renderArenaQuestion();
+            renderArenaLeaderboard();
+        }
+    }
+
+    function onHeaderLessonChange(val) {
+        activeLesson = val;
+        if (typeof MASTER_BUS !== 'undefined' && MASTER_BUS.setLesson) {
+            MASTER_BUS.setLesson(val);
+        }
+        updateTeacherRemoteUI();
+        renderSocratesChips();
+        initSimulationUI();
+        renderArenaQuestion();
+    }
+
+    // ==================== ĐIỀU KHIỂN GIÁO VIÊN ====================
+    let teacherTimerSec = 5 * 60;
+    let teacherTimerInterval = null;
+
+    function handleTeacherNext() {
+        if (currentStep < 5) currentStep++;
+        if (typeof MASTER_BUS !== 'undefined' && MASTER_BUS.nextStep) {
+            MASTER_BUS.nextStep();
+        }
+        updateTeacherRemoteUI();
+    }
+
+    function handleTeacherPrev() {
+        if (currentStep > 1) currentStep--;
+        if (typeof MASTER_BUS !== 'undefined' && MASTER_BUS.prevStep) {
+            MASTER_BUS.prevStep();
+        }
+        updateTeacherRemoteUI();
+    }
+
+    function handleTeacherDetox() {
+        isDetoxLocked = !isDetoxLocked;
+        if (typeof MASTER_BUS !== 'undefined' && MASTER_BUS.toggleScreenLock) {
+            MASTER_BUS.toggleScreenLock();
+        }
+        applyDetoxOverlay(isDetoxLocked);
+    }
+
+    function applyDetoxOverlay(locked) {
+        const overlay = document.getElementById('screen-detox-overlay');
+        const btn = document.getElementById('btn-detox-state');
+        if (locked) {
+            overlay.classList.add('active');
+            btn.className = 'btn-nav btn-detox unlocked';
+            btn.innerHTML = '🔓 MỞ MÀN HÌNH';
+        } else {
+            overlay.classList.remove('active');
+            btn.className = 'btn-nav btn-detox';
+            btn.innerHTML = '🔒 KHÓA MÀN HÌNH';
+        }
+    }
+
+    function updateTeacherRemoteUI() {
+        const lessonMap = {
+            bai1: "Bài 1: Cấu trúc chất & Thuyết động học phân tử chất khí",
+            bai2: "Bài 2: Định luật Boyle (Quá trình đẳng nhiệt)",
+            bai3: "Bài 3: Đo nhiệt dung riêng của nước",
+            bai4: "Bài 4: Đo nhiệt hóa hơi riêng của nước",
+            bai5: "Bài 5: Đo nhiệt nóng chảy riêng của nước đá",
+            bai6: "Bài 6: Khí thực và phương trình Van der Waals"
+        };
+        const stepMap = {
+            1: { name: "Bước 1: Khởi động", desc: "Tạo tình huống có vấn đề và phân chia nhiệm vụ học tập." },
+            2: { name: "Bước 2: Tìm tòi", desc: "Thực hiện mô phỏng số và thí nghiệm video để thu thập số liệu." },
+            3: { name: "Bước 3: Lập luận", desc: "Phân tích đồ thị, xử lý sai số và đối thoại mở với AI Socrates." },
+            4: { name: "Bước 4: Thí nghiệm", desc: "Thực hành ảo, đo đạc thông số thực nghiệm SGK Kết nối tri thức." },
+            5: { name: "Bước 5: Áp dụng", desc: "Thi đấu Đấu trường Chuông Vàng và báo cáo sản phẩm nhóm." }
+        };
+
+        const lessonTitle = lessonMap[activeLesson] || lessonMap['bai5'];
+        const step = stepMap[currentStep] || stepMap[1];
+
+        document.getElementById('teacher-lesson-title').innerText = lessonTitle.toUpperCase();
+        document.getElementById('teacher-step-tag').innerText = `🎯 ${step.name.toUpperCase()}`;
+        document.getElementById('teacher-step-guide').innerHTML = `📌 <strong>Nhiệm vụ ${step.name}:</strong> ${step.desc}`;
+    }
+
+    function toggleTeacherTimer() {
+        const btn = document.getElementById('btn-teacher-timer-run');
+        if (teacherTimerInterval) {
+            clearInterval(teacherTimerInterval);
+            teacherTimerInterval = null;
+            btn.innerText = 'Tiếp Tục';
+        } else {
+            btn.innerText = 'Tạm Dừng';
+            teacherTimerInterval = setInterval(() => {
+                if (teacherTimerSec > 0) {
+                    teacherTimerSec--;
+                    const m = Math.floor(teacherTimerSec / 60);
+                    const s = teacherTimerSec % 60;
+                    document.getElementById('teacher-timer-num').innerText = 
+                        `${m < 10 ? '0' : ''}${m}:${s < 10 ? '0' : ''}${s}`;
+                } else {
+                    clearInterval(teacherTimerInterval);
+                    teacherTimerInterval = null;
+                    btn.innerText = 'Hết Giờ';
+                }
+            }, 1000);
+        }
+    }
+
+    function sendTeacherNoticeFromHub() {
+        const inp = document.getElementById('teacher-notice-input');
+        const txt = inp.value.trim();
+        if (!txt) return;
+
+        addSocratesMsg('teacher', txt);
+        if (typeof MASTER_BUS !== 'undefined' && MASTER_BUS.broadcast) {
+            MASTER_BUS.broadcast('teacherIntervention', {
+                targetGroup: 'all',
+                text: txt,
+                time: new Date().toLocaleTimeString()
+            });
+        }
+        alert('Đã gửi lời nhắc đến toàn bộ học sinh!');
+        inp.value = '';
+    }
+
+    // ==================== THÍ NGHIỆM SỐ BƯỚC 4 ====================
+    function setLabMode(mode) {
+        if (typeof setStep4Mode === 'function') {
+            setStep4Mode(mode);
+        }
+        const btnCanvas = document.getElementById('btn-mode-canvas');
+        const btnVideo = document.getElementById('btn-mode-video');
+        const boxCanvas = document.getElementById('sim-canvas-box');
+        const boxVideo = document.getElementById('sim-video-box');
+
+        if (btnCanvas) btnCanvas.classList.toggle('active', mode === 'canvas');
+        if (btnVideo) btnVideo.classList.toggle('active', mode === 'video');
+
+        if (boxCanvas) boxCanvas.style.display = (mode === 'canvas') ? 'flex' : 'none';
+        if (boxVideo) boxVideo.style.display = (mode === 'video') ? 'flex' : 'none';
+
+        if (mode === 'video' && typeof renderLabVideoFrame === 'function') {
+            renderLabVideoFrame();
+        }
+    }
+
+    function submitSimDataToAIHub() {
+        alert('✅ Đã gửi số liệu thực nghiệm sang Gia sư AI Socrates thành công!');
+    }
+
+    // ==================== ĐẤU TRƯỜNG CHUÔNG VÀNG BƯỚC 5 ====================
+    let arenaQIndex = 0;
+    let arenaTimerSec = 15;
+    let arenaTimerInterval = null;
+
+    function renderArenaQuestion() {
+        const qBank = gameQuestionBanks[activeLesson] || gameQuestionBanks['bai5'];
+        if (arenaQIndex < 0) arenaQIndex = 0;
+        if (arenaQIndex >= qBank.length) arenaQIndex = qBank.length - 1;
+
+        const cur = qBank[arenaQIndex];
+        document.getElementById('arena-round-tag').innerText = `${cur.round} (Câu ${arenaQIndex + 1} / ${qBank.length})`;
+        document.getElementById('arena-q-text').innerText = cur.q;
+
+        const keys = ['A', 'B', 'C', 'D'];
+        const box = document.getElementById('arena-answers-box');
+        box.innerHTML = '';
+        cur.opts.forEach((opt, idx) => {
+            const btn = document.createElement('button');
+            btn.className = 'ans-btn';
+            btn.innerHTML = `<span style="font-weight:900; color:var(--cyan); width:24px;">${keys[idx]}</span><span>${opt}</span>`;
+            btn.onclick = () => onArenaSelectAns(idx, cur.ans, btn);
+            box.appendChild(btn);
+        });
+
+        stopArenaTimer();
+        arenaTimerSec = 15;
+        document.getElementById('arena-timer-num').innerText = '15s';
+    }
+
+    function onArenaSelectAns(chosenIdx, correctIdx, btnEl) {
+        stopArenaTimer();
+        if (chosenIdx === correctIdx) {
+            btnEl.classList.add('correct');
+            playSoundCorrect();
+        } else {
+            btnEl.classList.add('wrong');
+            playSoundWrong();
+        }
+    }
+
+    function startArenaTimer() {
+        stopArenaTimer();
+        arenaTimerSec = 15;
+        arenaTimerInterval = setInterval(() => {
+            arenaTimerSec--;
+            document.getElementById('arena-timer-num').innerText = arenaTimerSec + 's';
+            playSoundTick();
+            if (arenaTimerSec <= 0) {
+                stopArenaTimer();
+                playSoundWrong();
+                revealArenaAns();
+            }
+        }, 1000);
+    }
+
+    function stopArenaTimer() {
+        if (arenaTimerInterval) {
+            clearInterval(arenaTimerInterval);
+            arenaTimerInterval = null;
+        }
+    }
+
+    function revealArenaAns() {
+        stopArenaTimer();
+        const qBank = gameQuestionBanks[activeLesson] || gameQuestionBanks['bai5'];
+        const cur = qBank[arenaQIndex];
+        const buttons = document.querySelectorAll('#arena-answers-box .ans-btn');
+        if (buttons[cur.ans]) buttons[cur.ans].classList.add('correct');
+        playSoundCorrect();
+    }
+
+    function prevArenaQ() {
+        if (arenaQIndex > 0) { arenaQIndex--; renderArenaQuestion(); }
+    }
+
+    function nextArenaQ() {
+        const qBank = gameQuestionBanks[activeLesson] || gameQuestionBanks['bai5'];
+        if (arenaQIndex < qBank.length - 1) { arenaQIndex++; renderArenaQuestion(); }
+    }
+
+    function triggerArenaFinale() {
+        playSoundFanfare();
+        alert('🏆 CHÚC MỪNG QUÁN QUÂN ĐẤU TRƯỜNG NHIỆT HỌC!');
+    }
+
+    function handleStudentDeskBuzzer() {
+        playSoundBuzzer();
+        const fb = document.getElementById('student-desk-feedback');
+        const grp = classroomConfig.groups.find(g => g.id === studentActiveGroup);
+        const name = grp ? grp.name : `Nhóm 0${studentActiveGroup}`;
+        fb.innerText = `🔔 NHÓM 0${studentActiveGroup} (${name.toUpperCase()}) ĐÃ BẤM CHUÔNG THÀNH CÔNG!`;
+        fb.style.color = '#ef4444';
+    }
+
+    // ==================== KHỞI TẠO TỰ ĐỘNG ====================
+    window.addEventListener('DOMContentLoaded', () => {
+        // Kiểm tra tham số URL điều hướng
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('view') === 'student') {
+            switchFunctionView('student');
+        }
+
+        updateGeminiUIState();
+        renderRealQRCode();
+        renderAllGroupViews();
+        updateTeacherRemoteUI();
+        renderSocratesChips();
+        initSimulationUI();
+    });
+    </script>
+</body>
+</html>
