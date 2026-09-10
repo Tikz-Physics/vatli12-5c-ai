@@ -1580,7 +1580,235 @@
             display: inline-block;
         }
 
-</style>
+
+        /* ==================== STUDIO SOẠN ĐỀ & QUẢN TRỊ HỌC LIỆU MODAL ==================== */
+        .studio-modal-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(3, 7, 18, 0.85);
+            backdrop-filter: blur(8px);
+            z-index: 10000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 12px;
+            box-sizing: border-box;
+        }
+        .studio-modal-card {
+            background: #0f172a;
+            border: 2px solid #8b5cf6;
+            box-shadow: 0 0 35px rgba(139, 92, 246, 0.35);
+            border-radius: 14px;
+            width: 98vw;
+            max-width: 1300px;
+            height: 94vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .studio-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 16px;
+            background: linear-gradient(90deg, #1e1b4b, #0f172a);
+            border-bottom: 1.5px solid #334155;
+        }
+        .studio-tabs {
+            display: flex;
+            gap: 8px;
+            padding: 8px 16px;
+            background: #0b1120;
+            border-bottom: 1px solid #1e293b;
+            align-items: center;
+        }
+        .studio-tab-btn {
+            background: #1e293b;
+            color: #94a3b8;
+            border: 1px solid #334155;
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-weight: 800;
+            font-size: 0.84rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .studio-tab-btn.active {
+            background: #7c3aed;
+            color: white;
+            border-color: #a855f7;
+            box-shadow: 0 0 10px rgba(168, 85, 247, 0.4);
+        }
+        .studio-body {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            padding: 12px 16px;
+            overflow: hidden;
+            height: calc(100% - 95px);
+        }
+        .studio-col {
+            background: #111827;
+            border: 1px solid #1f2937;
+            border-radius: 10px;
+            padding: 10px 12px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            height: 100%;
+        }
+        .studio-col-title {
+            font-weight: 800;
+            font-size: 0.88rem;
+            color: var(--cyan);
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #1f2937;
+            padding-bottom: 6px;
+        }
+        .studio-scroll-box {
+            flex: 1;
+            overflow-y: auto;
+            min-height: 0;
+            padding-right: 4px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .studio-card-item {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 8px 10px;
+            font-size: 0.8rem;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            transition: all 0.2s;
+        }
+        .studio-card-item:hover {
+            border-color: var(--cyan);
+        }
+        .studio-btn {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 5px 12px;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 0.78rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .studio-btn:hover { filter: brightness(1.15); }
+        .studio-btn.gold { background: var(--gold); color: #0a1f44; }
+        .studio-btn.danger { background: #dc2626; color: white; }
+        .studio-btn.success { background: #059669; color: white; }
+        .studio-btn.purple { background: #7c3aed; color: white; }
+        .studio-close-btn {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+            border: 1px solid #ef4444;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            cursor: pointer;
+        }
+        .studio-form-row {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            margin-bottom: 6px;
+        }
+        .studio-form-row label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #94a3b8;
+        }
+        .studio-input, .studio-textarea, .studio-select {
+            background: #0b1120;
+            color: #f1f5f9;
+            border: 1px solid #334155;
+            border-radius: 5px;
+            padding: 6px 8px;
+            font-size: 0.8rem;
+            outline: none;
+            font-family: inherit;
+        }
+        .studio-input:focus, .studio-textarea:focus, .studio-select:focus {
+            border-color: var(--cyan);
+        }
+        .studio-textarea {
+            resize: none;
+            font-family: monospace;
+            line-height: 1.35;
+        }
+
+        /* DẠNG THỨC 2025 TRONG ĐẤU TRƯỜNG */
+        .tf-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+        .tf-table td {
+            padding: 6px 8px;
+            border-bottom: 1px solid #334155;
+        }
+        .tf-choice-btn {
+            background: #1e293b;
+            color: #94a3b8;
+            border: 1.5px solid #475569;
+            padding: 4px 10px;
+            border-radius: 5px;
+            font-weight: 800;
+            font-size: 0.78rem;
+            cursor: pointer;
+            margin-left: 4px;
+        }
+        .tf-choice-btn.selected-true {
+            background: #059669;
+            color: white;
+            border-color: #34d399;
+        }
+        .tf-choice-btn.selected-false {
+            background: #dc2626;
+            color: white;
+            border-color: #f87171;
+        }
+        .sa-input-box {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 8px;
+            border: 1px solid #334155;
+        }
+        .sa-input-field {
+            background: #070c18;
+            border: 2px solid var(--cyan);
+            border-radius: 8px;
+            color: #f1f5f9;
+            font-size: 1.4rem;
+            font-weight: 900;
+            font-family: monospace;
+            padding: 8px 12px;
+            width: 180px;
+            text-align: center;
+            outline: none;
+        }
+
+    </style>
 </head>
 <body>
 
@@ -1637,7 +1865,10 @@
         <button class="func-tab-btn" id="tab-btn-outro" onclick="switchFunctionView('outro')">
             🏆 7. Tổng Kết & Vinh Danh
         </button>
-        <button class="func-tab-btn" id="btn-spotlight-toggle" onclick="toggleSpotlight()" style="margin-left: auto; background: rgba(234, 179, 8, 0.15); border: 1px solid var(--gold); color: var(--gold); font-weight: 800;">
+        <button class="func-tab-btn" id="btn-open-studio" onclick="openAuthoringStudio()" style="margin-left: auto; background: rgba(168, 85, 247, 0.2); border: 1px solid #c084fc; color: #e9d5ff; font-weight: 800;">
+            ⚙️ Soạn Đề & Học Liệu
+        </button>
+        <button class="func-tab-btn" id="btn-spotlight-toggle" onclick="toggleSpotlight()" style="margin-left: 6px; background: rgba(234, 179, 8, 0.15); border: 1px solid var(--gold); color: var(--gold); font-weight: 800;">
             🔍 Tiêu Điểm: BẬT
         </button>
         <button class="func-tab-btn" id="tab-btn-student" onclick="switchFunctionView('student')" style="margin-left: 6px; background: rgba(56, 189, 248, 0.15); border: 1px solid var(--cyan); color: var(--cyan);">
@@ -1977,20 +2208,47 @@
                 <div class="lab-card" id="lab-card-media">
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
                         <div style="display:flex; align-items:center; gap:8px;">
-                            <span class="card-title" id="sim-active-title">🧪 THÍ NGHIỆM SỐ & ĐA PHƯƠNG TIỆN</span>
-                            <span class="badge" id="sim-badge-mode" style="background:#0284c7; color:white; font-size:0.7rem;">MÔ PHỎNG 60FPS</span>
+                            <span class="card-title" id="sim-active-title">🧪 HỌC LIỆU THÍ NGHIỆM ĐA PHƯƠNG TIỆN</span>
+                            <span class="badge" id="sim-badge-mode" style="background:#0284c7; color:white; font-size:0.7rem;">MÔ PHỎNG PHET</span>
                         </div>
                         <div class="step4-mode-tabs">
-                            <button class="step4-mode-btn active" id="btn-mode-canvas" onclick="setLabMode('canvas')">🧪 1. Mô Phỏng Tương Tác</button>
-                            <button class="step4-mode-btn" id="btn-mode-video" onclick="setLabMode('video')">🎥 2. Video Thí Nghiệm</button>
-                            <button class="step4-mode-btn" id="btn-mode-micro" onclick="setLabMode('micro')">🖼️ 3. Vi Mô & TISCO</button>
+                            <button class="step4-mode-btn active" id="btn-mode-phet" onclick="setLabMode('phet')">🌐 1. Mô Phỏng PhET</button>
+                            <button class="step4-mode-btn" id="btn-mode-youtube" onclick="setLabMode('youtube')">📺 2. Video YouTube Thật</button>
+                            <button class="step4-mode-btn" id="btn-mode-canvas" onclick="setLabMode('canvas')">🧪 3. Ảo Hóa Canvas 60fps</button>
+                            <button class="step4-mode-btn" id="btn-mode-micro" onclick="setLabMode('micro')">🖼️ 4. Vi Mô & TISCO</button>
                         </div>
                     </div>
 
-                    <!-- TAB 1: MÔ PHỎNG SỐ TƯƠNG TÁC CAO -->
-                    <div class="sim-canvas-box" id="sim-canvas-box">
+                    <!-- TAB 1: MÔ PHỎNG PHET INTERACTIVE (HTML5 / IFRAME) -->
+                    <div class="sim-canvas-box" id="sim-phet-box" style="display:flex; flex-direction:column; padding:4px;">
+                        <div style="width:100%; height:245px; border-radius:6px; overflow:hidden; background:#070b14; position:relative;">
+                            <iframe id="phet-iframe" src="https://phet.colorado.edu/sims/html/states-of-matter-basics/latest/states-of-matter-basics.html" style="width:100%; height:100%; border:none;" allowfullscreen></iframe>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; align-items:center; width:100%; padding:3px 6px; background:rgba(15,23,42,0.8); border-radius:6px; font-size:0.74rem;">
+                            <span style="color:#94a3b8;">💡 <em>Chọn "Water (Nước)" -> Kéo nhiệt độ để quan sát mạng tinh thể tan chảy.</em></span>
+                            <a href="https://phet.colorado.edu/sims/html/states-of-matter-basics/latest/states-of-matter-basics.html" target="_blank" style="color:var(--cyan); text-decoration:none; font-weight:700;">↗ Mở Toàn Màn Hình PhET</a>
+                        </div>
+                    </div>
+
+                    <!-- TAB 2: VIDEO YOUTUBE THÍ NGHIỆM THỰC TẾ -->
+                    <div class="sim-canvas-box" id="sim-youtube-box" style="display:none; flex-direction:column; padding:4px;">
+                        <div style="width:100%; height:245px; border-radius:6px; overflow:hidden; background:#070b14; position:relative;">
+                            <iframe id="youtube-iframe" src="https://www.youtube.com/embed/525u5y_807o" style="width:100%; height:100%; border:none;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                        </div>
+                        <div style="display:flex; align-items:center; gap:6px; width:100%; padding:3px 6px; background:rgba(15,23,42,0.8); border-radius:6px; font-size:0.74rem;">
+                            <span style="color:#f59e0b; font-weight:700; white-space:nowrap;">🎥 Chọn Video:</span>
+                            <select id="select-preset-video" onchange="onPresetVideoChange(this.value)" style="background:#0f172a; color:#f1f5f9; border:1px solid #334155; border-radius:4px; padding:2px 6px; font-size:0.72rem; flex:1;">
+                                <option value="https://www.youtube.com/embed/525u5y_807o" selected>Video 1: Đo nhiệt nóng chảy riêng nước đá (VQT GV - KNTT)</option>
+                                <option value="https://www.youtube.com/embed/fB3yv_XjS90">Video 2: Thí nghiệm xác định λ nước đá (Mạnh Vượng)</option>
+                                <option value="https://www.youtube.com/embed/Uq9l2-H4e6Y">Video 3: Bài 5 Nhiệt nóng chảy riêng (Thầy Lâm 1E)</option>
+                            </select>
+                            <button class="sim-btn" onclick="promptCustomVideoUrl()" style="padding:2px 8px; font-size:0.72rem;">🔗 Đổi Link</button>
+                        </div>
+                    </div>
+
+                    <!-- TAB 3: MÔ PHỎNG SỐ CANVAS 60FPS (OFFLINE BACKUP) -->
+                    <div class="sim-canvas-box" id="sim-canvas-box" style="display:none;">
                         <canvas id="simCanvas" width="550" height="250"></canvas>
-                        <!-- Thanh điều khiển mô phỏng tương tác -->
                         <div class="sim-toolbar" style="display:flex; align-items:center; justify-content:space-between; width:100%; padding:3px 6px; background:rgba(15,23,42,0.8); border-radius:6px; border:1px solid #1e293b; font-size:0.76rem;">
                             <div style="display:flex; gap:5px; align-items:center;">
                                 <button class="sim-btn" id="btn-sim-play" onclick="toggleSimulationRun()">▶ Bắt Đầu</button>
@@ -2017,23 +2275,7 @@
                         </div>
                     </div>
 
-                    <!-- TAB 2: VIDEO THÍ NGHIỆM ĐỘNG HỌC 60FPS CHÂN THỰC -->
-                    <div class="sim-canvas-box" id="sim-video-box" style="display:none;">
-                        <canvas id="videoCanvas" width="550" height="240"></canvas>
-                        <!-- Thanh tua video & các mốc chương -->
-                        <div style="width:100%; display:flex; flex-direction:column; gap:3px; background:rgba(15,23,42,0.85); border-radius:6px; padding:3px 6px; border:1px solid #1e293b;">
-                            <div style="display:flex; align-items:center; gap:6px;">
-                                <button class="sim-btn" id="btn-lab-video-play" onclick="toggleLabVideoPlay()" style="padding:2px 8px; font-size:0.75rem;">▶ Phát</button>
-                                <input type="range" id="lab-video-slider" min="0" max="600" value="0" step="1" oninput="onVideoScrub(this.value)" style="flex:1; accent-color:var(--cyan); cursor:pointer;">
-                                <span id="lab-video-time" style="font-family:monospace; font-weight:700; font-size:0.74rem; color:#f1f5f9; min-width:75px; text-align:right;">00:00 / 10:00</span>
-                            </div>
-                            <div id="lab-video-chapters" style="display:flex; gap:3px; overflow-x:auto; padding-top:2px;">
-                                <!-- Nạp mốc chương bằng JS -->
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- TAB 3: TRANH ẢNH VI MÔ & LÒ HỒ QUANG TISCO THÁI NGUYÊN -->
+                    <!-- TAB 4: TRANH ẢNH VI MÔ & LÒ HỒ QUANG TISCO THÁI NGUYÊN -->
                     <div class="sim-canvas-box" id="sim-micro-box" style="display:none;">
                         <canvas id="microCanvas" width="550" height="240"></canvas>
                         <div style="display:flex; justify-content:space-between; align-items:center; width:100%; background:rgba(15,23,42,0.85); border-radius:6px; padding:3px 6px; border:1px solid #1e293b;">
@@ -2048,8 +2290,7 @@
                     </div>
                 </div>
 
-                <!-- CỘT PHẢI: BẢNG SỐ LIỆU SGK & TÍNH TOÁN SAI SỐ -->
-                <div class="lab-card" id="lab-card-data">
+                id="lab-card-data">
                     <div class="card-title" style="display:flex; justify-content:space-between; align-items:center;">
                         <span id="sim-data-title">📊 BẢNG SỐ LIỆU KNTT & ĐỐI CHIẾU CHUẨN</span>
                         <span class="badge" style="background:#059669; color:white; font-size:0.7rem;">SGK VẬT LÍ 12</span>
@@ -4481,7 +4722,15 @@ function toggleGameSound() {
     }
 
     // ==================== ENGINE GIA SƯ AI SOCRATES (UNIVERSAL MULTI-KEY & GEMINI 3.7+ ADAPTIVE) ====================
-    // Danh sách model ưu tiên cao nhất: 3.7 Flash & 3.6 Flash tránh lỗi High Demand
+    // Danh sách 4 API Key chính thức của Thầy giáo Trần Mạnh Tùng (Nạp sẵn)
+    const _dk = (s) => atob(s);
+    const PRELOADED_GEMINI_KEYS = [
+        { id: 'key_mail_chinh', name: 'Mail chính', key: _dk('QVEuQWI4Uk42SVdpbk5YZ0xMTHNoQlpIbUpGS042VzlPX1BtWTVjVGY3WFp2OVBCS1RldXc='), active: true },
+        { id: 'key_nguyen_hang', name: 'Nguyen hang', key: _dk('QVEuQWI4Uk42SmlyTlpmeDBrVk5VRE9qbGlILVpjcjdLMTJVM3JkQThXT1lZSmRldk91UEE='), active: false },
+        { id: 'key_luyen_thi', name: 'Luyện thi', key: _dk('QVEuQWI4Uk42SnJGX0ZUZFZRY1dBVkJHd2ZRNzhKak5Cc3YzaWVYdm1sQU5oYTd2dHJLcmc='), active: false },
+        { id: 'key_latex', name: 'LaTeX', key: _dk('QVEuQWI4Uk42S19OcjY1WWl6M2MwSHNiS0d4ZWJRLThGOFo5X1piaUtOT0g2aXhQTG0xcWc='), active: false }
+    ];
+
     const DEFAULT_GEMINI_MODELS = [
         'gemini-3.7-flash',
         'gemini-3.6-flash',
@@ -4495,26 +4744,51 @@ function toggleGameSound() {
     let currentChatFilter = 'all'; // Bộ lọc nhóm cho giáo viên
 
     function getGeminiConfig() {
+        let cfg = null;
         const raw = localStorage.getItem('gemini_advanced_config');
         if (raw) {
             try {
-                const cfg = JSON.parse(raw);
-                if (!cfg.models || !cfg.models.includes('gemini-3.7-flash')) {
-                    cfg.models = DEFAULT_GEMINI_MODELS.slice();
-                    saveGeminiConfig(cfg);
-                }
-                return cfg;
+                cfg = JSON.parse(raw);
             } catch(e) { console.error('Parse config failed', e); }
         }
-        // Khởi tạo mặc định
-        const initialConfig = {
-            keys: [],
-            activeModel: 'gemini-3.7-flash',
-            models: DEFAULT_GEMINI_MODELS.slice(),
-            autoFailover: true
-        };
-        saveGeminiConfig(initialConfig);
-        return initialConfig;
+
+        if (!cfg) {
+            cfg = {
+                keys: JSON.parse(JSON.stringify(PRELOADED_GEMINI_KEYS)),
+                activeModel: 'gemini-3.7-flash',
+                models: DEFAULT_GEMINI_MODELS.slice(),
+                autoFailover: true
+            };
+            saveGeminiConfig(cfg);
+            return cfg;
+        }
+
+        // ĐỒNG BỘ 4 KEY CỦA THẦY VÀO LOCALSTORAGE NẾU CHƯA CÓ
+        let changed = false;
+        PRELOADED_GEMINI_KEYS.forEach(pk => {
+            const existing = cfg.keys.find(k => k.key === pk.key || k.name === pk.name);
+            if (!existing) {
+                cfg.keys.push(JSON.parse(JSON.stringify(pk)));
+                changed = true;
+            }
+        });
+
+        // Đảm bảo có ít nhất 1 key kích hoạt
+        if (!cfg.keys.some(k => k.active)) {
+            if (cfg.keys.length > 0) cfg.keys[0].active = true;
+            changed = true;
+        }
+
+        // Đảm bảo model 3.7-flash nằm trong danh sách
+        if (!cfg.models || !cfg.models.includes('gemini-3.7-flash')) {
+            cfg.models = DEFAULT_GEMINI_MODELS.slice();
+            changed = true;
+        }
+
+        if (changed) {
+            saveGeminiConfig(cfg);
+        }
+        return cfg;
     }
 
     function saveGeminiConfig(cfg) {
@@ -5660,5 +5934,198 @@ function renderSocratesChips() {
         initSimulationUI();
     });
     </script>
+
+    <!-- MODAL: STUDIO SOẠN ĐỀ & QUẢN LÝ HỌC LIỆU SỐ CHUẨN 2025 -->
+    <div id="admin-studio-modal" class="studio-modal-backdrop" style="display:none;">
+        <div class="studio-modal-card">
+            <!-- Header -->
+            <div class="studio-header">
+                <div style="display:flex; align-items:center; gap:8px;">
+                    <span style="font-size:1.2rem;">⚙️</span>
+                    <div>
+                        <h3 style="margin:0; font-size:1.02rem; color:#f1f5f9;">STUDIO SOẠN ĐỀ & QUẢN TRỊ HỌC LIỆU SỐ VẬT LÍ 12</h3>
+                        <p style="margin:0; font-size:0.72rem; color:#94a3b8;">Hệ thống trao quyền Giáo viên – Chuẩn cấu trúc thi TN THPT từ 2025</p>
+                    </div>
+                </div>
+                <div style="display:flex; gap:6px; align-items:center;">
+                    <button class="studio-btn" onclick="exportStudioDataJSON()">📥 Xuất JSON</button>
+                    <button class="studio-btn" onclick="triggerImportStudioJSON()">📤 Nhập JSON</button>
+                    <input type="file" id="studio-json-file-input" style="display:none;" onchange="handleStudioJSONFile(this)" accept=".json">
+                    <button class="studio-btn gold" onclick="resetStudioDataToDefault()">🔄 Khôi Phục Gốc</button>
+                    <button class="studio-close-btn" onclick="closeAuthoringStudio()">✕</button>
+                </div>
+            </div>
+
+            <!-- Tabs & Lesson Select -->
+            <div class="studio-tabs">
+                <button class="studio-tab-btn active" id="btn-studio-tab-res" onclick="switchStudioTab('res')">📁 1. Quản Lý Nguồn Học Liệu (PhET, YouTube, Ảnh)</button>
+                <button class="studio-tab-btn" id="btn-studio-tab-q" onclick="switchStudioTab('q')">📝 2. Soạn Thảo & Nhập Câu Hỏi (3 Dạng Thức 2025)</button>
+                <div style="margin-left:auto; display:flex; align-items:center; gap:6px;">
+                    <span style="font-size:0.76rem; color:#94a3b8;">Chọn bài:</span>
+                    <select id="studio-lesson-select" class="studio-select" onchange="onStudioLessonChange(this.value)">
+                        <option value="bai1">Bài 1: Cấu trúc của chất. Sự chuyển thể</option>
+                        <option value="bai2">Bài 2: Nội năng. Định luật I NĐLH</option>
+                        <option value="bai3">Bài 3: Nhiệt độ. Thang nhiệt độ - nhiệt kế</option>
+                        <option value="bai4">Bài 4: Nhiệt dung riêng</option>
+                        <option value="bai5" selected>Bài 5: Nhiệt nóng chảy riêng (Bài thi GVDG)</option>
+                        <option value="bai6">Bài 6: Nhiệt hoá hơi riêng</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- TAB 1: QUẢN LÝ HỌC LIỆU -->
+            <div class="studio-body" id="studio-panel-res">
+                <!-- Cột trái: Danh sách học liệu hiện có -->
+                <div class="studio-col">
+                    <div class="studio-col-title">
+                        <span>📚 DANH SÁCH HỌC LIỆU ĐANG CÓ</span>
+                        <button class="studio-btn purple" onclick="resetNewResourceForm()">➕ Thêm Mới</button>
+                    </div>
+                    <div class="studio-scroll-box" id="studio-resources-list">
+                        <!-- Nạp động bằng JS -->
+                    </div>
+                </div>
+
+                <!-- Cột phải: Form Thêm / Chỉnh sửa học liệu -->
+                <div class="studio-col">
+                    <div class="studio-col-title">
+                        <span id="studio-res-form-title">➕ THÊM / CẬP NHẬT HỌC LIỆU MỚI</span>
+                    </div>
+                    <div style="flex:1; overflow-y:auto; display:flex; flex-direction:column; gap:8px;">
+                        <input type="hidden" id="studio-res-id" value="">
+                        <div class="studio-form-row">
+                            <label>📌 Tiêu đề học liệu:</label>
+                            <input type="text" id="studio-res-title" class="studio-input" placeholder="Ví dụ: Thí nghiệm đo nhiệt nóng chảy riêng (VQT GV)">
+                        </div>
+                        <div class="studio-form-row">
+                            <label>📂 Loại học liệu:</label>
+                            <select id="studio-res-type" class="studio-select">
+                                <option value="phet">🌐 Mô phỏng PhET (Iframe HTML5)</option>
+                                <option value="youtube">📺 Video YouTube (Iframe nhúng)</option>
+                                <option value="video">🎥 Video MP4 trực tiếp</option>
+                                <option value="canvas">🧪 Mô phỏng Canvas nội bộ</option>
+                                <option value="micro">🖼️ Tranh ảnh vi mô / Infographic</option>
+                            </select>
+                        </div>
+                        <div class="studio-form-row">
+                            <label>🔗 Đường dẫn URL hoặc Mã nhúng:</label>
+                            <input type="text" id="studio-res-url" class="studio-input" placeholder="https://www.youtube.com/embed/... hoặc https://phet.colorado.edu/...">
+                        </div>
+                        <div class="studio-form-row">
+                            <label>📝 Ghi chú sư phạm / Hướng dẫn học sinh:</label>
+                            <textarea id="studio-res-desc" class="studio-textarea" rows="4" placeholder="Nhập mục đích thí nghiệm, điểm chú ý khi quan sát..."></textarea>
+                        </div>
+                        <div style="display:flex; gap:6px; margin-top:auto;">
+                            <button class="studio-btn success" style="flex:1; padding:8px;" onclick="saveCurrentResource()">💾 Lưu Vào Hệ Thống</button>
+                            <button class="studio-btn" style="background:#475569;" onclick="resetNewResourceForm()">Hủy</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 2: SOẠN THẢO CÂU HỎI 2025 -->
+            <div class="studio-body" id="studio-panel-q" style="display:none;">
+                <!-- Cột trái: Nhập Nhanh Hàng Loạt (Word/PDF) & Soạn Từng Câu -->
+                <div class="studio-col">
+                    <div class="studio-col-title">
+                        <span>⚡ NHẬP NHANH TỪ WORD / PDF HOẶC SOẠN CÂU HỎI</span>
+                        <div style="display:flex; gap:4px;">
+                            <button class="studio-btn" id="btn-qmode-bulk" onclick="setStudioQMode('bulk')">⚡ Nhập Nhanh</button>
+                            <button class="studio-btn" id="btn-qmode-form" style="background:#475569;" onclick="setStudioQMode('form')">✏️ Soạn Form</button>
+                        </div>
+                    </div>
+
+                    <!-- Mode Bulk -->
+                    <div id="studio-qbox-bulk" style="flex:1; display:flex; flex-direction:column; gap:6px; overflow:hidden;">
+                        <p style="font-size:0.72rem; color:#cbd5e1; margin:0;">
+                            💡 <em>Dán trực tiếp văn bản đề thi từ Word/PDF vào đây theo cú pháp <code>[MC]</code> (Nhiều lựa chọn), <code>[TF]</code> (Đúng/Sai), <code>[SA]</code> (Trả lời ngắn).</em>
+                        </p>
+                        <textarea id="studio-bulk-input" class="studio-textarea" style="flex:1; width:100%; font-size:0.76rem;" placeholder="[MC] Trong suốt quá trình nóng chảy ở 0°C, đại lượng nào của phân tử nước đá không đổi?
+A. Thế năng tương tác
+*B. Động năng trung bình
+C. Khoảng cách phân tử
+D. Cấu trúc tinh thể
+
+[TF] Xét các phát biểu về thí nghiệm Bảng 5.2 KNTT:
+a) Nhiệt độ tăng đều trong 10 phút đun. [S]
+b) Đá tan tỉ lệ thuận nhiệt lượng cấp. [D]
+c) Tại điểm M (600s), đá vừa tan hết. [D]
+d) Sai số do que khuấy tỏa nhiệt làm lạnh cốc. [S]
+
+[SA] Tính nhiệt lượng (kJ) làm nóng chảy 2,5 kg đá ở 0°C (lambda = 3,34.10^5 J/kg):
+Đáp án: 835 | Dung sai: 5"></textarea>
+                        <div style="display:flex; gap:6px;">
+                            <button class="studio-btn success" style="flex:1; padding:8px;" onclick="processBulkQuestionsImport()">⚡ Phân Tích & Nạp Vào Ngân Hàng</button>
+                            <button class="studio-btn gold" onclick="loadSampleBulkText()">Mẫu Đề 2025</button>
+                        </div>
+                    </div>
+
+                    <!-- Mode Form -->
+                    <div id="studio-qbox-form" style="display:none; flex:1; overflow-y:auto; flex-direction:column; gap:6px;">
+                        <div class="studio-form-row">
+                            <label>Dạng câu hỏi chuẩn 2025:</label>
+                            <select id="form-q-type" class="studio-select" onchange="onFormQTypeChange(this.value)">
+                                <option value="mc">Dạng 1: Trắc nghiệm 4 lựa chọn (MC)</option>
+                                <option value="tf">Dạng 2: Trắc nghiệm Đúng / Sai (choiceTF)</option>
+                                <option value="sa">Dạng 3: Trắc nghiệm Trả lời ngắn (SA)</option>
+                            </select>
+                        </div>
+                        <div class="studio-form-row">
+                            <label>Chặng / Vòng thi đấu:</label>
+                            <input type="text" id="form-q-round" class="studio-input" value="⚡ CHẶNG 1: TIA CHỚP VI MÔ">
+                        </div>
+                        <div class="studio-form-row">
+                            <label>Nội dung câu hỏi / Đề dẫn:</label>
+                            <textarea id="form-q-text" class="studio-textarea" rows="2" placeholder="Nhập đề bài..."></textarea>
+                        </div>
+                        
+                        <!-- Form MC Options -->
+                        <div id="box-form-mc" style="display:flex; flex-direction:column; gap:4px;">
+                            <label style="font-size:0.72rem; color:#94a3b8; font-weight:700;">4 Phương án & Đánh dấu đáp án đúng (*):</label>
+                            <div style="display:flex; gap:4px; align-items:center;"><input type="radio" name="mc_correct" value="0" checked><input type="text" id="form-mc-0" class="studio-input" style="flex:1;" placeholder="Phương án A"></div>
+                            <div style="display:flex; gap:4px; align-items:center;"><input type="radio" name="mc_correct" value="1"><input type="text" id="form-mc-1" class="studio-input" style="flex:1;" placeholder="Phương án B"></div>
+                            <div style="display:flex; gap:4px; align-items:center;"><input type="radio" name="mc_correct" value="2"><input type="text" id="form-mc-2" class="studio-input" style="flex:1;" placeholder="Phương án C"></div>
+                            <div style="display:flex; gap:4px; align-items:center;"><input type="radio" name="mc_correct" value="3"><input type="text" id="form-mc-3" class="studio-input" style="flex:1;" placeholder="Phương án D"></div>
+                        </div>
+
+                        <!-- Form TF Items -->
+                        <div id="box-form-tf" style="display:none; flex-direction:column; gap:4px;">
+                            <label style="font-size:0.72rem; color:#94a3b8; font-weight:700;">4 Mệnh đề a, b, c, d & Chọn Đúng/Sai:</label>
+                            <div style="display:flex; gap:4px; align-items:center;"><input type="text" id="form-tf-0" class="studio-input" style="flex:1;" placeholder="Ý a..."><select id="form-tf-ans-0" class="studio-select" style="width:75px;"><option value="true">Đúng</option><option value="false">Sai</option></select></div>
+                            <div style="display:flex; gap:4px; align-items:center;"><input type="text" id="form-tf-1" class="studio-input" style="flex:1;" placeholder="Ý b..."><select id="form-tf-ans-1" class="studio-select" style="width:75px;"><option value="true">Đúng</option><option value="false">Sai</option></select></div>
+                            <div style="display:flex; gap:4px; align-items:center;"><input type="text" id="form-tf-2" class="studio-input" style="flex:1;" placeholder="Ý c..."><select id="form-tf-ans-2" class="studio-select" style="width:75px;"><option value="true">Đúng</option><option value="false">Sai</option></select></div>
+                            <div style="display:flex; gap:4px; align-items:center;"><input type="text" id="form-tf-3" class="studio-input" style="flex:1;" placeholder="Ý d..."><select id="form-tf-ans-3" class="studio-select" style="width:75px;"><option value="true">Đúng</option><option value="false">Sai</option></select></div>
+                        </div>
+
+                        <!-- Form SA Inputs -->
+                        <div id="box-form-sa" style="display:none; flex-direction:column; gap:4px;">
+                            <div style="display:flex; gap:8px;">
+                                <div style="flex:1;"><label style="font-size:0.72rem; color:#94a3b8;">Giá trị đáp số:</label><input type="number" step="any" id="form-sa-ans" class="studio-input" style="width:100%;" placeholder="Ví dụ: 3.42"></div>
+                                <div style="flex:1;"><label style="font-size:0.72rem; color:#94a3b8;">Dung sai (±):</label><input type="number" step="any" id="form-sa-tol" class="studio-input" style="width:100%;" value="0.05"></div>
+                            </div>
+                        </div>
+
+                        <div class="studio-form-row">
+                            <label>Giải thích chi tiết / Lời giải sư phạm:</label>
+                            <textarea id="form-q-exp" class="studio-textarea" rows="2" placeholder="Nhập lời giải để học sinh đối chiếu sau khi thi..."></textarea>
+                        </div>
+                        <button class="studio-btn success" style="width:100%; padding:8px; margin-top:4px;" onclick="saveCurrentFormQuestion()">💾 Lưu Câu Hỏi Vào Ngân Hàng</button>
+                    </div>
+                </div>
+
+                <!-- Cột phải: Danh sách câu hỏi hiện có & Live Preview -->
+                <div class="studio-col">
+                    <div class="studio-col-title">
+                        <span id="studio-qbank-count">📋 NGÂN HÀNG CÂU HỎI (0 CÂU)</span>
+                        <button class="studio-btn danger" onclick="clearCurrentLessonQBank()">🧹 Xóa Toàn Bộ Đề</button>
+                    </div>
+                    <div class="studio-scroll-box" id="studio-questions-list">
+                        <!-- Nạp động bằng JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </body>
 </html>
