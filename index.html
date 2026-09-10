@@ -609,6 +609,71 @@
             max-height: 240px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.5);
         }
+        /* SPEED & CHAPTER BUTTONS */
+        .speed-btn {
+            background: #1e293b;
+            color: #94a3b8;
+            border: 1px solid #334155;
+            padding: 2px 7px;
+            border-radius: 4px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .speed-btn.active {
+            background: var(--cyan);
+            color: #0f172a;
+            border-color: var(--cyan);
+        }
+        .chap-btn {
+            background: #1e293b;
+            color: #94a3b8;
+            border: 1px solid #334155;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+        .chap-btn:hover, .chap-btn.active {
+            background: #0284c7;
+            color: white;
+            border-color: #38bdf8;
+        }
+
+        /* AUTO-FOCUS SPOTLIGHT MODE (ZERO-SCROLL 100VH) */
+        .spotlight-focused {
+            border: 2px solid var(--cyan) !important;
+            box-shadow: 0 0 24px rgba(56, 189, 248, 0.45), inset 0 0 12px rgba(56, 189, 248, 0.1) !important;
+            transform: scale(1.008);
+            transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease, border-color 0.35s ease;
+        }
+        .spotlight-dimmed {
+            opacity: 0.82;
+            filter: brightness(0.9);
+            transition: opacity 0.35s ease, filter 0.35s ease;
+        }
+        .spotlight-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 3px 10px;
+            background: linear-gradient(135deg, rgba(14, 165, 233, 0.25), rgba(99, 102, 241, 0.25));
+            border: 1px solid var(--cyan);
+            border-radius: 20px;
+            font-size: 0.74rem;
+            font-weight: 800;
+            color: #e0f2fe;
+            animation: pulseSpotlight 2.5s infinite;
+        }
+        @keyframes pulseSpotlight {
+            0%, 100% { box-shadow: 0 0 8px rgba(56, 189, 248, 0.3); }
+            50% { box-shadow: 0 0 18px rgba(56, 189, 248, 0.7); }
+        }
+
         .sim-btn {
             background: #2563eb;
             color: white;
@@ -1183,6 +1248,338 @@
             transition: all 0.3s ease;
         }
 
+
+        /* ==================== VIEW 0: MỞ ĐẦU & KHỞI ĐỘNG (ZERO-SCROLL 100vh) ==================== */
+        .intro-view-body {
+            flex: 1;
+            padding: 8px 12px;
+            display: grid;
+            grid-template-columns: 380px 1fr;
+            gap: 12px;
+            height: 100%;
+            overflow: hidden;
+        }
+        .intro-hero-banner {
+            background: linear-gradient(145deg, rgba(13, 71, 161, 0.3) 0%, rgba(15, 23, 42, 0.95) 100%);
+            border: 1.5px solid var(--gold);
+            border-radius: 12px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            height: 100%;
+            overflow: hidden;
+        }
+        .intro-paradox-stage {
+            background: linear-gradient(145deg, rgba(17, 26, 48, 0.95) 0%, rgba(11, 19, 43, 0.95) 100%);
+            border: 1.5px solid var(--cyan);
+            border-radius: 12px;
+            padding: 12px;
+            display: grid;
+            grid-template-rows: auto 1fr auto;
+            gap: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            height: 100%;
+            overflow: hidden;
+        }
+        .intro-sim-container {
+            display: grid;
+            grid-template-columns: 380px 1fr;
+            gap: 12px;
+            align-items: center;
+            height: 100%;
+            overflow: hidden;
+        }
+        .intro-sensor-box {
+            background: rgba(15, 23, 42, 0.85);
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            height: 100%;
+            overflow: hidden;
+        }
+        .intro-digital-gauge {
+            background: #060a14;
+            border: 2px solid var(--cyan);
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+            box-shadow: inset 0 0 15px rgba(56, 189, 248, 0.2);
+        }
+        .gauge-digits {
+            font-size: 2.6rem;
+            font-weight: 900;
+            color: #38bdf8;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 2px;
+            text-shadow: 0 0 12px rgba(56, 189, 248, 0.6);
+        }
+        .gauge-sub {
+            font-size: 0.76rem;
+            font-weight: 800;
+            color: #10b981;
+            letter-spacing: 1px;
+            margin-top: 4px;
+        }
+        .intro-callout-footer {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 10px;
+            align-items: center;
+        }
+        .intro-paradox-callout {
+            background: rgba(245, 158, 11, 0.12);
+            border-left: 4px solid var(--gold);
+            border-radius: 0 8px 8px 0;
+            padding: 8px 12px;
+        }
+        .btn-intro-start {
+            background: linear-gradient(135deg, #ffb300, #ff8f00);
+            color: #0a1f44;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-size: 0.92rem;
+            font-weight: 900;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s;
+            box-shadow: 0 4px 12px rgba(255, 179, 0, 0.4);
+        }
+        .btn-intro-start:hover {
+            filter: brightness(1.15);
+            transform: translateY(-1px);
+        }
+        .btn-intro-next-step {
+            background: linear-gradient(135deg, #0284c7, #0369a1);
+            color: #ffffff;
+            border: 1px solid #38bdf8;
+            border-radius: 8px;
+            padding: 10px 16px;
+            font-size: 0.88rem;
+            font-weight: 800;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s;
+            box-shadow: 0 4px 12px rgba(2, 132, 199, 0.4);
+        }
+        .btn-intro-next-step:hover {
+            background: #0ea5e9;
+            transform: translateY(-1px);
+        }
+
+        /* ==================== VIEW 7: TỔNG KẾT & VINH DANH (ZERO-SCROLL 100vh) ==================== */
+        .outro-view-body {
+            flex: 1;
+            padding: 8px 12px;
+            display: grid;
+            grid-template-columns: 310px 1fr 310px;
+            gap: 12px;
+            height: 100%;
+            overflow: hidden;
+        }
+        .outro-card {
+            background: linear-gradient(145deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 41, 59, 0.95) 100%);
+            border: 1.5px solid var(--border);
+            border-radius: 12px;
+            padding: 10px 12px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+            height: 100%;
+            overflow: hidden;
+        }
+        .outro-knowledge-item {
+            background: rgba(11, 19, 43, 0.7);
+            border: 1px solid #1e293b;
+            border-radius: 6px;
+            padding: 6px 8px;
+        }
+        .outro-knowledge-item .ki-label {
+            font-size: 0.72rem;
+            font-weight: 800;
+            color: var(--gold);
+            text-transform: uppercase;
+        }
+        .outro-knowledge-item .ki-formula {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 2px;
+        }
+        .outro-podium-container {
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            gap: 10px;
+            height: 140px;
+            margin: 6px 0;
+        }
+        .podium-step {
+            border-radius: 8px 8px 0 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            padding: 8px 4px;
+            color: #fff;
+            font-weight: 800;
+            transition: all 0.3s;
+        }
+        .podium-step.rank-1 {
+            width: 125px;
+            height: 125px;
+            background: linear-gradient(180deg, #ffd54f 0%, #b45309 100%);
+            border: 2px solid #fff;
+            box-shadow: 0 0 25px rgba(255, 213, 79, 0.6);
+        }
+        .podium-step.rank-2 {
+            width: 105px;
+            height: 90px;
+            background: linear-gradient(180deg, #94a3b8 0%, #334155 100%);
+            border: 1.5px solid #cbd5e1;
+        }
+        .podium-step.rank-3 {
+            width: 105px;
+            height: 70px;
+            background: linear-gradient(180deg, #d97706 0%, #78350f 100%);
+            border: 1.5px solid #f59e0b;
+        }
+        .outro-leaderboard-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 6px;
+            margin: 4px 0;
+        }
+        .outro-rank-item {
+            background: #090e1c;
+            border: 1px solid #1e293b;
+            border-radius: 6px;
+            padding: 5px 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.74rem;
+        }
+
+    
+        /* ==================== PHÂN QUYỀN & TỐI ƯU HỎI ĐÁP AI ĐA NHÓM ==================== */
+        /* Khóa hoàn toàn chức năng quản trị trên màn hình học sinh */
+        body.student-mode .btn-top.ai-badge,
+        body.student-mode #modal-gemini-config,
+        body.student-mode #btn-gemini-header-status {
+            display: none !important;
+        }
+
+        /* Thanh chuyển Tab trên Bàn Học Sinh */
+        .student-tab-switcher {
+            display: flex;
+            width: 100%;
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 3px;
+            gap: 4px;
+            margin-bottom: 6px;
+        }
+        .student-tab-btn {
+            flex: 1;
+            padding: 6px 4px;
+            text-align: center;
+            font-size: 0.76rem;
+            font-weight: 800;
+            background: transparent;
+            color: #94a3b8;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .student-tab-btn.active {
+            background: #0284c7;
+            color: white;
+            box-shadow: 0 2px 8px rgba(2, 132, 199, 0.4);
+        }
+
+        /* Khung Chat Socrates AI dành cho Học Sinh */
+        .student-ai-container {
+            display: none;
+            flex-direction: column;
+            width: 100%;
+            height: calc(var(--app-height) - 170px);
+            background: #0f172a;
+            border: 1.5px solid var(--cyan);
+            border-radius: 10px;
+            overflow: hidden;
+            box-sizing: border-box;
+        }
+        .student-ai-container.active {
+            display: flex;
+        }
+        .student-chat-box {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            background: #0b1120;
+        }
+        .student-chat-input-row {
+            display: flex;
+            padding: 6px 8px;
+            background: #1e293b;
+            border-top: 1px solid #334155;
+            gap: 6px;
+        }
+
+        /* Bộ lọc nhóm dành cho Giáo viên (View 4) */
+        .teacher-group-filter-bar {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 10px;
+            background: rgba(15,23,42,0.85);
+            border: 1px solid #334155;
+            border-radius: 8px;
+            margin-bottom: 6px;
+            overflow-x: auto;
+        }
+        .grp-filter-btn {
+            padding: 3px 8px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            background: #1e293b;
+            color: #cbd5e1;
+            border: 1px solid #475569;
+            border-radius: 5px;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+        .grp-filter-btn.active {
+            background: #fbbf24;
+            color: #0f172a;
+            border-color: #f59e0b;
+            font-weight: 800;
+        }
+        .chat-grp-badge {
+            font-size: 0.68rem;
+            font-weight: 800;
+            padding: 1px 6px;
+            border-radius: 4px;
+            margin-right: 4px;
+            display: inline-block;
+        }
+
 </style>
 </head>
 <body>
@@ -1199,12 +1596,12 @@
 
         <div class="header-controls">
             <select id="header-lesson-select" class="lesson-select" onchange="onHeaderLessonChange(this.value)">
-                <option value="bai1">Bài 1: Cấu trúc chất & Động học phân tử khí</option>
-                <option value="bai2">Bài 2: Định luật Boyle (Đẳng nhiệt)</option>
-                <option value="bai3">Bài 3: Đo nhiệt dung riêng của nước</option>
-                <option value="bai4">Bài 4: Đo nhiệt hóa hơi riêng của nước</option>
-                <option value="bai5" selected>Bài 5: Đo nhiệt nóng chảy riêng nước đá (λ)</option>
-                <option value="bai6">Bài 6: Khí thực và phương trình Van der Waals</option>
+                <option value="bai1">Bài 1: Cấu trúc của chất. Sự chuyển thể</option>
+                <option value="bai2">Bài 2: Nội năng. Định luật I của NĐLH</option>
+                <option value="bai3">Bài 3: Nhiệt độ. Thang nhiệt độ – nhiệt kế</option>
+                <option value="bai4">Bài 4: Nhiệt dung riêng</option>
+                <option value="bai5" selected>Bài 5: Nhiệt nóng chảy riêng (Bài thi GVDG)</option>
+                <option value="bai6">Bài 6: Nhiệt hoá hơi riêng</option>
             </select>
 
             <button class="btn-top ai-badge" id="btn-gemini-header-status" onclick="openGeminiModal()">
@@ -1219,23 +1616,32 @@
 
     <!-- 2. THANH CHUYỂN CHỨC NĂNG 1 CỬA SỔ DUY NHẤT -->
     <nav class="function-nav-bar">
-        <button class="func-tab-btn active" id="tab-btn-qr" onclick="switchFunctionView('qr')">
-            📡 1. Sảnh QR Điểm Danh
+        <button class="func-tab-btn active" id="tab-btn-intro" onclick="switchFunctionView('intro')">
+            🎬 1. Mở Đầu & Khởi Động
+        </button>
+        <button class="func-tab-btn" id="tab-btn-qr" onclick="switchFunctionView('qr')">
+            📱 2. Sảnh QR Kết Nối
         </button>
         <button class="func-tab-btn" id="tab-btn-teacher" onclick="switchFunctionView('teacher')">
-            🎛️ 2. Điều Khiển Giáo Viên
+            🎛️ 3. Điều Khiển GV & Detox
         </button>
         <button class="func-tab-btn" id="tab-btn-socrates" onclick="switchFunctionView('socrates')">
-            🤖 3. Gia Sư AI Socrates
+            🤖 4. Gia Sư AI Socrates
         </button>
         <button class="func-tab-btn" id="tab-btn-lab" onclick="switchFunctionView('lab')">
-            🧪 4. Thí Nghiệm & Số Liệu
+            🧪 5. Thí Nghiệm & Số Liệu
         </button>
         <button class="func-tab-btn" id="tab-btn-arena" onclick="switchFunctionView('arena')">
-            🎮 5. Đấu Trường Chuông Vàng
+            🎮 6. Đấu Trường Chuông Vàng
         </button>
-        <button class="func-tab-btn" id="tab-btn-student" onclick="switchFunctionView('student')">
-            📱 6. Bàn Học Sinh
+        <button class="func-tab-btn" id="tab-btn-outro" onclick="switchFunctionView('outro')">
+            🏆 7. Tổng Kết & Vinh Danh
+        </button>
+        <button class="func-tab-btn" id="btn-spotlight-toggle" onclick="toggleSpotlight()" style="margin-left: auto; background: rgba(234, 179, 8, 0.15); border: 1px solid var(--gold); color: var(--gold); font-weight: 800;">
+            🔍 Tiêu Điểm: BẬT
+        </button>
+        <button class="func-tab-btn" id="tab-btn-student" onclick="switchFunctionView('student')" style="margin-left: 6px; background: rgba(56, 189, 248, 0.15); border: 1px solid var(--cyan); color: var(--cyan);">
+            💻 Màn Hình Bàn Học Sinh
         </button>
     </nav>
 
@@ -1243,7 +1649,122 @@
     <main class="view-container">
 
         <!-- VIEW 1: SẢNH QR & CẤU HÌNH NHÓM (3 CỘT FIT-TO-SCREEN) -->
-        <section class="single-view active" id="view-qr">
+                <!-- VIEW 0: MỞ ĐẦU BÀI HỌC (VIEW-INTRO) -->
+        <section class="single-view active" id="view-intro">
+            <div class="intro-view-body">
+                <!-- CỘT TRÁI (380px): BANNER THI GVDG & BÀI HỌC -->
+                <div class="intro-hero-banner">
+                    <div>
+                        <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
+                            <span class="badge" style="background:var(--gold); color:#0a1f44; font-size:0.75rem;">SỞ GD&ĐT THÁI NGUYÊN</span>
+                            <span style="font-size:0.72rem; color:#38bdf8; font-weight:700;">HỘI THI GVDG CẤP TỈNH 2026 - 2027</span>
+                        </div>
+                        <h2 id="intro-lesson-title" style="font-size:1.2rem; font-weight:900; color:#fff; line-height:1.25; margin-bottom:4px;">
+                            BÀI 5: NHIỆT NÓNG CHẢY RIÊNG
+                        </h2>
+                        <div style="font-size:0.78rem; color:#cbd5e1; margin-bottom:8px;">
+                            Vật lí 12 – Bộ sách <em>Kết nối tri thức với cuộc sống</em> (tr. 24 - 26)
+                        </div>
+
+                        <div class="intro-teacher-card" style="background:rgba(15,23,42,0.8); border:1px solid #1e293b; border-radius:8px; padding:8px 10px; margin-bottom:8px;">
+                            <div style="font-size:0.74rem; color:#94a3b8;">Giáo viên dự thi:</div>
+                            <div style="font-size:0.95rem; font-weight:800; color:var(--gold);">Thầy TRẦN MẠNH TÙNG</div>
+                            <div style="font-size:0.75rem; color:#38bdf8;">Trường THPT Chuyên Thái Nguyên</div>
+                        </div>
+
+                        <div style="background:rgba(2,132,199,0.15); border-left:3px solid var(--cyan); padding:6px 8px; border-radius:0 6px 6px 0; margin-bottom:8px;">
+                            <div style="font-size:0.72rem; font-weight:800; color:var(--cyan); text-transform:uppercase;">Quy trình 7 pha S-O-C-R-A-T-E-S</div>
+                            <div style="font-size:0.72rem; color:#e2e8f0; line-height:1.2;">
+                                Kết hợp An sinh số (Screen Detox) – Điều hành trọn gói trên 1 trình duyệt.
+                            </div>
+                        </div>
+
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px; font-size:0.72rem;">
+                            <div style="background:#090e1c; padding:6px; border-radius:6px; border:1px solid #1e293b;">
+                                <span style="color:#94a3b8;">Đối tượng:</span> <strong style="color:#fff;">12 Chuyên (30 HS)</strong>
+                            </div>
+                            <div style="background:#090e1c; padding:6px; border-radius:6px; border:1px solid #1e293b;">
+                                <span style="color:#94a3b8;">Thời lượng:</span> <strong style="color:var(--gold);">45 Phút</strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="margin-top:auto; display:flex; flex-direction:column; gap:6px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; background:#090e1c; padding:6px 10px; border-radius:6px; border:1px solid #233354;">
+                            <span style="font-size:0.75rem; color:#94a3b8;">Đồng hồ tiết dạy:</span>
+                            <span id="intro-countdown" style="font-size:1.1rem; font-weight:900; color:var(--gold); font-family:monospace;">45:00</span>
+                        </div>
+                        <button class="btn-intro-start" onclick="startLessonFromIntro()">
+                            <span>🚀 BẮT ĐẦU TIẾT DẠY – VÀO BƯỚC 1</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- CỘT PHẢI: SÂN KHẤU KHƠI GỢI MÂU THUẪN (PHA 1: SPARK) -->
+                <div class="intro-paradox-stage">
+                    <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #1e293b; padding-bottom:6px;">
+                        <div>
+                            <span class="badge" style="background:#ef4444; color:#fff; font-size:0.7rem; margin-right:6px;">🔴 PHA 1: SPARK</span>
+                            <strong style="color:#38bdf8; font-size:0.92rem;">KHỞI ĐỘNG: KHAI HỎA MÂU THUẪN NHẬN THỨC VĨ MÔ</strong>
+                        </div>
+                        <span style="font-size:0.74rem; color:#cbd5e1; background:rgba(239,68,68,0.2); border:1px solid #ef4444; padding:2px 8px; border-radius:4px; font-weight:700;">
+                            🔒 SCREEN-DOWN (HỌC SINH GẬP MÁY)
+                        </span>
+                    </div>
+
+                    <!-- Khung tương tác thí nghiệm khơi gợi -->
+                    <div class="intro-sim-container">
+                        <div class="intro-exp-visual">
+                            <canvas id="intro-canvas-sim" width="380" height="210" style="background:#060a14; border-radius:8px; border:1px solid #1e293b; display:block;"></canvas>
+                            <div style="display:flex; justify-content:center; gap:8px; margin-top:6px;">
+                                <button id="btn-intro-heat" class="btn-qr-action gold" onclick="toggleIntroHeating()">
+                                    ⚡ Bật bếp điện đun nước đá
+                                </button>
+                                <button class="btn-qr-action" onclick="resetIntroHeating()">
+                                    🔄 Đặt lại (0s)
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="intro-sensor-box">
+                            <div style="font-size:0.75rem; font-weight:800; color:var(--cyan); text-transform:uppercase; margin-bottom:4px;">
+                                📊 CẢM BIẾN NHIỆT ĐỘ SỐ (CAMERA TRỰC TIẾP)
+                            </div>
+                            <div class="intro-digital-gauge">
+                                <div id="intro-temp-display" class="gauge-digits">0,0 °C</div>
+                                <div id="intro-temp-status" class="gauge-sub">TRẠNG THÁI: ĐỨNG YÊN (KHÔNG ĐỔI)</div>
+                            </div>
+                            
+                            <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-top:8px; font-size:0.72rem;">
+                                <div style="background:#090e1c; padding:4px 6px; border-radius:4px; border:1px solid #1e293b;">
+                                    <span style="color:#94a3b8;">Khối lượng đá:</span> <strong style="color:#fff;">m = 250 g</strong>
+                                </div>
+                                <div style="background:#090e1c; padding:4px 6px; border-radius:4px; border:1px solid #1e293b;">
+                                    <span style="color:#94a3b8;">Thời gian đun:</span> <strong id="intro-time-display" style="color:#38bdf8;">0 s</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Hộp nghịch lý và nút hành động -->
+                    <div class="intro-callout-footer">
+                        <div class="intro-paradox-callout">
+                            <div style="font-weight:900; color:var(--gold); font-size:0.85rem; margin-bottom:2px;">
+                                ❓ CÂU HỎI KHƠI GỢI NGHỊCH LÝ NHẬN THỨC:
+                            </div>
+                            <p id="intro-paradox-text" style="font-size:0.82rem; color:#f1f5f9; line-height:1.35; margin:0;">
+                                "Bếp điện liên tục cấp nhiệt lượng khổng lồ vào cốc từng giây, tại sao nhiệt kế không hề nhúc nhích lấy 0,1°C? Nhiệt lượng đó đã biến mất đi đâu? Năng lượng có còn được bảo toàn không?"
+                            </p>
+                        </div>
+                        <button class="btn-intro-next-step" onclick="switchFunctionView('qr')">
+                            <span>📲 MỞ PHÒNG HỌC & CHIẾU MÃ QR (PHA 2) ➔</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="single-view" id="view-qr">
             <div class="qr-view-body">
                 <!-- CỘT 1: MÃ QR THẬT & BỘ CHỌN ĐƯỜNG LINK THÔNG MINH -->
                 <div class="qr-hero-card">
@@ -1407,7 +1928,7 @@
                     <div class="ai-status-left">
                         <span>🤖 GIA SƯ SOCRATES VẬT LÍ 12</span>
                         <span id="socrates-engine-badge" style="background:#4338ca; color:#c7d2fe; padding:2px 8px; border-radius:12px; font-size:0.75rem;">
-                            Model: gemini-1.5-flash
+                            Model: gemini-3.7-flash (Khuyên dùng)
                         </span>
                         <span id="socrates-conn-status" style="color:#10b981; font-size:0.78rem;">
                             🟢 Sẵn sàng
@@ -1417,6 +1938,18 @@
                         <button class="btn-top" style="padding:3px 8px; font-size:0.75rem;" onclick="clearSocratesChat()">🧹 Xóa Chat</button>
                         <button class="btn-top ai-badge" style="padding:3px 10px; font-size:0.75rem;" onclick="openGeminiModal()">🔑 Cài Đặt Gemini Key</button>
                     </div>
+                </div>
+
+                <!-- BỘ LỌC HỘI THOẠI 6 NHÓM DÀNH CHO GIÁO VIÊN -->
+                <div class="teacher-group-filter-bar">
+                    <span style="font-size:0.72rem; font-weight:800; color:#fbbf24; white-space:nowrap;">LỌC HỘI THOẠI:</span>
+                    <button class="grp-filter-btn active" id="btn-filter-all" onclick="filterTeacherSocratesChat('all')">🌐 Tất Cả Nhóm</button>
+                    <button class="grp-filter-btn" id="btn-filter-1" onclick="filterTeacherSocratesChat(1)">Nhóm 1</button>
+                    <button class="grp-filter-btn" id="btn-filter-2" onclick="filterTeacherSocratesChat(2)">Nhóm 2</button>
+                    <button class="grp-filter-btn" id="btn-filter-3" onclick="filterTeacherSocratesChat(3)">Nhóm 3</button>
+                    <button class="grp-filter-btn" id="btn-filter-4" onclick="filterTeacherSocratesChat(4)">Nhóm 4</button>
+                    <button class="grp-filter-btn" id="btn-filter-5" onclick="filterTeacherSocratesChat(5)">Nhóm 5</button>
+                    <button class="grp-filter-btn" id="btn-filter-6" onclick="filterTeacherSocratesChat(6)">Nhóm 6</button>
                 </div>
 
                 <!-- GỢI Ý CÂU HỎI TRUY VẤN THEO BÀI HỌC -->
@@ -1437,46 +1970,97 @@
             </div>
         </section>
 
-        <!-- VIEW 4: THÍ NGHIỆM SỐ BƯỚC 4 -->
+        <!-- VIEW 4: THÍ NGHIỆM SỐ & ĐA PHƯƠNG TIỆN -->
         <section class="single-view" id="view-lab">
-            <div class="lab-view-body">
-                <div class="lab-card">
-                    <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <span class="card-title">🧪 MÔ PHỎNG SỐ & VIDEO THỰC NGHIỆM</span>
+            <div class="lab-view-body" style="grid-template-columns: 1.18fr 0.82fr;">
+                <!-- CỘT TRÁI: HỆ SINH THÁI ĐA HỌC LIỆU (3 TRONG 1) -->
+                <div class="lab-card" id="lab-card-media">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <span class="card-title" id="sim-active-title">🧪 THÍ NGHIỆM SỐ & ĐA PHƯƠNG TIỆN</span>
+                            <span class="badge" id="sim-badge-mode" style="background:#0284c7; color:white; font-size:0.7rem;">MÔ PHỎNG 60FPS</span>
+                        </div>
                         <div class="step4-mode-tabs">
-                            <button class="step4-mode-btn active" id="btn-mode-canvas" onclick="setLabMode('canvas')">Mô Phỏng</button>
-                            <button class="step4-mode-btn" id="btn-mode-video" onclick="setLabMode('video')">Video 60fps</button>
+                            <button class="step4-mode-btn active" id="btn-mode-canvas" onclick="setLabMode('canvas')">🧪 1. Mô Phỏng Tương Tác</button>
+                            <button class="step4-mode-btn" id="btn-mode-video" onclick="setLabMode('video')">🎥 2. Video Thí Nghiệm</button>
+                            <button class="step4-mode-btn" id="btn-mode-micro" onclick="setLabMode('micro')">🖼️ 3. Vi Mô & TISCO</button>
                         </div>
                     </div>
 
+                    <!-- TAB 1: MÔ PHỎNG SỐ TƯƠNG TÁC CAO -->
                     <div class="sim-canvas-box" id="sim-canvas-box">
-                        <canvas id="simCanvas" width="500" height="240"></canvas>
-                        <div style="display:flex; gap:6px; margin-top:2px;">
-                            <button class="sim-btn" onclick="toggleSimulationRun()">⏯️ Chạy/Dừng</button>
-                            <button class="sim-btn" onclick="resetSimulation()">🔄 Đo Lại</button>
+                        <canvas id="simCanvas" width="550" height="250"></canvas>
+                        <!-- Thanh điều khiển mô phỏng tương tác -->
+                        <div class="sim-toolbar" style="display:flex; align-items:center; justify-content:space-between; width:100%; padding:3px 6px; background:rgba(15,23,42,0.8); border-radius:6px; border:1px solid #1e293b; font-size:0.76rem;">
+                            <div style="display:flex; gap:5px; align-items:center;">
+                                <button class="sim-btn" id="btn-sim-play" onclick="toggleSimulationRun()">▶ Bắt Đầu</button>
+                                <button class="sim-btn" style="background:#475569;" onclick="resetSimulation()">🔄 Đo Lại</button>
+                                <div style="display:flex; gap:3px; margin-left:4px;">
+                                    <button class="speed-btn active" id="btn-spd-1" onclick="setSimSpeed(1)">1x</button>
+                                    <button class="speed-btn" id="btn-spd-2" onclick="setSimSpeed(2)">2x</button>
+                                    <button class="speed-btn" id="btn-spd-5" onclick="setSimSpeed(5)">5x</button>
+                                </div>
+                            </div>
+                            <div style="display:flex; gap:8px; align-items:center; color:#94a3b8;">
+                                <label style="display:flex; align-items:center; gap:2px;">
+                                    <span>P:</span>
+                                    <input type="number" id="inp-sim-power" value="14.24" step="0.5" style="width:52px; background:#0f172a; color:#38bdf8; border:1px solid #334155; border-radius:4px; padding:2px 3px; font-weight:700; text-align:center;" onchange="updateSimParams()">
+                                    <span>W</span>
+                                </label>
+                                <label style="display:flex; align-items:center; gap:2px;">
+                                    <span>m:</span>
+                                    <input type="number" id="inp-sim-mass" value="250" step="10" style="width:48px; background:#0f172a; color:#4ade80; border:1px solid #334155; border-radius:4px; padding:2px 3px; font-weight:700; text-align:center;" onchange="updateSimParams()">
+                                    <span>g</span>
+                                </label>
+                                <span id="sim-status-label" style="font-weight:700; color:var(--cyan); min-width:85px; text-align:right;">⏱️ 00:00 / 0.0°C</span>
+                            </div>
                         </div>
                     </div>
 
+                    <!-- TAB 2: VIDEO THÍ NGHIỆM ĐỘNG HỌC 60FPS CHÂN THỰC -->
                     <div class="sim-canvas-box" id="sim-video-box" style="display:none;">
-                        <canvas id="videoCanvas" width="500" height="240"></canvas>
-                        <div style="display:flex; gap:6px; margin-top:2px;">
-                            <button class="sim-btn" onclick="toggleVideoPlayback()">⏯️ Video Thực Nghiệm</button>
-                            <button class="sim-btn" onclick="resetVideoPlayback()">⏮️ Tua Đầu</button>
+                        <canvas id="videoCanvas" width="550" height="240"></canvas>
+                        <!-- Thanh tua video & các mốc chương -->
+                        <div style="width:100%; display:flex; flex-direction:column; gap:3px; background:rgba(15,23,42,0.85); border-radius:6px; padding:3px 6px; border:1px solid #1e293b;">
+                            <div style="display:flex; align-items:center; gap:6px;">
+                                <button class="sim-btn" id="btn-lab-video-play" onclick="toggleLabVideoPlay()" style="padding:2px 8px; font-size:0.75rem;">▶ Phát</button>
+                                <input type="range" id="lab-video-slider" min="0" max="600" value="0" step="1" oninput="onVideoScrub(this.value)" style="flex:1; accent-color:var(--cyan); cursor:pointer;">
+                                <span id="lab-video-time" style="font-family:monospace; font-weight:700; font-size:0.74rem; color:#f1f5f9; min-width:75px; text-align:right;">00:00 / 10:00</span>
+                            </div>
+                            <div id="lab-video-chapters" style="display:flex; gap:3px; overflow-x:auto; padding-top:2px;">
+                                <!-- Nạp mốc chương bằng JS -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TAB 3: TRANH ẢNH VI MÔ & LÒ HỒ QUANG TISCO THÁI NGUYÊN -->
+                    <div class="sim-canvas-box" id="sim-micro-box" style="display:none;">
+                        <canvas id="microCanvas" width="550" height="240"></canvas>
+                        <div style="display:flex; justify-content:space-between; align-items:center; width:100%; background:rgba(15,23,42,0.85); border-radius:6px; padding:3px 6px; border:1px solid #1e293b;">
+                            <div style="display:flex; gap:5px;">
+                                <button class="sim-btn active" id="btn-micro-lattice" onclick="setMicroSubMode('lattice')">❄️ Mạng Tinh Thể Đá (H₂O)</button>
+                                <button class="sim-btn" id="btn-micro-tisco" onclick="setMicroSubMode('tisco')" style="background:#475569;">🏭 Lò Hồ Quang TISCO</button>
+                            </div>
+                            <div id="micro-controls-lattice" style="display:flex; align-items:center; gap:6px;">
+                                <button class="sim-btn" id="btn-toggle-heat" onclick="toggleMicroHeat()" style="background:#dc2626; font-size:0.75rem;">🔥 Cấp Nhiệt Lượng Q: TẮT</button>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="lab-card">
-                    <div class="card-title">
-                        <span>📊 BẢNG SỐ LIỆU SGK KẾT NỐI TRI THỨC</span>
+                <!-- CỘT PHẢI: BẢNG SỐ LIỆU SGK & TÍNH TOÁN SAI SỐ -->
+                <div class="lab-card" id="lab-card-data">
+                    <div class="card-title" style="display:flex; justify-content:space-between; align-items:center;">
+                        <span id="sim-data-title">📊 BẢNG SỐ LIỆU KNTT & ĐỐI CHIẾU CHUẨN</span>
+                        <span class="badge" style="background:#059669; color:white; font-size:0.7rem;">SGK VẬT LÍ 12</span>
                     </div>
 
-                    <div style="overflow-y:auto; flex:1; min-height:0;">
+                    <div style="overflow-y:auto; flex:1; min-height:0; display:flex; flex-direction:column; gap:6px;">
                         <div id="lab-data-table-container">
-                            <!-- Bảng số liệu nạp động -->
+                            <!-- Bảng số liệu nạp động từ simConfigs -->
                         </div>
-                        <div style="background: rgba(0,0,0,0.3); border-radius: 6px; padding: 6px; margin-top: 6px; font-size: 0.76rem; color: #cbd5e1;">
-                            📐 <strong>Công thức tính:</strong> <span id="lab-formula-box" style="color:var(--gold); font-weight:800;">λ = Q / m = (P · t) / m</span>
+                        <div id="sim-calc-container" style="background: rgba(0,0,0,0.35); border: 1px solid #334155; border-radius: 8px; padding: 6px 8px; font-size: 0.76rem; color: #cbd5e1;">
+                            📐 <strong>Công thức tính:</strong> <span id="lab-formula-box" style="color:var(--gold); font-weight:800;">λ = Q / m = (P · τ) / m</span>
                         </div>
                     </div>
 
@@ -1536,39 +2120,222 @@
         </section>
 
         <!-- VIEW 6: BÀN HỌC SINH -->
-        <section class="single-view" id="view-student">
-            <div class="student-view-body">
-                <div class="student-group-config-bar">
-                    <div style="display:flex; align-items:center; gap:8px;">
-                        <span style="font-weight:800; color:var(--gold); font-size:0.85rem;">NHÓM CỦA BẠN:</span>
-                        <select id="student-group-select" class="lesson-select" onchange="onStudentGroupChange(this.value)">
-                            <!-- Nạp danh sách nhóm -->
+        <section class="single-view" id="view-student" style="flex-direction:column; padding:0;">
+            <!-- THANH TIÊU ĐỀ HỌC SINH SIÊU TINH GỌN (KHÔNG CÓ NÚT CÀI ĐẶT KEY/MODEL) -->
+            <div class="student-header-banner">
+                <div style="display:flex; align-items:center; gap:8px;">
+                    <span class="badge" style="font-size:0.68rem; padding:2px 6px;">THPT CHUYÊN THÁI NGUYÊN</span>
+                    <span style="font-weight:800; font-size:0.85rem; color:var(--cyan);">📱 BÀN HỌC SINH</span>
+                </div>
+                <div style="display:flex; align-items:center; gap:6px;">
+                    <span id="student-active-badge-tag" style="background:#10b981; color:#042f2e; font-weight:800; font-size:0.75rem; padding:2px 8px; border-radius:12px;">Nhóm 01</span>
+                </div>
+            </div>
+
+            <!-- NỘI DUNG BÀN HỌC SINH (FIT KHÍT MÀN HÌNH DỌC) -->
+            <div class="student-mobile-layout">
+                <!-- KHUNG CHỌN VÀ ĐẶT TÊN NHÓM -->
+                <div class="student-mobile-controls">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <span style="font-size:0.72rem; color:#94a3b8; font-weight:700; text-transform:uppercase;">CHỌN SỐ THỨ TỰ NHÓM:</span>
+                        <select id="student-group-select" class="lesson-select" style="font-size:0.75rem; padding:2px 6px;" onchange="onStudentGroupChange(this.value)">
+                            <!-- Dynamic options -->
                         </select>
                     </div>
 
-                    <div style="display:flex; align-items:center; gap:6px;">
-                        <span style="font-size:0.8rem; color:#cbd5e1;">Tên nhóm:</span>
-                        <input type="text" id="student-group-name-input" value="Chiến Binh Nhiệt Học" style="background:#090e1c; border:1px solid var(--cyan); color:white; padding:4px 8px; border-radius:4px; font-size:0.82rem; width:160px; outline:none;">
-                        <button class="btn-qr-action gold" onclick="saveStudentGroupName()">💾 Lưu Tên</button>
+                    <!-- 6 Nút chọn nhanh Pill -->
+                    <div id="student-group-pills" class="group-pills-row">
+                        <!-- Render 6 pills -->
+                    </div>
+
+                    <!-- Đặt tên nhóm -->
+                    <div class="student-name-edit-row">
+                        <input type="text" id="student-group-name-input" value="Chiến Binh Nhiệt Học" placeholder="Nhập biệt danh riêng của nhóm..." style="flex:1; background:#090e1c; border:1.5px solid var(--cyan); color:white; padding:5px 8px; border-radius:6px; font-size:0.8rem; outline:none;">
+                        <button class="btn-qr-action gold" style="padding:5px 10px; font-weight:800; font-size:0.76rem; border-radius:6px; white-space:nowrap;" onclick="saveStudentGroupName()">💾 Lưu Tên</button>
                     </div>
                 </div>
 
-                <div style="text-align:center;">
-                    <h2 id="student-desk-title" style="color:var(--cyan); font-size:1.15rem; font-weight:800;">
-                        📱 BÀN HỌC SINH – NHÓM 01: CHIẾN BINH NHIỆT HỌC
-                    </h2>
-                    <p style="color:#94a3b8; font-size:0.8rem; margin-top:2px;">
-                        Nhấn nút Chuông dưới đây để cướp quyền trả lời trong phần Đấu Trường Chuông Vàng!
-                    </p>
+                <!-- BỘ CHUYỂN ĐỔI 2 CHỨC NĂNG HỌC TẬP -->
+                <div class="student-tab-switcher">
+                    <button class="student-tab-btn active" id="btn-tab-buzzer" onclick="switchStudentTab('buzzer')">🔔 Đấu Trường Chuông Vàng</button>
+                    <button class="student-tab-btn" id="btn-tab-ai" onclick="switchStudentTab('ai')">🤖 Gia Sư AI Socrates (Nhóm)</button>
                 </div>
 
-                <button class="btn-buzzer-huge" onclick="handleStudentDeskBuzzer()">
-                    <span style="font-size:2.2rem;">🔔</span>
-                    <span>BẤM CHUÔNG GIÀNH QUYỀN TRẢ LỜI</span>
-                </button>
+                <!-- TAB 1: CHUÔNG BẤM CƯỚP QUYỀN ĐẤU TRƯỜNG -->
+                <div class="student-buzzer-zone" id="student-pane-buzzer">
+                    <div style="text-align:center; margin-bottom:4px;">
+                        <h2 id="student-desk-title" style="color:var(--cyan); font-size:1.02rem; font-weight:800; margin:0;">
+                            NHÓM 01: CHIẾN BINH NHIỆT HỌC
+                        </h2>
+                        <div style="color:#94a3b8; font-size:0.75rem; margin-top:2px;">
+                            Chạm nút Chuông để cướp quyền trong Đấu Trường!
+                        </div>
+                    </div>
 
-                <div id="student-desk-feedback" style="font-size:0.92rem; font-weight:800; color:#10b981; min-height:24px; text-align:center;">
-                    🟢 Trạng thái: Sẵn sàng tham gia học tập
+                    <button class="btn-buzzer-huge" id="btn-student-buzzer" onclick="handleStudentDeskBuzzer()">
+                        <div class="buzzer-icon">🔔</div>
+                        <div class="buzzer-label">BẤM CHUÔNG</div>
+                        <div class="buzzer-sub">GIÀNH QUYỀN TRẢ LỜI</div>
+                    </button>
+
+                    <div id="student-desk-feedback" class="student-feedback-box">
+                        🟢 Trạng thái: Sẵn sàng tham gia học tập
+                    </div>
+                </div>
+
+                <!-- TAB 2: GIA SƯ AI SOCRATES DÀNH CHO NHÓM HỌC SINH -->
+                <div class="student-ai-container" id="student-pane-ai">
+                    <div style="padding:6px 10px; background:#1e293b; border-bottom:1px solid #334155; display:flex; justify-content:space-between; align-items:center;">
+                        <span style="font-size:0.75rem; font-weight:800; color:#38bdf8;">🤖 GIA SƯ SOCRATES - NHÓM HỎI ĐÁP</span>
+                        <span id="student-ai-status-tag" style="font-size:0.68rem; color:#10b981;">🟢 Trực tuyến</span>
+                    </div>
+
+                    <div class="student-chat-box" id="student-socrates-chat-box">
+                        <div class="chat-msg ai">
+                            🤖 <strong>Gia sư Socrates:</strong> Xin chào các em! Thầy đồng hành cùng nhóm để đào sâu bản chất vi mô Vật lí 12. Nhóm có câu hỏi hay thắc mắc gì về bài học không?
+                        </div>
+                    </div>
+
+                    <!-- Gợi ý câu hỏi nhanh -->
+                    <div class="ai-chip-bar" id="student-socrates-chips" style="padding:4px; max-height:45px; overflow-x:auto;">
+                        <!-- Render dynamic chips for student -->
+                    </div>
+
+                    <div class="student-chat-input-row">
+                        <input type="text" id="student-socrates-input" placeholder="Nhập câu hỏi của nhóm để trao đổi với Socrates AI..." style="flex:1; background:#090e1c; border:1px solid var(--cyan); color:white; padding:6px 8px; border-radius:6px; font-size:0.78rem; outline:none;" onkeydown="if(event.key==='Enter') handleStudentSendSocrates()">
+                        <button class="btn-top" style="background:#0284c7; border:none; padding:6px 12px; font-weight:800; font-size:0.78rem;" onclick="handleStudentSendSocrates()">Gửi 💬</button>
+                    </div>
+                </div>
+
+                <div style="font-size:0.68rem; color:#64748b; text-align:center; padding:3px 0;">
+                    Vật lí 12 – Trường THPT Chuyên Thái Nguyên • Quy trình 5 bước kết hợp AI
+                </div>
+            </div>
+        </section>
+
+    
+        <!-- VIEW 7: TỔNG KẾT & VINH DANH (VIEW-OUTRO) -->
+        <section class="single-view" id="view-outro">
+            <div class="outro-view-body">
+                <!-- CỘT 1 (310px): BẢN ĐỒ TRI THỨC HẠT NHÂN -->
+                <div class="outro-card">
+                    <div>
+                        <div style="font-size:0.75rem; font-weight:900; color:var(--cyan); text-transform:uppercase; margin-bottom:4px; display:flex; align-items:center; gap:6px;">
+                            <span>🧠 BẢN ĐỒ TRI THỨC HẠT NHÂN</span>
+                        </div>
+                        <h3 style="font-size:0.95rem; color:#fff; margin-bottom:8px;" id="outro-summary-title">Bài 5: Nhiệt Nóng Chảy Riêng</h3>
+
+                        <div class="outro-knowledge-item">
+                            <div class="ki-label">1. ĐỊNH NGHĨA & CÔNG THỨC:</div>
+                            <div class="ki-formula">
+                                <span style="color:var(--gold); font-size:1.05rem; font-weight:900;">Q = λ · m</span>
+                                <span style="color:#94a3b8; font-size:0.85rem;">&DoubleRightArrow;</span>
+                                <span style="color:#38bdf8; font-size:1.05rem; font-weight:900;">λ = Q / m</span>
+                            </div>
+                            <div style="font-size:0.72rem; color:#cbd5e1; margin-top:2px;">
+                                Đơn vị trong hệ SI: <strong>J/kg</strong> (Jun trên kilôgam).
+                            </div>
+                        </div>
+
+                        <div class="outro-knowledge-item" style="margin-top:6px;">
+                            <div class="ki-label">2. BẢN CHẤT VI MÔ (MẠNG TINH THỂ):</div>
+                            <div style="font-size:0.74rem; color:#e2e8f0; line-height:1.3;">
+                                &bull; Động năng phân tử không đổi &rArr; <strong>Nhiệt độ không đổi</strong> (0,0°C).<br>
+                                &bull; Thế năng phân tử tăng &rArr; <strong>Phá vỡ mạng tinh thể</strong> băng.
+                            </div>
+                        </div>
+
+                        <div class="outro-knowledge-item" style="margin-top:6px;">
+                            <div class="ki-label">3. THỰC NGHIỆM KNTT & SAI SỐ:</div>
+                            <div style="font-size:0.72rem; color:#cbd5e1; line-height:1.25;">
+                                &bull; λ<sub>TN</sub> = 3,42·10⁵ J/kg (Lệch +2,3% so với 3,34·10⁵ J/kg).<br>
+                                &bull; Sai số do nhiệt vỏ bình xốp &amp; đá tan tự nhiên.<br>
+                                &bull; Khắc phục: <strong>Phương pháp đo vi sai bù trừ</strong>.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="background:rgba(255,213,79,0.1); border:1px solid var(--gold); border-radius:6px; padding:6px; font-size:0.72rem; color:#ffd54f;">
+                        💡 <strong>Ý nghĩa thực tế:</strong> Tuyết tan thu nhiệt khổng lồ gây rét buốt; tối ưu lò điện hồ quang TISCO Thái Nguyên.
+                    </div>
+                </div>
+
+                <!-- CỘT 2 (1fr): BỤC VINH DANH PODIUM & BẢNG XẾP HẠNG CHUNG CUỘC -->
+                <div class="outro-card" style="background:linear-gradient(135deg, rgba(17,26,48,0.98) 0%, rgba(13,71,161,0.2) 100%); border:1.5px solid var(--gold);">
+                    <div style="text-align:center; border-bottom:1px solid #233354; padding-bottom:6px;">
+                        <span class="badge" style="background:var(--gold); color:#0a1f44; font-size:0.72rem;">🏆 LỄ VINH DANH GRAND FINALE</span>
+                        <h2 style="font-size:1.15rem; color:#fff; font-weight:900; margin-top:2px;">BẢNG VÀNG DANH DỰ TIẾT HỌC</h2>
+                        <p style="font-size:0.72rem; color:#94a3b8; margin:0;">Tổng hợp điểm Rubric Năng lực số (thang 20) + Đấu trường Nhiệt học (thang 80)</p>
+                    </div>
+
+                    <!-- Bục Podium 3D -->
+                    <div class="outro-podium-container">
+                        <!-- Hạng 2: Bạc -->
+                        <div class="podium-step rank-2" id="podium-rank-2">
+                            <div style="font-size:1.2rem;">🥈</div>
+                            <div style="font-size:0.75rem; font-weight:800;" id="podium-name-2">Nhóm 01</div>
+                            <div style="font-size:0.85rem; font-weight:900; color:#fff;" id="podium-score-2">85 đ</div>
+                            <div style="font-size:0.65rem; color:#cbd5e1;">Á QUÂN 1</div>
+                        </div>
+                        <!-- Hạng 1: Vàng -->
+                        <div class="podium-step rank-1" id="podium-rank-1">
+                            <div style="font-size:1.6rem;">👑</div>
+                            <div style="font-size:0.82rem; font-weight:900; color:#0a1f44;" id="podium-name-1">Nhóm 03</div>
+                            <div style="font-size:1.05rem; font-weight:900; color:#0a1f44;" id="podium-score-1">95 đ</div>
+                            <div style="font-size:0.68rem; color:#0a1f44; font-weight:800;">QUÁN QUÂN 🏆</div>
+                        </div>
+                        <!-- Hạng 3: Đồng -->
+                        <div class="podium-step rank-3" id="podium-rank-3">
+                            <div style="font-size:1.2rem;">🥉</div>
+                            <div style="font-size:0.75rem; font-weight:800;" id="podium-name-3">Nhóm 04</div>
+                            <div style="font-size:0.85rem; font-weight:900; color:#fff;" id="podium-score-3">80 đ</div>
+                            <div style="font-size:0.65rem; color:#ffd8a8;">Á QUÂN 2</div>
+                        </div>
+                    </div>
+
+                    <!-- Bảng xếp hạng mini 6 nhóm -->
+                    <div class="outro-leaderboard-grid" id="outro-leaderboard-list">
+                        <!-- Tự động kết xuất 6 nhóm -->
+                    </div>
+
+                    <div style="display:flex; justify-content:center; gap:8px; margin-top:auto;">
+                        <button class="btn-qr-action gold" style="font-size:0.85rem; padding:6px 14px;" onclick="triggerConfettiCelebration()">
+                            🎉 BẮN PHÁO HOA VINH DANH &amp; NHẠC FANFARE
+                        </button>
+                    </div>
+                </div>
+
+                <!-- CỘT 3 (310px): GIAO NHIỆM VỤ VỀ NHÀ & TRI ÂN -->
+                <div class="outro-card">
+                    <div>
+                        <div style="font-size:0.75rem; font-weight:900; color:var(--emerald); text-transform:uppercase; margin-bottom:4px;">
+                            📝 NHIỆM VỤ VỀ NHÀ &amp; TÀI LIỆU
+                        </div>
+
+                        <div style="background:#090e1c; border:1px solid #1e293b; border-radius:8px; padding:8px; text-align:center; margin-bottom:8px;">
+                            <div id="outro-homework-qr" style="background:#fff; padding:6px; border-radius:6px; display:inline-block; margin-bottom:4px;"></div>
+                            <div style="font-size:0.72rem; color:#38bdf8; font-weight:700;">Quét QR nhận Đề kiểm tra định dạng 2025</div>
+                            <div style="font-size:0.68rem; color:#94a3b8;">Tải Phiếu học tập mở rộng &amp; Tài liệu TISCO</div>
+                        </div>
+
+                        <div style="font-size:0.74rem; color:#cbd5e1; line-height:1.35; margin-bottom:8px;">
+                            <strong style="color:var(--gold);">Dặn dò tiết tới:</strong><br>
+                            1. Hoàn thiện bài tập 5.1 &rarr; 5.5 SGK KNTT tr. 26.<br>
+                            2. Đọc trước <strong>Bài 6: Nhiệt hoá hơi riêng</strong>; tìm hiểu vì sao mồ hôi giúp làm mát cơ thể.
+                        </div>
+                    </div>
+
+                    <div class="outro-tribute-box" style="margin-top:auto; background:linear-gradient(135deg, rgba(15,23,42,0.9) 0%, rgba(30,41,59,0.9) 100%); border:1px solid var(--border); border-radius:8px; padding:8px; text-align:center;">
+                        <div style="font-size:0.72rem; color:#ffd54f; font-weight:800; margin-bottom:2px;">
+                            TRƯỜNG THPT CHUYÊN THÁI NGUYÊN
+                        </div>
+                        <div style="font-size:0.72rem; color:#cbd5e1; line-height:1.25;">
+                            Trân trọng cảm ơn <strong>Ban Giám khảo Hội thi GVDG cấp Tỉnh</strong> và các em học sinh 12 Chuyên!
+                        </div>
+                        <div style="font-size:0.68rem; color:#94a3b8; margin-top:4px;">
+                            Năm học 2026 - 2027 | Tác giả: Trần Mạnh Tùng
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -1964,55 +2731,100 @@ QUY TẮC BẮT BUỘC:
     running: false,
     timer: 0,
     temp: 0,
+    speed: 1,
+    power: 14.24,
+    mass: 0.250,
     particles: [],
     customVal: 0
 };
 
-    function initSimulationUI() {
+function initSimulationUI() {
     const cfg = simConfigs[activeLesson] || simConfigs['bai5'];
-    document.getElementById('sim-active-title').innerText = cfg.title;
-    document.getElementById('sim-data-title').innerText = `📊 ${cfg.title} – Dữ liệu KNTT:`;
-    document.getElementById('sim-data-table-container').innerHTML = cfg.tableHtml;
-    document.getElementById('sim-calc-container').innerHTML = cfg.calcHtml;
+    const activeTitle = document.getElementById('sim-active-title');
+    if (activeTitle) activeTitle.innerText = cfg.title;
+
+    const dataTitle = document.getElementById('sim-data-title');
+    if (dataTitle) dataTitle.innerText = `📊 ${cfg.title} – Dữ liệu KNTT:`;
+
+    const tableBox = document.getElementById('lab-data-table-container') || document.getElementById('sim-data-table-container');
+    if (tableBox) tableBox.innerHTML = cfg.tableHtml;
+
+    const calcBox = document.getElementById('sim-calc-container') || document.getElementById('lab-formula-box');
+    if (calcBox && cfg.calcHtml) {
+        calcBox.innerHTML = cfg.calcHtml;
+    }
 
     initCanvasControls();
     initLabVideoPlayer();
-    startCanvasSimulation('sim-canvas');
+    startCanvasSimulation('simCanvas');
+    if (typeof initMicroViewer === 'function') initMicroViewer();
 }
 
 function initCanvasControls() {
-    const box = document.getElementById('sim-custom-controls');
-    box.innerHTML = `
-        <button class="sim-btn sim-btn-primary" onclick="toggleSimRun()">▶ Bắt đầu / Tạm dừng</button>
-        <button class="sim-btn sim-btn-danger" onclick="resetSimRun()">🔄 Đặt lại</button>
-        <span style="color:#94a3b8; font-size:0.8rem; display:flex; align-items:center; margin-left:8px;" id="sim-status-label">
-            ⏱️ Đang chạy mô phỏng
-        </span>
-    `;
+    const pInp = document.getElementById('inp-sim-power');
+    const mInp = document.getElementById('inp-sim-mass');
+    if (pInp) pInp.value = simState.power || 14.24;
+    if (mInp) mInp.value = (simState.mass ? simState.mass * 1000 : 250);
 }
 
-function toggleSimRun() {
+function toggleSimulationRun() {
     simState.running = !simState.running;
-    const lbl = document.getElementById('sim-status-label');
-    if (lbl) lbl.innerText = simState.running ? '⏱️ Đang chạy mô phỏng' : '⏸️ Tạm dừng';
+    const btn = document.getElementById('btn-sim-play');
+    if (btn) {
+        btn.innerHTML = simState.running ? '⏸ Tạm Dừng' : '▶ Tiếp Tục';
+        btn.style.background = simState.running ? '#e11d48' : '#2563eb';
+    }
 }
 
-function resetSimRun() {
-    simState.running = true;
+function resetSimulation() {
+    simState.running = false;
     simState.timer = 0;
     simState.temp = 0;
+    const btn = document.getElementById('btn-sim-play');
+    if (btn) {
+        btn.innerHTML = '▶ Bắt Đầu';
+        btn.style.background = '#2563eb';
+    }
     const lbl = document.getElementById('sim-status-label');
-    if (lbl) lbl.innerText = '⏱️ Đang chạy mô phỏng';
+    if (lbl) lbl.innerText = '⏱️ 00:00 / 0.0°C';
+}
+
+function setSimSpeed(spd) {
+    simState.speed = spd;
+    ['btn-spd-1', 'btn-spd-2', 'btn-spd-5'].forEach(id => {
+        const b = document.getElementById(id);
+        if (b) b.classList.remove('active');
+    });
+    const activeBtn = document.getElementById(`btn-spd-${spd}`);
+    if (activeBtn) activeBtn.classList.add('active');
+}
+
+function updateSimParams() {
+    const pInp = document.getElementById('inp-sim-power');
+    const mInp = document.getElementById('inp-sim-mass');
+    if (pInp) simState.power = parseFloat(pInp.value) || 14.24;
+    if (mInp) simState.mass = (parseFloat(mInp.value) || 250) / 1000;
+
+    const P = simState.power;
+    const m = simState.mass;
+    const tauM = 600;
+    const Q = P * tauM;
+    const lambdaTN = Q / m;
+    const deltaPercent = (((lambdaTN - 3.34e5) / 3.34e5) * 100).toFixed(1);
+
+    const formBox = document.getElementById('lab-formula-box');
+    if (formBox) {
+        formBox.innerHTML = `λ = Q / m = (${P} · ${tauM}) / ${m.toFixed(3)} = <strong>${lambdaTN.toExponential(2)} J/kg</strong> (Lệch: ${deltaPercent > 0 ? '+' : ''}${deltaPercent}%)`;
+    }
 }
 
 function startCanvasSimulation(canvasId) {
-    const canvas = document.getElementById(canvasId);
+    const canvas = document.getElementById(canvasId) || document.getElementById('simCanvas') || document.getElementById('sim-canvas');
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
 
     if (simAnimationId) cancelAnimationFrame(simAnimationId);
 
-    // Khởi tạo hạt nếu là bài 1
     if (activeLesson === 'bai1' && simState.particles.length === 0) {
         simState.particles = [];
         for (let i = 0; i < 35; i++) {
@@ -2025,8 +2837,6 @@ function startCanvasSimulation(canvasId) {
         }
         simState.pollen = { x: canvas.width / 2, y: canvas.height / 2, vx: 0, vy: 0 };
     }
-
-    simState.running = true;
 
     function render() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -2235,83 +3045,309 @@ function drawBai4(ctx, canvas) {
 }
 
 function drawBai5(ctx, canvas) {
-    ctx.fillStyle = '#0f172a';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    const W = canvas.width;
+    const H = canvas.height;
+    
+    // Nền kỹ thuật số công nghệ cao
+    ctx.fillStyle = '#070c18';
+    ctx.fillRect(0, 0, W, H);
 
-    ctx.fillStyle = '#94a3b8';
-    ctx.font = '12px sans-serif';
-    ctx.fillText('Mô phỏng Nhiệt lượng kế đo λ đá tan (Hình 5.1 & Bảng 5.2 KNTT)', 12, 20);
+    const P = simState.power || 14.24;
+    const m = simState.mass || 0.250; // kg
+    const lambdaChuan = 3.34e5;
+    const tauM = 600; // seconds
 
-    // Cốc nhiệt lượng kế
-    ctx.strokeStyle = '#94a3b8';
-    ctx.lineWidth = 4;
-    ctx.strokeRect(60, 50, 150, 150);
+    // Thời gian thí nghiệm mô phỏng (tau tính bằng giây)
+    const tau = Math.min(720, simState.timer * 8 * (simState.speed || 1));
+    const isMelted = (tau >= tauM);
+    const meltFraction = Math.min(1, tau / tauM);
+    const mRemainingIce = m * (1 - meltFraction);
+    
+    // Nhiệt độ: Đẳng nhiệt 0.0°C khi đá đang tan, sau 600s bắt đầu tăng
+    let tempC = 0.0;
+    if (isMelted) {
+        tempC = (P * (tau - tauM)) / (m * 4180);
+    }
+    const Q = P * tau;
 
-    // Nước đá vụn tan
-    ctx.fillStyle = '#e0f2fe';
-    ctx.fillRect(62, 100, 146, 98);
+    // Cập nhật nhãn trạng thái thời gian thực
+    const statusLabel = document.getElementById('sim-status-label');
+    if (statusLabel) {
+        const mStr = Math.floor(tau / 60).toString().padStart(2, '0');
+        const sStr = Math.floor(tau % 60).toString().padStart(2, '0');
+        statusLabel.innerText = `⏱️ ${mStr}:${sStr} / ${tempC.toFixed(1)}°C`;
+    }
 
-    // Các viên đá vụn
-    ctx.fillStyle = '#bae6fd';
-    ctx.fillRect(75, 115, 25, 20);
-    ctx.fillRect(115, 130, 30, 25);
-    ctx.fillRect(155, 120, 25, 20);
-
-    // Dây nung điện trở đỏ
-    ctx.strokeStyle = '#ef4444';
-    ctx.lineWidth = 3;
+    // ================= 1. NỬA TRÁI: CỐC NHIỆT LƯỢNG KẾ & DÂY NUNG =================
+    const calX = 16, calY = 24, calW = 210, calH = 205;
+    
+    // Vỏ cách nhiệt xốp (Styrofoam)
+    ctx.fillStyle = '#1e293b';
     ctx.beginPath();
-    ctx.moveTo(110, 55);
-    ctx.lineTo(110, 165);
-    ctx.lineTo(135, 165);
-    ctx.lineTo(135, 55);
+    ctx.roundRect(calX, calY, calW, calH, 8);
+    ctx.fill();
+    ctx.strokeStyle = '#475569';
+    ctx.lineWidth = 2;
     ctx.stroke();
 
-    // Nhiệt kế điện tử luôn chỉ 0,0°C
-    ctx.fillStyle = '#0284c7';
-    ctx.fillRect(170, 45, 12, 140);
-    ctx.fillStyle = '#22c55e';
-    ctx.font = 'bold 13px monospace';
-    ctx.fillText('0,0 °C', 65, 42);
+    // Lòng cốc nhiệt lượng kế
+    const inX = calX + 12, inY = calY + 12, inW = calW - 24, inH = calH - 22;
+    ctx.fillStyle = '#0b1329';
+    ctx.beginPath();
+    ctx.roundRect(inX, inY, inW, inH, 6);
+    ctx.fill();
+    ctx.strokeStyle = '#334155';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
 
-    // Đồ thị nhiệt độ t - tau bên phải (Đi ngang ở 0°C đến điểm M)
-    ctx.fillStyle = '#1e293b';
-    ctx.fillRect(240, 50, 200, 150);
-    ctx.strokeStyle = '#475569';
-    ctx.strokeRect(240, 50, 200, 150);
+    // Mực nước bên trong dâng lên khi đá tan
+    const waterH = 45 + meltFraction * 68;
+    const waterY = (inY + inH) - waterH;
+    const waterGrad = ctx.createLinearGradient(0, waterY, 0, inY + inH);
+    waterGrad.addColorStop(0, 'rgba(56, 189, 248, 0.45)');
+    waterGrad.addColorStop(1, 'rgba(14, 165, 233, 0.7)');
+    ctx.fillStyle = waterGrad;
+    ctx.fillRect(inX + 2, waterY, inW - 4, waterH);
 
-    ctx.fillStyle = '#94a3b8';
-    ctx.font = '10px sans-serif';
-    ctx.fillText('Đồ thị (t - τ): Giai đoạn đá tan 0°C', 246, 68);
-
-    // Trục tọa độ
-    ctx.strokeStyle = '#64748b';
+    // Bề mặt nước lung linh
+    ctx.strokeStyle = 'rgba(186, 230, 253, 0.6)';
     ctx.lineWidth = 1;
     ctx.beginPath();
-    ctx.moveTo(255, 175);
-    ctx.lineTo(425, 175); // Trục tau
-    ctx.moveTo(255, 175);
-    ctx.lineTo(255, 80);  // Trục t
+    ctx.moveTo(inX + 2, waterY);
+    ctx.lineTo(inX + inW - 2, waterY);
     ctx.stroke();
 
-    // Đường biểu diễn: Đi ngang ở 0°C đến điểm M (600s), sau đó dốc lên
-    ctx.strokeStyle = '#f59e0b';
-    ctx.lineWidth = 3;
+    // Dây nung điện trở tỏa nhiệt
+    const coilX = inX + 42;
+    ctx.save();
+    if (simState.running && !isMelted) {
+        ctx.shadowBlur = 10 + 4 * Math.sin(Date.now() / 120);
+        ctx.shadowColor = '#ef4444';
+        ctx.strokeStyle = '#ff4d4d';
+    } else if (isMelted) {
+        ctx.shadowBlur = 8;
+        ctx.shadowColor = '#f59e0b';
+        ctx.strokeStyle = '#f59e0b';
+    } else {
+        ctx.strokeStyle = '#64748b';
+    }
+    ctx.lineWidth = 3.5;
     ctx.beginPath();
-    ctx.moveTo(255, 160);
-    ctx.lineTo(365, 160); // Đi ngang
-    ctx.lineTo(415, 100); // Dốc lên sau M
+    ctx.moveTo(coilX, inY - 5);
+    ctx.lineTo(coilX, inY + inH - 24);
+    ctx.lineTo(coilX + 26, inY + inH - 24);
+    ctx.lineTo(coilX + 26, inY - 5);
     ctx.stroke();
 
-    // Điểm M
-    ctx.fillStyle = '#ef4444';
-    ctx.beginPath();
-    ctx.arc(365, 160, 4, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.fillText('M (600s - Đá vừa tan hết)', 270, 192);
+    // Các vòng xoắn tỏa nhiệt
+    for (let c = 0; c < 4; c++) {
+        ctx.beginPath();
+        ctx.arc(coilX + 13, inY + inH - 52 + c * 8, 11, 0, Math.PI);
+        ctx.stroke();
+    }
+    ctx.restore();
 
+    // Que khuấy cơ học (dao động qua lại khi đang chạy)
+    const sway = simState.running ? Math.sin(Date.now() / 240) * 8 : 0;
+    const stirrerX = inX + inW - 42 + sway;
+    ctx.strokeStyle = 'rgba(241, 245, 249, 0.85)';
+    ctx.lineWidth = 3.5;
+    ctx.beginPath();
+    ctx.moveTo(stirrerX, inY - 10);
+    ctx.lineTo(stirrerX, inY + inH - 18);
+    ctx.lineTo(stirrerX - 16, inY + inH - 18);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(stirrerX - 8, inY + inH - 18, 9, 0, Math.PI * 2);
+    ctx.stroke();
+
+    // Các viên đá vụn (thu nhỏ dần theo meltFraction)
+    if (!isMelted) {
+        const iceScale = Math.max(0.05, 1 - meltFraction * 0.92);
+        const iceAlpha = Math.max(0.2, 1 - meltFraction * 0.85);
+        ctx.fillStyle = `rgba(224, 242, 254, ${iceAlpha})`;
+        ctx.strokeStyle = `rgba(186, 230, 253, ${iceAlpha * 1.1})`;
+        ctx.lineWidth = 1.2;
+
+        const icePieces = [
+            { x: inX + 24, y: waterY + 6, w: 22, h: 16 },
+            { x: inX + 62, y: waterY + 4, w: 26, h: 18 },
+            { x: inX + 96, y: waterY + 8, w: 20, h: 14 },
+            { x: inX + 38, y: waterY + 22, w: 18, h: 14 },
+            { x: inX + 75, y: waterY + 24, w: 24, h: 16 },
+        ];
+        icePieces.forEach(p => {
+            const pw = p.w * iceScale;
+            const ph = p.h * iceScale;
+            ctx.beginPath();
+            ctx.roundRect(p.x, p.y, pw, ph, 3);
+            ctx.fill();
+            ctx.stroke();
+        });
+    }
+
+    // Nhiệt kế Vernier điện tử (Cảm biến nhiệt độ nhúng sâu)
+    const probeX = inX + 20;
+    ctx.strokeStyle = '#0284c7';
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    ctx.moveTo(probeX, inY - 14);
+    ctx.lineTo(probeX, inY + inH - 30);
+    ctx.stroke();
+    ctx.fillStyle = '#94a3b8';
+    ctx.fillRect(probeX - 3, inY + inH - 34, 6, 12);
+
+    // Màn hình LCD LED nhiệt kế Vernier
+    ctx.fillStyle = '#020617';
+    ctx.fillRect(calX + 6, calY + 6, 84, 24);
+    ctx.strokeStyle = '#0ea5e9';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(calX + 6, calY + 6, 84, 24);
+    ctx.fillStyle = isMelted ? '#f59e0b' : '#38bdf8';
+    ctx.font = 'bold 12px monospace';
+    ctx.fillText(`${tempC.toFixed(1)} °C`, calX + 16, calY + 23);
+
+    // Màn hình LCD Oát kế P
+    ctx.fillStyle = '#020617';
+    ctx.fillRect(calX + calW - 90, calY + 6, 84, 24);
+    ctx.strokeStyle = '#22c55e';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(calX + calW - 90, calY + 6, 84, 24);
     ctx.fillStyle = '#22c55e';
-    ctx.fillText('Q = 8544 J => λ = 3,42·10⁵ J/kg (+2,3%)', 245, 148);
+    ctx.font = 'bold 12px monospace';
+    ctx.fillText(`${P.toFixed(2)} W`, calX + calW - 80, calY + 23);
+
+    // Nhãn khối lượng đá còn lại
+    ctx.fillStyle = '#cbd5e1';
+    ctx.font = '10px sans-serif';
+    if (!isMelted) {
+        ctx.fillText(`🧊 Đá: ${(mRemainingIce * 1000).toFixed(0)}g / ${(m * 1000).toFixed(0)}g`, calX + 12, calY + calH - 6);
+    } else {
+        ctx.fillStyle = '#4ade80';
+        ctx.font = 'bold 10px sans-serif';
+        ctx.fillText(`✅ Đá đã tan hết 100%!`, calX + 12, calY + calH - 6);
+    }
+
+    // ================= 2. NỬA PHẢI: ĐỒ THỊ THỜI GIAN THỰC (t - tau) =================
+    const grX = 236, grY = 24, grW = W - grX - 14, grH = 205;
+    
+    // Nền đồ thị
+    ctx.fillStyle = '#0b1329';
+    ctx.beginPath();
+    ctx.roundRect(grX, grY, grW, grH, 8);
+    ctx.fill();
+    ctx.strokeStyle = '#1e293b';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    // Tiêu đề đồ thị
+    ctx.fillStyle = '#38bdf8';
+    ctx.font = 'bold 11px sans-serif';
+    ctx.fillText('ĐỒ THỊ THỰC NGHIỆM t(°C) - τ(s) BẢNG 5.2 KNTT', grX + 10, grY + 18);
+
+    // Lưới tọa độ & Trục
+    const axOriginX = grX + 38;
+    const axOriginY = grY + grH - 42; // Đường 0,0°C
+    const axEndX = grX + grW - 12;
+    const axTopY = grY + 32;
+
+    // Lưới ngang
+    [0, 2, 4].forEach(tc => {
+        const gy = axOriginY - tc * 20;
+        ctx.strokeStyle = 'rgba(51, 65, 85, 0.45)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(axOriginX, gy);
+        ctx.lineTo(axEndX, gy);
+        ctx.stroke();
+        ctx.fillStyle = '#64748b';
+        ctx.font = '9px monospace';
+        ctx.fillText(`${tc}°C`, axOriginX - 28, gy + 3);
+    });
+
+    // Lưới dọc
+    [0, 200, 400, 600].forEach(s => {
+        const gx = axOriginX + (s / 700) * (axEndX - axOriginX);
+        ctx.strokeStyle = 'rgba(51, 65, 85, 0.45)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(gx, axOriginY);
+        ctx.lineTo(gx, axTopY);
+        ctx.stroke();
+        ctx.fillStyle = '#64748b';
+        ctx.font = '9px monospace';
+        ctx.fillText(`${s}s`, gx - 8, axOriginY + 14);
+    });
+
+    // Trục chính
+    ctx.strokeStyle = '#94a3b8';
+    ctx.lineWidth = 1.8;
+    ctx.beginPath();
+    ctx.moveTo(axOriginX, axTopY);
+    ctx.lineTo(axOriginX, axOriginY);
+    ctx.lineTo(axEndX, axOriginY);
+    ctx.stroke();
+
+    ctx.fillStyle = '#94a3b8';
+    ctx.fillText('τ(s)', axEndX - 18, axOriginY + 16);
+    ctx.fillText('t(°C)', axOriginX - 12, axTopY - 4);
+
+    // Tiến trình vẽ đồ thị
+    const curPlotX = axOriginX + Math.min(1, tau / 700) * (axEndX - axOriginX);
+    const mPlotX = axOriginX + (tauM / 700) * (axEndX - axOriginX);
+
+    // GIAI ĐOẠN 1: ĐOẠN NẰM NGANG ĐẲNG NHIỆT (0 -> min(tau, 600))
+    ctx.strokeStyle = '#f59e0b';
+    ctx.lineWidth = 3.5;
+    ctx.beginPath();
+    ctx.moveTo(axOriginX, axOriginY);
+    const flatEndX = Math.min(curPlotX, mPlotX);
+    ctx.lineTo(flatEndX, axOriginY);
+    ctx.stroke();
+
+    // GIAI ĐOẠN 2: DỐC LÊN SAU ĐIỂM M (nếu tau > 600s)
+    if (tau > tauM) {
+        ctx.strokeStyle = '#ef4444';
+        ctx.beginPath();
+        ctx.moveTo(mPlotX, axOriginY);
+        const curPlotY = axOriginY - tempC * 20;
+        ctx.lineTo(curPlotX, curPlotY);
+        ctx.stroke();
+    }
+
+    // ĐIỂM GÃY M (tau_M = 600s, t = 0°C)
+    ctx.fillStyle = '#dc2626';
+    ctx.beginPath();
+    ctx.arc(mPlotX, axOriginY, 5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = '#ffffff';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    // Nhãn điểm M
+    ctx.fillStyle = '#ffd54f';
+    ctx.font = 'bold 10px sans-serif';
+    ctx.fillText('Điểm M (600s)', mPlotX - 32, axOriginY - 10);
+    ctx.fillStyle = '#94a3b8';
+    ctx.font = '9px sans-serif';
+    ctx.fillText('(Đá vừa tan hết)', mPlotX - 34, axOriginY + 26);
+
+    // Điểm đầu dò thời gian thực (Tracer dot)
+    const tracerY = (tau <= tauM) ? axOriginY : (axOriginY - tempC * 20);
+    ctx.fillStyle = '#38bdf8';
+    ctx.beginPath();
+    ctx.arc(curPlotX, tracerY, 4.5, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Banner tóm tắt công thức và kết quả tính toán bên dưới đồ thị
+    ctx.fillStyle = 'rgba(15, 23, 42, 0.95)';
+    ctx.fillRect(grX + 8, grY + grH - 26, grW - 16, 20);
+    ctx.strokeStyle = '#334155';
+    ctx.strokeRect(grX + 8, grY + grH - 26, grW - 16, 20);
+
+    ctx.fillStyle = '#4ade80';
+    ctx.font = 'bold 9.5px monospace';
+    ctx.fillText(`Q = ${Q.toFixed(0)} J | λ_TN = ${(Q / m).toExponential(2)} J/kg (+2,3% so với chuẩn)`, grX + 12, grY + grH - 12);
 }
 
 function drawBai6(ctx, canvas) {
@@ -2475,7 +3511,7 @@ function loadExternalVideo() {
     if (!url) return;
     const embedBox = document.getElementById('video-embed-box');
     const iframe = document.getElementById('video-embed-iframe');
-    const canvas = document.getElementById('lab-video-canvas');
+    const canvas = document.getElementById('videoCanvas') || document.getElementById('lab-video-canvas');
 
     let embedUrl = url;
     if (url.includes('youtube.com/watch?v=')) {
@@ -3444,31 +4480,36 @@ function toggleGameSound() {
         }
     }
 
-    // ==================== ENGINE GIA SƯ AI SOCRATES (MULTI-KEY & GEMINI 3.8+) ====================
+    // ==================== ENGINE GIA SƯ AI SOCRATES (UNIVERSAL MULTI-KEY & GEMINI 3.7+ ADAPTIVE) ====================
+    // Danh sách model ưu tiên cao nhất: 3.7 Flash & 3.6 Flash tránh lỗi High Demand
     const DEFAULT_GEMINI_MODELS = [
+        'gemini-3.7-flash',
+        'gemini-3.6-flash',
         'gemini-3.8-flash',
-        'gemini-3.8-pro',
-        'gemini-3.0-flash',
-        'gemini-2.5-flash',
         'gemini-2.0-flash',
         'gemini-2.0-flash-lite',
         'gemini-1.5-flash',
         'gemini-1.5-pro'
     ];
 
+    let currentChatFilter = 'all'; // Bộ lọc nhóm cho giáo viên
+
     function getGeminiConfig() {
         const raw = localStorage.getItem('gemini_advanced_config');
         if (raw) {
             try {
-                return JSON.parse(raw);
+                const cfg = JSON.parse(raw);
+                if (!cfg.models || !cfg.models.includes('gemini-3.7-flash')) {
+                    cfg.models = DEFAULT_GEMINI_MODELS.slice();
+                    saveGeminiConfig(cfg);
+                }
+                return cfg;
             } catch(e) { console.error('Parse config failed', e); }
         }
-        // Tự động chuyển đổi dữ liệu cũ nếu có
-        const legacyKey = localStorage.getItem('gemini_api_key');
-        const legacyModel = localStorage.getItem('gemini_model') || 'gemini-3.8-flash';
+        // Khởi tạo mặc định
         const initialConfig = {
-            keys: legacyKey ? [{ id: 'key_' + Date.now(), name: 'Key Mặc định (Cá nhân)', key: legacyKey, active: true }] : [],
-            activeModel: legacyModel.includes('1.5') ? 'gemini-3.8-flash' : legacyModel,
+            keys: [],
+            activeModel: 'gemini-3.7-flash',
             models: DEFAULT_GEMINI_MODELS.slice(),
             autoFailover: true
         };
@@ -3478,7 +4519,6 @@ function toggleGameSound() {
 
     function saveGeminiConfig(cfg) {
         localStorage.setItem('gemini_advanced_config', JSON.stringify(cfg));
-        // Giữ tương thích ngược
         const activeKeyObj = cfg.keys.find(k => k.active);
         if (activeKeyObj) {
             localStorage.setItem('gemini_api_key', activeKeyObj.key);
@@ -3489,6 +4529,10 @@ function toggleGameSound() {
     }
 
     function getActiveGeminiKey() {
+        // Kiểm tra xem có key kế thừa từ giáo viên qua URL Hash không
+        const inheritedKey = sessionStorage.getItem('gemini_inherited_key');
+        if (inheritedKey) return inheritedKey;
+
         const cfg = getGeminiConfig();
         const active = cfg.keys.find(k => k.active);
         return active ? active.key : '';
@@ -3499,7 +4543,12 @@ function toggleGameSound() {
         return cfg.keys.find(k => k.active) || null;
     }
 
+    // BẢO MẬT: CHỈ GIÁO VIÊN ĐƯỢC MỞ MODAL CẤU HÌNH KEY/MODEL
     function openGeminiModal() {
+        if (document.body.classList.contains('student-mode')) {
+            alert('Chức năng cài đặt API Key và Model chỉ thuộc quyền quản trị của Giáo viên!');
+            return;
+        }
         renderGeminiModalUI();
         document.getElementById('modal-gemini-config').classList.add('active');
     }
@@ -3507,6 +4556,7 @@ function toggleGameSound() {
     function closeGeminiModal() {
         document.getElementById('modal-gemini-config').classList.remove('active');
         updateGeminiUIState();
+        renderRealQRCode(); // Cập nhật lại mã QR chứa Key mới
     }
 
     function renderGeminiModalUI() {
@@ -3514,26 +4564,28 @@ function toggleGameSound() {
         
         // 1. Render Keys
         const container = document.getElementById('gemini-keys-container');
-        container.innerHTML = '';
-        if (cfg.keys.length === 0) {
-            container.innerHTML = '<div style="font-size:0.75rem; color:#94a3b8; font-style:italic; padding:8px; text-align:center;">Kho Key đang trống. Vui lòng thêm ít nhất 1 Key để kích hoạt AI!</div>';
-        } else {
-            cfg.keys.forEach(k => {
-                const item = document.createElement('div');
-                item.className = 'gemini-key-item' + (k.active ? ' active' : '');
-                const maskedKey = k.key.length > 12 ? (k.key.substring(0, 7) + '...' + k.key.substring(k.key.length - 4)) : k.key;
-                item.innerHTML = `
-                    <div style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:65%;">
-                        <div style="font-weight:700; color:${k.active ? '#38bdf8' : '#e2e8f0'};">${k.name}</div>
-                        <div style="font-size:0.68rem; color:#94a3b8; font-family:monospace;">${maskedKey}</div>
-                    </div>
-                    <div style="display:flex; align-items:center; gap:6px;">
-                        ${k.active ? '<span class="badge-active">🟢 ĐANG DÙNG</span>' : `<span class="badge-inactive" onclick="switchActiveGeminiKey('${k.id}')">Dùng key này</span>`}
-                        <button style="background:none; border:none; cursor:pointer; color:#ef4444; font-size:0.85rem;" title="Xóa Key" onclick="deleteGeminiKey('${k.id}')">🗑️</button>
-                    </div>
-                `;
-                container.appendChild(item);
-            });
+        if (container) {
+            container.innerHTML = '';
+            if (cfg.keys.length === 0) {
+                container.innerHTML = '<div style="font-size:0.75rem; color:#94a3b8; font-style:italic; padding:8px; text-align:center;">Kho Key đang trống. Vui lòng thêm ít nhất 1 Key để kích hoạt AI!</div>';
+            } else {
+                cfg.keys.forEach(k => {
+                    const item = document.createElement('div');
+                    item.className = 'gemini-key-item' + (k.active ? ' active' : '');
+                    const maskedKey = k.key.length > 12 ? (k.key.substring(0, 7) + '...' + k.key.substring(k.key.length - 4)) : k.key;
+                    item.innerHTML = `
+                        <div style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:65%;">
+                            <div style="font-weight:700; color:${k.active ? '#38bdf8' : '#e2e8f0'};">${k.name}</div>
+                            <div style="font-size:0.68rem; color:#94a3b8; font-family:monospace;">${maskedKey}</div>
+                        </div>
+                        <div style="display:flex; align-items:center; gap:6px;">
+                            ${k.active ? '<span class="badge-active">🟢 ĐANG DÙNG</span>' : `<span class="badge-inactive" onclick="switchActiveGeminiKey('${k.id}')">Dùng key này</span>`}
+                            <button style="background:none; border:none; cursor:pointer; color:#ef4444; font-size:0.85rem;" title="Xóa Key" onclick="deleteGeminiKey('${k.id}')">🗑️</button>
+                        </div>
+                    `;
+                    container.appendChild(item);
+                });
+            }
         }
 
         // 2. Auto-failover checkbox
@@ -3542,20 +4594,23 @@ function toggleGameSound() {
 
         // 3. Render Models Select
         const sel = document.getElementById('select-gemini-model');
-        sel.innerHTML = '';
-        cfg.models.forEach(m => {
-            const opt = document.createElement('option');
-            opt.value = m;
-            let tag = '';
-            if (m === 'gemini-3.8-flash') tag = ' ⭐ [Mặc định - 3.8 Mới nhất, Siêu tốc]';
-            else if (m === 'gemini-3.8-pro') tag = ' 🧠 [3.8 Chuyên sâu suy luận]';
-            else if (m === 'gemini-3.0-flash') tag = ' ⚡ [3.0 Flash Tiêu chuẩn]';
-            else if (m.includes('2.0')) tag = ' 🚀 [Thế hệ 2.0]';
-            else if (m.includes('1.5')) tag = ' 🛡️ [Thế hệ 1.5 Dự phòng]';
-            opt.innerText = m + tag;
-            if (m === cfg.activeModel) opt.selected = true;
-            sel.appendChild(opt);
-        });
+        if (sel) {
+            sel.innerHTML = '';
+            cfg.models.forEach(m => {
+                const opt = document.createElement('option');
+                opt.value = m;
+                let tag = '';
+                if (m === 'gemini-3.7-flash') tag = ' ⭐ [Mặc định khuyên dùng - 3.7 Siêu tốc, Ổn định]';
+                else if (m === 'gemini-3.6-flash') tag = ' ⚡ [3.6 Flash Tốc độ cao]';
+                else if (m === 'gemini-3.8-flash') tag = ' 🚀 [3.8 Flash Cao cấp]';
+                else if (m === 'gemini-2.0-flash') tag = ' 🛡️ [2.0 Flash Chuẩn mực]';
+                else if (m.includes('lite')) tag = ' 💡 [Bản siêu nhẹ]';
+                else if (m.includes('pro')) tag = ' 🧠 [Bản suy luận chuyên sâu]';
+                opt.innerText = m + tag;
+                if (m === cfg.activeModel) opt.selected = true;
+                sel.appendChild(opt);
+            });
+        }
 
         const activeBadge = document.getElementById('gemini-active-badge');
         const activeKey = getActiveGeminiKey();
@@ -3567,14 +4622,16 @@ function toggleGameSound() {
 
     function toggleNewKeyVisibility() {
         const inp = document.getElementById('input-new-key-val');
-        inp.type = inp.type === 'password' ? 'text' : 'password';
+        if (inp) inp.type = inp.type === 'password' ? 'text' : 'password';
     }
 
     function toggleAutoFailover() {
         const cfg = getGeminiConfig();
         const chk = document.getElementById('chk-auto-failover');
-        cfg.autoFailover = chk.checked;
-        saveGeminiConfig(cfg);
+        if (chk) {
+            cfg.autoFailover = chk.checked;
+            saveGeminiConfig(cfg);
+        }
     }
 
     function addNewGeminiKey() {
@@ -3593,7 +4650,6 @@ function toggleGameSound() {
             name = `Key #${cfg.keys.length + 1} (${new Date().toLocaleDateString('vi-VN')})`;
         }
 
-        // Nếu là key đầu tiên, tự kích hoạt
         const isActive = cfg.keys.length === 0;
         cfg.keys.push({
             id: 'key_' + Date.now(),
@@ -3607,6 +4663,7 @@ function toggleGameSound() {
         valInp.value = '';
         renderGeminiModalUI();
         updateGeminiUIState();
+        renderRealQRCode();
         document.getElementById('gemini-test-result').innerHTML = `<span style="color:#10b981;">✅ Đã thêm "${name}" thành công!</span>`;
     }
 
@@ -3618,6 +4675,7 @@ function toggleGameSound() {
         saveGeminiConfig(cfg);
         renderGeminiModalUI();
         updateGeminiUIState();
+        renderRealQRCode();
         const activeObj = cfg.keys.find(k => k.id === id);
         document.getElementById('gemini-test-result').innerHTML = `<span style="color:#38bdf8;">🔄 Đã kích hoạt sử dụng: ${activeObj ? activeObj.name : id}</span>`;
     }
@@ -3633,16 +4691,19 @@ function toggleGameSound() {
         saveGeminiConfig(cfg);
         renderGeminiModalUI();
         updateGeminiUIState();
+        renderRealQRCode();
         document.getElementById('gemini-test-result').innerHTML = '<span style="color:#f59e0b;">🗑️ Đã xóa Key thành công.</span>';
     }
 
     function changeActiveModel() {
         const sel = document.getElementById('select-gemini-model');
+        if (!sel) return;
         const cfg = getGeminiConfig();
         cfg.activeModel = sel.value;
         saveGeminiConfig(cfg);
         renderGeminiModalUI();
         updateGeminiUIState();
+        renderRealQRCode();
     }
 
     function addCustomGeminiModel() {
@@ -3661,60 +4722,15 @@ function toggleGameSound() {
         inp.value = '';
         renderGeminiModalUI();
         updateGeminiUIState();
+        renderRealQRCode();
         document.getElementById('gemini-test-result').innerHTML = `<span style="color:#10b981;">🚀 Đã thêm và chọn Model mới: "${val}"</span>`;
     }
 
-    async function fetchGoogleModelsFromAPI() {
-        const activeKey = getActiveGeminiKey();
-        const resBox = document.getElementById('gemini-test-result');
-        if (!activeKey) {
-            resBox.innerHTML = '<span style="color:#ef4444;">⚠️ Cần ít nhất 1 Key đang kích hoạt để quét Model từ Google!</span>';
-            return;
-        }
-        resBox.innerHTML = '<span style="color:#38bdf8;">⏳ Đang kết nối máy chủ Google AI để quét danh sách Model mới nhất...</span>';
-
-        try {
-            const url = `https://generativelanguage.googleapis.com/v1beta/models?key=${activeKey}`;
-            const resp = await fetch(url);
-            if (!resp.ok) {
-                const err = await resp.json();
-                throw new Error(err.error?.message || 'Không thể lấy dữ liệu từ Google');
-            }
-            const data = await resp.json();
-            if (data.models && Array.isArray(data.models)) {
-                const fetchedModels = data.models
-                    .filter(m => m.supportedGenerationMethods && m.supportedGenerationMethods.includes('generateContent'))
-                    .map(m => m.name.replace(/^models\//, ''))
-                    .filter(name => name.startsWith('gemini-'));
-
-                const cfg = getGeminiConfig();
-                // Gộp danh sách model mới và giữ thứ tự ưu tiên các model 3.8, 3.0, 2.5
-                const combined = Array.from(new Set([...DEFAULT_GEMINI_MODELS, ...fetchedModels, ...cfg.models]));
-                // Sắp xếp ưu tiên 3.8 lên đầu
-                combined.sort((a, b) => {
-                    if (a.includes('3.8') && !b.includes('3.8')) return -1;
-                    if (!a.includes('3.8') && b.includes('3.8')) return 1;
-                    if (a.includes('3.0') && !b.includes('3.0')) return -1;
-                    if (!a.includes('3.0') && b.includes('3.0')) return 1;
-                    return 0;
-                });
-
-                cfg.models = combined;
-                saveGeminiConfig(cfg);
-                renderGeminiModalUI();
-                resBox.innerHTML = `<span style="color:#10b981;">✅ Đã quét thành công! Tìm thấy ${fetchedModels.length} mô hình Gemini từ Google.</span>`;
-            } else {
-                resBox.innerHTML = '<span style="color:#f59e0b;">Không tìm thấy danh sách model phù hợp.</span>';
-            }
-        } catch(e) {
-            resBox.innerHTML = `<span style="color:#ef4444;">❌ Lỗi quét Model: ${e.message}</span>`;
-        }
-    }
-
+    // KIỂM TRA KẾT NỐI VỚI CƠ CHẾ AUTO-FALLBACK THÔNG MINH
     async function testActiveGeminiConnection() {
         const activeKey = getActiveGeminiKey();
         const cfg = getGeminiConfig();
-        const model = cfg.activeModel || 'gemini-3.8-flash';
+        let model = cfg.activeModel || 'gemini-3.7-flash';
         const resBox = document.getElementById('gemini-test-result');
         if (!activeKey) {
             resBox.innerHTML = '<span style="color:#ef4444;">⚠️ Chưa có Key nào trong Kho được kích hoạt!</span>';
@@ -3722,28 +4738,47 @@ function toggleGameSound() {
         }
         resBox.innerHTML = `<span style="color:#38bdf8;">⏳ Đang kiểm tra kết nối với Model [${model}]...</span>`;
 
-        try {
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${activeKey}`;
-            const payload = {
-                contents: [{ role: "user", parts: [{ text: "Xác thực kết nối: Phản hồi 1 câu ngắn chào Thầy giáo Trần Mạnh Tùng." }] }]
-            };
-            const startTime = performance.now();
-            const resp = await fetch(url, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
-            const endTime = performance.now();
-            const latency = Math.round(endTime - startTime);
-            const data = await resp.json();
-            if (data.candidates && data.candidates[0]?.content?.parts[0]?.text) {
-                const aiMsg = data.candidates[0].content.parts[0].text.trim();
-                resBox.innerHTML = `<span style="color:#10b981;">✅ Kết nối thành công tới ${model}! (Độ trễ: ${latency}ms)<br>"${aiMsg}"</span>`;
-            } else {
-                resBox.innerHTML = `<span style="color:#ef4444;">❌ Lỗi từ Google: ${data.error?.message || 'Không có phản hồi hợp lệ'}</span>`;
+        // Danh sách fallback nếu model chọn bị high demand hoặc 404
+        const fallbackCandidates = Array.from(new Set([model, 'gemini-3.7-flash', 'gemini-3.6-flash', 'gemini-2.0-flash', 'gemini-1.5-flash']));
+        let success = false;
+
+        for (const m of fallbackCandidates) {
+            try {
+                const url = `https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${activeKey}`;
+                const payload = {
+                    contents: [{ role: "user", parts: [{ text: "Xác thực: phản hồi ngắn chào Thầy giáo Trần Mạnh Tùng." }] }]
+                };
+                const startTime = performance.now();
+                const resp = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const endTime = performance.now();
+                const latency = Math.round(endTime - startTime);
+                const data = await resp.json();
+
+                if (resp.ok && data.candidates && data.candidates[0]?.content?.parts[0]?.text) {
+                    const aiMsg = data.candidates[0].content.parts[0].text.trim();
+                    let fallbackNotice = (m !== model) ? `<br><small style="color:#fbbf24;">(Tự động điều chỉnh sang ${m} do ${model} đang quá tải)</small>` : '';
+                    resBox.innerHTML = `<span style="color:#10b981;">✅ Kết nối thành công tới ${m}! (Độ trễ: ${latency}ms)${fallbackNotice}<br>"${aiMsg}"</span>`;
+                    if (m !== model) {
+                        cfg.activeModel = m;
+                        saveGeminiConfig(cfg);
+                        renderGeminiModalUI();
+                    }
+                    success = true;
+                    break;
+                } else {
+                    console.warn(`Model ${m} phản hồi không thành công:`, data.error?.message);
+                }
+            } catch(e) {
+                console.warn(`Lỗi mạng với ${m}:`, e);
             }
-        } catch(e) {
-            resBox.innerHTML = `<span style="color:#ef4444;">❌ Lỗi kết nối mạng: ${e.message}</span>`;
+        }
+
+        if (!success) {
+            resBox.innerHTML = `<span style="color:#ef4444;">❌ Lỗi kết nối Google: Vui lòng kiểm tra lại mã Key hoặc thử kết nối mạng khác.</span>`;
         }
     }
 
@@ -3765,97 +4800,310 @@ function toggleGameSound() {
         }
     }
 
-    // GỌI GEMINI CÓ KHẢ NĂNG TỰ ĐỘNG LUÂN CHUYỂN KEY (AUTO-FAILOVER)
+    // ==================== CÁC HÀM HIỂN THỊ CHAT CỐT LÕI (KHÔI PHỤC HOÀN TOÀN) ====================
+    function addSocratesMsg(role, text, groupTag) {
+        // 1. Thêm vào khung chat giáo viên
+        const box = document.getElementById('socrates-chat-box');
+        if (box) {
+            const d = document.createElement('div');
+            d.className = `chat-msg ${role}`;
+            d.dataset.group = groupTag || 'all';
+
+            let prefix = '';
+            let groupHtml = '';
+            if (groupTag && groupTag !== 'all') {
+                const colors = ['#38bdf8', '#fbbf24', '#34d399', '#f472b6', '#a78bfa', '#fb923c'];
+                const grpNum = parseInt((groupTag.match(/\d+/) || [1])[0]) || 1;
+                const col = colors[(grpNum - 1) % colors.length];
+                groupHtml = `<span class="chat-grp-badge" style="background:${col}; color:#0f172a;">${groupTag}</span> `;
+            }
+
+            if (role === 'ai') {
+                prefix = `🤖 <strong>Gia sư Socrates:</strong> `;
+            } else if (role === 'teacher') {
+                prefix = `📢 <strong>THẦY TÙNG (LỜI NHẮC):</strong> `;
+            } else {
+                prefix = `👤 ${groupHtml}<strong>Học Sinh:</strong> `;
+            }
+
+            d.innerHTML = prefix + text;
+            box.appendChild(d);
+            box.scrollTop = box.scrollHeight;
+        }
+
+        // 2. Thêm vào khung chat học sinh (nếu học sinh đang mở tab chat)
+        const studentBox = document.getElementById('student-socrates-chat-box');
+        if (studentBox) {
+            const sd = document.createElement('div');
+            sd.className = `chat-msg ${role}`;
+            if (role === 'ai') {
+                sd.innerHTML = `🤖 <strong>Gia sư Socrates:</strong> ${text}`;
+            } else if (role === 'teacher') {
+                sd.innerHTML = `📢 <strong>THẦY TÙNG:</strong> ${text}`;
+            } else {
+                sd.innerHTML = `👤 <strong>Bạn:</strong> ${text}`;
+            }
+            studentBox.appendChild(sd);
+            studentBox.scrollTop = studentBox.scrollHeight;
+        }
+    }
+
+    function showSocratesTyping(id) {
+        const box = document.getElementById('socrates-chat-box');
+        if (box) {
+            const d = document.createElement('div');
+            d.id = id;
+            d.className = 'chat-msg ai typing';
+            d.innerHTML = '🤖 <em>Gia sư Socrates đang tư duy theo mô hình vi mô...</em>';
+            box.appendChild(d);
+            box.scrollTop = box.scrollHeight;
+        }
+        const studentBox = document.getElementById('student-socrates-chat-box');
+        if (studentBox) {
+            const sd = document.createElement('div');
+            sd.id = id + '-student';
+            sd.className = 'chat-msg ai typing';
+            sd.innerHTML = '🤖 <em>Gia sư Socrates đang phản hồi...</em>';
+            studentBox.appendChild(sd);
+            studentBox.scrollTop = studentBox.scrollHeight;
+        }
+    }
+
+    function removeSocratesTyping(id) {
+        const el = document.getElementById(id);
+        if (el) el.remove();
+        const sel = document.getElementById(id + '-student');
+        if (sel) sel.remove();
+    }
+
+    function clearSocratesChat() {
+        const box = document.getElementById('socrates-chat-box');
+        if (box) {
+            box.innerHTML = '';
+            addSocratesMsg('ai', `Gia sư Socrates đã sẵn sàng cho bài học ${activeLesson.toUpperCase()}! Mời Thầy và các nhóm đặt câu hỏi hoặc đưa ra lập luận.`);
+        }
+        const studentBox = document.getElementById('student-socrates-chat-box');
+        if (studentBox) {
+            studentBox.innerHTML = '';
+            addSocratesMsg('ai', `Gia sư Socrates đã sẵn sàng! Mời nhóm đặt câu hỏi thảo luận.`);
+        }
+    }
+
+    // BỘ LỌC CHAT DÀNH CHO GIÁO VIÊN
+    function filterTeacherSocratesChat(target) {
+        currentChatFilter = target;
+        document.querySelectorAll('.grp-filter-btn').forEach(b => b.classList.remove('active'));
+        const activeBtn = document.getElementById(target === 'all' ? 'btn-filter-all' : `btn-filter-${target}`);
+        if (activeBtn) activeBtn.classList.add('active');
+
+        const msgs = document.querySelectorAll('#socrates-chat-box .chat-msg');
+        msgs.forEach(m => {
+            if (target === 'all') {
+                m.style.display = 'block';
+            } else {
+                const grp = m.dataset.group;
+                if (!grp || grp === 'all' || grp.includes(`0${target}`) || grp.includes(`Nhóm ${target}`)) {
+                    m.style.display = 'block';
+                } else {
+                    m.style.display = 'none';
+                }
+            }
+        });
+    }
+
+    // CHUYỂN TAB TRÊN BÀN HỌC SINH
+    function switchStudentTab(tab) {
+        const btnBuzzer = document.getElementById('btn-tab-buzzer');
+        const btnAI = document.getElementById('btn-tab-ai');
+        const paneBuzzer = document.getElementById('student-pane-buzzer');
+        const paneAI = document.getElementById('student-pane-ai');
+
+        if (tab === 'buzzer') {
+            btnBuzzer.classList.add('active');
+            btnAI.classList.remove('active');
+            paneBuzzer.style.display = 'flex';
+            paneAI.classList.remove('active');
+            paneAI.style.display = 'none';
+        } else {
+            btnBuzzer.classList.remove('active');
+            btnAI.classList.add('active');
+            paneBuzzer.style.display = 'none';
+            paneAI.classList.add('active');
+            paneAI.style.display = 'flex';
+            renderStudentSocratesChips();
+        }
+    }
+
+    function renderStudentSocratesChips() {
+        const container = document.getElementById('student-socrates-chips');
+        if (!container) return;
+        container.innerHTML = '';
+        const chips = LESSON_CHIPS[activeLesson] || LESSON_CHIPS['bai5'] || [];
+        chips.forEach(txt => {
+            const btn = document.createElement('button');
+            btn.className = 'ai-chip-btn';
+            btn.style.fontSize = '0.7rem';
+            btn.style.padding = '3px 6px';
+            btn.innerText = txt;
+            btn.onclick = () => {
+                document.getElementById('student-socrates-input').value = txt;
+                handleStudentSendSocrates();
+            };
+            container.appendChild(btn);
+        });
+    }
+
+    // GỌI AI ADAPTIVE CHO GIÁO VIÊN
     async function handleSendSocrates() {
         const inp = document.getElementById('socrates-input');
         const txt = inp.value.trim();
         if (!txt) return;
 
-        addSocratesMsg('user', txt);
+        addSocratesMsg('user', txt, 'Giáo Viên');
         inp.value = '';
 
-        const typingId = 'socrates-typing-indicator';
+        await executeAdaptiveGeminiCall(txt, 'Giáo Viên');
+    }
+
+    // GỌI AI ADAPTIVE CHO HỌC SINH TỪNG NHÓM
+    async function handleStudentSendSocrates() {
+        const inp = document.getElementById('student-socrates-input');
+        const txt = inp.value.trim();
+        if (!txt) return;
+
+        const grp = classroomConfig.groups.find(g => g.id === studentActiveGroup);
+        const grpName = grp ? grp.name : `Nhóm 0${studentActiveGroup}`;
+        const groupTag = `Nhóm 0${studentActiveGroup} (${grpName})`;
+
+        addSocratesMsg('user', txt, groupTag);
+        inp.value = '';
+
+        await executeAdaptiveGeminiCall(txt, groupTag);
+    }
+
+    // BỘ NÃO GỌI AI TỰ ĐỘNG THÍCH ỨNG (CASCADE MODEL & AUTO KEY FAILOVER)
+    async function executeAdaptiveGeminiCall(txt, groupTag) {
+        const typingId = 'typing-' + Date.now();
         showSocratesTyping(typingId);
 
         const cfg = getGeminiConfig();
         const systemPrompt = SOCRATES_SYSTEM_PROMPTS[activeLesson] || SOCRATES_SYSTEM_PROMPTS['bai5'];
-        const model = cfg.activeModel || 'gemini-3.8-flash';
+        
+        // Chuỗi ưu tiên model: model đang chọn -> 3.7-flash -> 3.6-flash -> 2.0-flash -> 1.5-flash
+        const preferredModel = cfg.activeModel || 'gemini-3.7-flash';
+        const modelCascade = Array.from(new Set([preferredModel, 'gemini-3.7-flash', 'gemini-3.6-flash', 'gemini-2.0-flash', 'gemini-1.5-flash']));
 
-        if (cfg.keys.length > 0) {
-            // Danh sách các key để thử (ưu tiên key đang active lên đầu)
-            const keyPool = [...cfg.keys.filter(k => k.active), ...cfg.keys.filter(k => !k.active)];
+        // Danh sách key để xoay vòng chống nghẽn
+        let keyPool = cfg.keys.length > 0 ? [...cfg.keys.filter(k => k.active), ...cfg.keys.filter(k => !k.active)] : [];
+        
+        // Nếu là học sinh dùng key kế thừa từ QR
+        const inheritedKey = sessionStorage.getItem('gemini_inherited_key');
+        if (inheritedKey && keyPool.length === 0) {
+            keyPool = [{ id: 'inherited', name: 'Key Giáo Viên', key: inheritedKey, active: true }];
+        }
 
-            for (let i = 0; i < keyPool.length; i++) {
-                const currentKeyObj = keyPool[i];
-                try {
-                    const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${currentKeyObj.key}`;
-                    const payload = {
-                        systemInstruction: { parts: [{ text: systemPrompt }] },
-                        contents: [
-                            {
-                                role: "user",
-                                parts: [{ text: `Học sinh nhóm thảo luận: "${txt}".
-Hãy phản hồi theo đúng vai trò Gia sư Socrates Vật lí nhiệt 12: ngắn gọn tối đa 3 câu, không chép giải hộ, kết thúc bằng 1 câu hỏi truy vấn vi mô.` }]
+        if (keyPool.length > 0) {
+            for (let kIdx = 0; kIdx < keyPool.length; kIdx++) {
+                const currentKeyObj = keyPool[kIdx];
+
+                for (let mIdx = 0; mIdx < modelCascade.length; mIdx++) {
+                    const currentModel = modelCascade[mIdx];
+
+                    try {
+                        const url = `https://generativelanguage.googleapis.com/v1beta/models/${currentModel}:generateContent?key=${currentKeyObj.key}`;
+                        const payload = {
+                            systemInstruction: { parts: [{ text: systemPrompt }] },
+                            contents: [
+                                {
+                                    role: "user",
+                                    parts: [{ text: `[${groupTag}] hỏi: "${txt}".\nHãy phản hồi theo đúng vai trò Gia sư Socrates Vật lí nhiệt 12: ngắn gọn tối đa 3 câu, không chép giải hộ, kết thúc bằng 1 câu hỏi truy vấn vi mô gợi mở bản chất nhiệt học.` }]
+                                }
+                            ],
+                            generationConfig: {
+                                temperature: 0.7,
+                                topP: 0.95,
+                                maxOutputTokens: 500
                             }
-                        ],
-                        generationConfig: {
-                            temperature: 0.7,
-                            topP: 0.95,
-                            maxOutputTokens: 600
-                        }
-                    };
+                        };
 
-                    const resp = await fetch(url, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
+                        const resp = await fetch(url, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(payload)
+                        });
 
-                    if (resp.ok) {
-                        const data = await resp.json();
-                        const aiText = data.candidates?.[0]?.content?.parts?.[0]?.text;
-                        if (aiText) {
-                            removeSocratesTyping(typingId);
-                            // Nếu đã chuyển key, cập nhật lại key active
-                            if (!currentKeyObj.active && cfg.autoFailover) {
-                                switchActiveGeminiKey(currentKeyObj.id);
-                                addSocratesMsg('ai', `*(Hệ thống đã tự động chuyển sang ${currentKeyObj.name} do Key trước đó nghẽn tải)*
-
-${aiText}`);
-                            } else {
-                                addSocratesMsg('ai', aiText);
+                        if (resp.ok) {
+                            const data = await resp.json();
+                            const aiText = data.candidates?.[0]?.content?.parts?.[0]?.text;
+                            if (aiText) {
+                                removeSocratesTyping(typingId);
+                                let notice = '';
+                                if (currentModel !== preferredModel) {
+                                    notice = `*(Tự động chuyển sang ${currentModel} do ${preferredModel} đang quá tải)*\n\n`;
+                                }
+                                addSocratesMsg('ai', notice + aiText, groupTag);
+                                return;
                             }
-                            return;
-                        }
-                    } else {
-                        const errData = await resp.json();
-                        console.warn(`Key ${currentKeyObj.name} gặp lỗi:`, errData);
-                        // Nếu bị lỗi 429 hoặc Resource Exhausted, tiếp tục vòng lặp sang key tiếp theo
-                        if (resp.status === 429 || errData.error?.status === 'RESOURCE_EXHAUSTED') {
-                            if (cfg.autoFailover && i < keyPool.length - 1) {
-                                console.log(`Auto-failover: Chuyển sang key dự phòng tiếp theo...`);
-                                continue;
+                        } else {
+                            const errData = await resp.json();
+                            console.warn(`Model ${currentModel} với Key ${currentKeyObj.name} báo lỗi:`, errData);
+                            // Nếu lỗi 429 Quota -> chuyển sang key tiếp theo trong pool
+                            if (resp.status === 429 || errData.error?.status === 'RESOURCE_EXHAUSTED') {
+                                if (cfg.autoFailover && kIdx < keyPool.length - 1) {
+                                    console.log('Auto-failover: Tự động xoay sang Key tiếp theo do chạm hạn mức Quota...');
+                                    break; // Thoát vòng lặp model để sang key tiếp theo
+                                }
                             }
+                            // Nếu lỗi 503 High Demand hoặc 404 -> thử model tiếp theo trong cascade
                         }
-                    }
-                } catch(netErr) {
-                    console.warn(`Lỗi mạng với Key ${currentKeyObj.name}:`, netErr);
-                    if (cfg.autoFailover && i < keyPool.length - 1) {
-                        continue;
+                    } catch(netErr) {
+                        console.warn(`Lỗi mạng với ${currentModel}:`, netErr);
                     }
                 }
             }
         }
 
-        // OFFLINE FALLBACK NẾU TẤT CẢ KEY ĐỀU THẤT BẠI HOẶC MẤT MẠNG
+        // OFFLINE HEURISTIC ENGINE NẾU KHÔNG CÓ KEY HOẶC MẤT MẠNG
         removeSocratesTyping(typingId);
         setTimeout(() => {
             const offlineAns = getOfflineSocratesAnswer(txt, activeLesson);
-            addSocratesMsg('ai', offlineAns);
+            addSocratesMsg('ai', offlineAns, groupTag);
         }, 400);
     }
 
-    function renderSocratesChips() {
+    // ==================== TRI THỨC DỰ PHÒNG NGOẠI TUYẾN ====================
+    function getOfflineSocratesAnswer(txt, lesson) {
+        const lower = txt.toLowerCase();
+        if (lesson === 'bai5') {
+            if (lower.includes('0') || lower.includes('nhiệt độ') || lower.includes('không đổi')) {
+                return "Rất sắc sảo! Trong suốt quá trình nước đá đang nóng chảy ở 0 °C, nhiệt lượng nhận được dùng để phá vỡ liên kết tinh thể chứ không làm tăng động năng hạt. Vậy thế năng phân tử của khối chất lúc này đang tăng hay giảm?";
+            } else if (lower.includes('bám') || lower.includes('lau') || lower.includes('thấm') || lower.includes('sai số')) {
+                return "Chính xác! Nước bám ngoài viên đá sẽ làm tăng khối lượng m cân được nhưng lại không hấp thụ nhiệt nóng chảy λ, gây sai số lớn cho kết quả. Các em đã làm thao tác thấm khô như thế nào trong thí nghiệm?";
+            }
+            return "Câu hỏi rất thú vị! Nhiệt nóng chảy riêng λ đặc trưng cho năng lượng cần thiết để phá vỡ mạng tinh thể của 1 kg chất. Nhóm em hãy liên hệ giữa nhiệt lượng Q mà nhiệt lượng kế cung cấp và độ tan của khối đá?";
+        } else if (lesson === 'bai1') {
+            if (lower.includes('0,011') || lower.includes('thể tích') || lower.includes('rỗng')) {
+                return "Rất chuẩn! Con số 0,011% thể tích riêng chứng thực các phân tử khí ở rất xa nhau và không gian bình phần lớn là rỗng. Nhưng tại sao khi nén thể tích giảm thì áp suất khí lại tăng vọt lên thành bình?";
+            }
+            return "Thầy gợi ý: Hãy nhìn chất dưới góc độ vi mô. Khi nhiệt độ tăng, động năng chuyển động nhiệt hỗn loạn của các phân tử thay đổi ra sao?";
+        } else if (lesson === 'bai2') {
+            return "Đúng rồi! Khi nhiệt độ không đổi, nén thể tích khí xuống 1 nửa thì mật độ phân tử trong 1 đơn vị thể tích tăng gấp đôi. Số va chạm vào thành bình trong 1 giây sẽ thay đổi như thế nào?";
+        } else if (lesson === 'bai3') {
+            return "Nhiệt dung riêng c cho biết nhiệt lượng cần truyền cho 1 kg chất để tăng 1 K. Tại sao nước lại có nhiệt dung riêng lớn hơn rất nhiều so với kim loại?";
+        } else if (lesson === 'bai4') {
+            return "Khi nước sôi ở 100 °C, các phân tử nước cần thắng được lực hút giữa các phân tử lỏng để thoát ra thành hơi. Nhiệt hóa hơi riêng L phản ánh năng lượng liên kết này như thế nào?";
+        }
+        return "Gia sư Socrates nhận được câu hỏi của nhóm. Trong hiện tượng nhiệt này, các em hãy phân tích xem đại lượng nào (áp suất, thể tích, nhiệt độ, nội năng) đang đóng vai trò quyết định?";
+    }
+
+    function sendSocratesPrompt(txt) {
+        const inp = document.getElementById('socrates-input');
+        if (inp) {
+            inp.value = txt;
+            handleSendSocrates();
+        }
+    }
+function renderSocratesChips() {
         const container = document.getElementById('socrates-chips-container');
         if (!container) return;
         const chips = LESSON_CHIPS[activeLesson] || LESSON_CHIPS['bai5'];
@@ -4081,6 +5329,8 @@ ${aiText}`);
         if (targetView) targetView.classList.add('active');
         if (targetBtn) targetBtn.classList.add('active');
 
+        applySpotlightToView(viewName);
+
         if (viewName === 'qr') {
             renderRealQRCode();
         } else if (viewName === 'socrates') {
@@ -4214,22 +5464,33 @@ ${aiText}`);
 
     // ==================== THÍ NGHIỆM SỐ BƯỚC 4 ====================
     function setLabMode(mode) {
-        if (typeof setStep4Mode === 'function') {
-            setStep4Mode(mode);
-        }
+        currentStep4Mode = mode;
         const btnCanvas = document.getElementById('btn-mode-canvas');
         const btnVideo = document.getElementById('btn-mode-video');
+        const btnMicro = document.getElementById('btn-mode-micro');
         const boxCanvas = document.getElementById('sim-canvas-box');
         const boxVideo = document.getElementById('sim-video-box');
+        const boxMicro = document.getElementById('sim-micro-box');
+        const badgeMode = document.getElementById('sim-badge-mode');
 
         if (btnCanvas) btnCanvas.classList.toggle('active', mode === 'canvas');
         if (btnVideo) btnVideo.classList.toggle('active', mode === 'video');
+        if (btnMicro) btnMicro.classList.toggle('active', mode === 'micro');
 
         if (boxCanvas) boxCanvas.style.display = (mode === 'canvas') ? 'flex' : 'none';
         if (boxVideo) boxVideo.style.display = (mode === 'video') ? 'flex' : 'none';
+        if (boxMicro) boxMicro.style.display = (mode === 'micro') ? 'flex' : 'none';
+
+        if (badgeMode) {
+            if (mode === 'canvas') badgeMode.innerText = 'MÔ PHỎNG 60FPS';
+            else if (mode === 'video') badgeMode.innerText = 'VIDEO THỰC NGHIỆM';
+            else if (mode === 'micro') badgeMode.innerText = 'VI MÔ & TISCO';
+        }
 
         if (mode === 'video' && typeof renderLabVideoFrame === 'function') {
             renderLabVideoFrame();
+        } else if (mode === 'micro' && typeof drawMicroFrame === 'function') {
+            drawMicroFrame();
         }
     }
 
@@ -4368,19 +5629,34 @@ ${aiText}`);
 
     // ==================== KHỞI TẠO TỰ ĐỘNG ====================
     window.addEventListener('DOMContentLoaded', () => {
+        // TỰ ĐỘNG KẾ THỪA KEY TỪ URL HASH CỦA MÃ QR (DÀNH CHO HỌC SINH)
+        const hash = window.location.hash;
+        if (hash && hash.includes('k=')) {
+            try {
+                const params = new URLSearchParams(hash.substring(1));
+                const inheritedKey = params.get('k');
+                const inheritedModel = params.get('m');
+                if (inheritedKey) {
+                    sessionStorage.setItem('gemini_inherited_key', inheritedKey);
+                    if (inheritedModel) sessionStorage.setItem('gemini_inherited_model', inheritedModel);
+                    console.log('Đã tự động nạp cấu hình AI ngầm từ Giáo viên thành công!');
+                }
+            } catch(e) { console.warn('Lỗi đọc URL Hash', e); }
+        }
+
         // Kiểm tra tham số URL điều hướng
         const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.get('view') === 'student') {
             document.body.classList.add('student-mode');
             switchFunctionView('student');
         }
-        renderStudentGroupPills();
 
         updateGeminiUIState();
         renderRealQRCode();
         renderAllGroupViews();
         updateTeacherRemoteUI();
         renderSocratesChips();
+        renderStudentGroupPills();
         initSimulationUI();
     });
     </script>
