@@ -82,6 +82,7 @@ const localIP = getLocalIP();
 
 server.listen(PORT, '0.0.0.0', () => {
     const teacherUrl = `http://${localIP}:${PORT}/index.html`;
+    const stageUrl = `http://${localIP}:${PORT}/index.html?view=stage`;
     const studentUrl = `http://${localIP}:${PORT}/index.html?view=student`;
 
     console.log('================================================================');
@@ -89,8 +90,9 @@ server.listen(PORT, '0.0.0.0', () => {
     console.log('   Tác giả: Thầy giáo Trần Mạnh Tùng – THPT Chuyên Thái Nguyên');
     console.log('================================================================');
     console.log(`📡 MÁY CHỦ NỘI BỘ PHÒNG HỌC ĐÃ SẴN SÀNG!`);
-    console.log(`👉 Link Giáo Viên (Máy tính/TV): ${teacherUrl}`);
-    console.log(`📱 Link Bàn Học Sinh (Quét QR):   ${studentUrl}`);
+    console.log(`👉 Link Điều Khiển GV (Laptop):   ${teacherUrl}`);
+    console.log(`📺 Link Màn Hình Máy Chiếu (TV):   ${stageUrl}`);
+    console.log(`📱 Link Bàn Học Sinh (Quét QR):    ${studentUrl}`);
     console.log('----------------------------------------------------------------');
     console.log('💡 Học sinh và Giáo viên chỉ cần kết nối chung mạng Wi-Fi phòng học.');
     console.log('   (Bấm Ctrl + C trong cửa sổ này nếu muốn dừng máy chủ)');

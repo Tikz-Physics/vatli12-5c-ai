@@ -81,10 +81,19 @@
             border-bottom: 2px solid #1e293b;
             display: flex;
             gap: 4px;
-            padding: 4px 12px 0 12px;
+            padding: 4px 10px 0 10px;
             height: 40px;
             flex-shrink: 0;
             z-index: 90;
+            overflow-x: auto;
+            overflow-y: hidden;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            max-width: 100vw;
+            box-sizing: border-box;
+        }
+        .function-nav-bar::-webkit-scrollbar {
+            display: none;
         }
         .func-tab-btn {
             background: rgba(30, 41, 59, 0.6);
@@ -92,15 +101,16 @@
             border: none;
             border-top: 3px solid transparent;
             border-radius: 6px 6px 0 0;
-            padding: 6px 14px;
-            font-size: 0.88rem;
+            padding: 5px 10px;
+            font-size: 0.8rem;
             font-weight: 800;
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 5px;
             transition: all 0.2s;
             white-space: nowrap;
+            flex-shrink: 0;
         }
         .func-tab-btn:hover {
             background: rgba(51, 65, 85, 0.8);
@@ -335,6 +345,53 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+        }
+        .group-link-layout {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 2px;
+        }
+        .group-mini-qr {
+            width: 58px;
+            height: 58px;
+            background: #ffffff;
+            border-radius: 4px;
+            padding: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.35);
+        }
+        .group-mini-qr svg {
+            width: 100% !important;
+            height: 100% !important;
+            display: block;
+        }
+        .group-link-info {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .group-link-preview {
+            font-family: monospace;
+            font-size: 0.62rem;
+            color: #38bdf8;
+            background: rgba(0,0,0,0.45);
+            padding: 2px 4px;
+            border-radius: 4px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            border: 1px solid rgba(56,189,248,0.25);
+        }
+        .group-link-actions {
+            display: flex;
+            gap: 4px;
+            margin-top: 2px;
         }
 
         /* ==================== VIEW 2: ĐIỀU KHIỂN GIÁO VIÊN (2 CỘT) ==================== */
@@ -2007,19 +2064,20 @@
                     <div id="qr-code-display" class="real-qr-wrapper"></div>
                     
                     <div class="qr-url-toolbar">
-                        <div id="qr-protocol-hint" style="font-size: 0.72rem; font-weight: 700; color: #f59e0b; margin-bottom: 3px;">
-                            🌐 Link bàn học sinh:
+                        <div id="qr-protocol-hint" style="font-size: 0.72rem; font-weight: 700; color: var(--cyan); margin-bottom: 3px; display:flex; justify-content:space-between; align-items:center;">
+                            <span>🌐 Link kết nối Bàn học sinh:</span>
+                            <span id="qr-mode-badge" style="font-size:0.68rem; padding:1px 6px; border-radius:4px; background:rgba(16,185,129,0.2); color:#10b981; border:1px solid rgba(16,185,129,0.4);">🟢 Web Online (4G/Wi-Fi)</span>
                         </div>
                         <div class="qr-input-row">
-                            <input type="text" id="input-qr-target-url" value="" oninput="onQRUrlInputChange(this.value)" placeholder="IP hoặc link...">
-                            <button class="btn-qr-action gold" onclick="copyQRLink()">📋 Copy</button>
+                            <input type="text" id="input-qr-target-url" value="" oninput="onQRUrlInputChange(this.value)" placeholder="Đường link hoặc IP...">
+                            <button class="btn-qr-action gold" onclick="copyQRLink()" title="Sao chép link">📋 Copy</button>
                         </div>
                         <div style="display:flex; gap:4px; margin-top:4px;">
-                            <button class="btn-qr-action emerald" style="flex:1;" onclick="setQRMode('lan')">📶 Wi-Fi Lớp (LAN)</button>
-                            <button class="btn-qr-action" style="flex:1;" onclick="setQRMode('online')">🌐 Web Online</button>
+                            <button id="btn-qr-online" class="btn-qr-action emerald" style="flex:1.2; font-weight:800;" onclick="setQRMode('online')">🌐 Web Online (4G / Wi-Fi) ⭐</button>
+                            <button id="btn-qr-lan" class="btn-qr-action" style="flex:0.8; opacity:0.85;" onclick="setQRMode('lan')">📶 Wi-Fi Lớp (LAN)</button>
                         </div>
-                        <div style="font-size: 0.7rem; color: #94a3b8; margin-top: 4px;">
-                            📶 Wi-Fi: <strong>THPT_Chuyen_TN_5G</strong> | Pass: <strong>vatli12kntt</strong>
+                        <div id="qr-network-guide" style="font-size: 0.7rem; color: #cbd5e1; margin-top: 4px; line-height: 1.3;">
+                            🟢 <em>Học sinh dùng 4G/5G hoặc Wi-Fi trường quét kết nối tức thì (0.2s).</em>
                         </div>
                     </div>
                 </div>
@@ -3059,6 +3117,8 @@ function updateSimParams() {
     }
 }
 
+let simAnimationId = null;
+
 function startCanvasSimulation(canvasId) {
     const canvas = document.getElementById(canvasId) || document.getElementById('simCanvas') || document.getElementById('sim-canvas');
     if (!canvas) return;
@@ -3771,9 +3831,10 @@ function loadExternalVideo() {
 
 /* ĐỘNG CƠ RENDER VIDEO THÍ NGHIỆM ĐỘNG HỌC 60FPS CHÂN THỰC TRÊN CANVAS */
 function initLabVideoPlayer() {
+    const slider = document.getElementById('lab-video-slider');
+    if (!slider) return;
     const cfg = simConfigs[activeLesson] || simConfigs['bai5'];
     const maxDur = cfg.durationSec || 600;
-    const slider = document.getElementById('lab-video-slider');
     slider.max = maxDur;
     slider.value = 0;
     labVideoTime = 0;
@@ -3782,18 +3843,20 @@ function initLabVideoPlayer() {
 
     // Build chapter buttons
     const chapRow = document.getElementById('lab-video-chapters');
-    chapRow.innerHTML = '';
-    (cfg.chapters || []).forEach(ch => {
-        const b = document.createElement('button');
-        b.className = 'chap-btn';
-        b.innerText = ch.label;
-        b.onclick = () => {
-            labVideoTime = ch.time;
-            slider.value = ch.time;
-            renderLabVideoFrame();
-        };
-        chapRow.appendChild(b);
-    });
+    if (chapRow) {
+        chapRow.innerHTML = '';
+        (cfg.chapters || []).forEach(ch => {
+            const b = document.createElement('button');
+            b.className = 'chap-btn';
+            b.innerText = ch.label;
+            b.onclick = () => {
+                labVideoTime = ch.time;
+                slider.value = ch.time;
+                renderLabVideoFrame();
+            };
+            chapRow.appendChild(b);
+        });
+    }
 
     renderLabVideoFrame();
 }
@@ -4550,39 +4613,147 @@ function toggleGameSound() {
     document.addEventListener('MSFullscreenChange', updateFullscreenButtonState);
 
     // ==================== BỘ SINH MÃ QR THÔNG MINH ====================
-    const DEFAULT_LAN_IP = '192.168.1.7';
     const DEFAULT_ONLINE_URL = 'https://tikz-physics.github.io/vatli12-5c-ai/index.html?view=student';
+    let currentQRNetworkMode = localStorage.getItem('dashboard_qr_mode') || 'online';
 
-    function renderRealQRCode(url) {
-        const isFile = window.location.protocol === 'file:';
-        if (!url) {
-            if (isFile) {
-                url = `http://${DEFAULT_LAN_IP}:8080/index.html?view=student`;
+    function formatGroupNumber(id) {
+        return String(id).padStart(2, '0');
+    }
+
+    function escapeHtml(str) {
+        return String(str ?? '').replace(/[&<>"']/g, m => ({
+            '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+        }[m]));
+    }
+
+    function getLanStudentUrl() {
+        const isHttp = window.location.protocol.startsWith('http');
+        const isLanHost = isHttp && !['localhost', '127.0.0.1'].includes(window.location.hostname);
+        const host = isLanHost ? window.location.hostname : '127.0.0.1';
+        const port = window.location.port || '8080';
+        const pageName = window.location.pathname.split('/').pop() || 'index.html';
+        return `http://${host}:${port}/${pageName}?view=student`;
+    }
+
+    function getStudentLinkBase() {
+        const input = document.getElementById('input-qr-target-url');
+        const configuredUrl = input ? input.value.trim() : '';
+        if (configuredUrl) return configuredUrl;
+        
+        if (currentQRNetworkMode === 'lan') {
+            return getLanStudentUrl();
+        }
+        return DEFAULT_ONLINE_URL;
+    }
+
+    function buildStudentDeskUrl(baseUrl = '') {
+        let rawUrl = (baseUrl || getStudentLinkBase()).trim();
+
+        if (!rawUrl || rawUrl.startsWith('file:')) {
+            rawUrl = (currentQRNetworkMode === 'lan') ? getLanStudentUrl() : DEFAULT_ONLINE_URL;
+        }
+
+        try {
+            const url = new URL(rawUrl, window.location.href);
+            url.searchParams.set('view', 'student');
+            url.searchParams.delete('group');
+            ['key', 'api_key', 'apiKey', 'gemini_api_key', 'token'].forEach(param => url.searchParams.delete(param));
+            url.hash = '';
+            return url.toString();
+        } catch (error) {
+            console.warn('Không thể chuẩn hóa URL bàn học sinh:', error);
+            const sep = rawUrl.includes('?') ? '&' : '?';
+            return `${rawUrl}${sep}view=student`;
+        }
+    }
+
+    function buildStudentGroupUrl(groupId, baseUrl = '') {
+        const id = Number.parseInt(groupId, 10);
+        const validGroup = (classroomConfig && Array.isArray(classroomConfig.groups))
+            ? classroomConfig.groups.some(group => group.id === id)
+            : true;
+        const safeId = validGroup ? id : (classroomConfig?.groups?.[0]?.id || 1);
+        try {
+            const url = new URL(buildStudentDeskUrl(baseUrl), window.location.href);
+            url.searchParams.set('group', String(safeId));
+            return url.toString();
+        } catch (error) {
+            console.warn('Không thể tạo URL nhóm:', error);
+            const base = buildStudentDeskUrl(baseUrl);
+            const sep = base.includes('?') ? '&' : '?';
+            return `${base}${sep}group=${safeId}`;
+        }
+    }
+
+    function updateQRModeUI(mode) {
+        currentQRNetworkMode = mode;
+        try { localStorage.setItem('dashboard_qr_mode', mode); } catch (e) {}
+
+        const btnOnline = document.getElementById('btn-qr-online');
+        const btnLan = document.getElementById('btn-qr-lan');
+        const badge = document.getElementById('qr-mode-badge');
+        const guide = document.getElementById('qr-network-guide');
+
+        if (btnOnline) {
+            btnOnline.className = mode === 'online' ? 'btn-qr-action emerald' : 'btn-qr-action';
+            btnOnline.style.fontWeight = mode === 'online' ? '800' : '500';
+            btnOnline.style.opacity = mode === 'online' ? '1' : '0.85';
+        }
+        if (btnLan) {
+            btnLan.className = mode === 'lan' ? 'btn-qr-action emerald' : 'btn-qr-action';
+            btnLan.style.fontWeight = mode === 'lan' ? '800' : '500';
+            btnLan.style.opacity = mode === 'lan' ? '1' : '0.85';
+        }
+
+        if (badge) {
+            if (mode === 'online') {
+                badge.innerText = '🟢 Web Online (4G/Wi-Fi)';
+                badge.style.background = 'rgba(16,185,129,0.2)';
+                badge.style.color = '#10b981';
+                badge.style.borderColor = 'rgba(16,185,129,0.4)';
             } else {
-                url = window.location.href.split('#')[0];
-                if (!url.includes('view=student')) {
-                    url += (url.includes('?') ? '&' : '?') + 'view=student';
-                }
+                badge.innerText = '📶 Wi-Fi LAN (Nội bộ)';
+                badge.style.background = 'rgba(245,158,11,0.2)';
+                badge.style.color = '#f59e0b';
+                badge.style.borderColor = 'rgba(245,158,11,0.4)';
             }
         }
+
+        if (guide) {
+            if (mode === 'online') {
+                guide.innerHTML = '🟢 <em>Học sinh dùng 4G/5G hoặc Wi-Fi trường quét kết nối tức thì (0.2s).</em>';
+                guide.style.color = '#cbd5e1';
+            } else {
+                guide.innerHTML = '⚠️ <em>Chỉ dùng khi phòng học mất mạng Internet và đã bật file <strong>BAT_DAU_DAY_HOC_OFFLINE.bat</strong>.</em>';
+                guide.style.color = '#f59e0b';
+            }
+        }
+    }
+
+    function setQRMode(mode) {
+        updateQRModeUI(mode);
+        const targetUrl = (mode === 'lan') ? getLanStudentUrl() : DEFAULT_ONLINE_URL;
+        const input = document.getElementById('input-qr-target-url');
+        if (input) input.value = targetUrl;
+        renderRealQRCode(targetUrl);
+    }
+
+    function renderRealQRCode(url) {
+        if (!url) {
+            const input = document.getElementById('input-qr-target-url');
+            if (input && input.value.trim()) {
+                url = input.value.trim();
+            } else {
+                url = (currentQRNetworkMode === 'lan') ? getLanStudentUrl() : DEFAULT_ONLINE_URL;
+            }
+        }
+        url = buildStudentDeskUrl(url);
 
         const container = document.getElementById('qr-code-display');
         const input = document.getElementById('input-qr-target-url');
-        const hint = document.getElementById('qr-protocol-hint');
 
         if (input && input.value !== url) input.value = url;
-        if (hint) {
-            if (isFile && url.startsWith('file:')) {
-                hint.innerHTML = '⚠️ <em>Đang chọn file:// (Điện thoại không vào được). Hãy chọn Wi-Fi Lớp hoặc Web Online:</em>';
-                hint.style.color = '#ef4444';
-            } else if (url.startsWith('http://192.168.') || url.startsWith('http://10.') || url.startsWith('http://172.')) {
-                hint.innerHTML = '📶 <strong>Chế độ Wi-Fi Phòng Học (Mạng LAN):</strong>';
-                hint.style.color = '#10b981';
-            } else {
-                hint.innerHTML = '🌐 <strong>Chế độ Web Trực Tuyến (Mọi mạng 4G/Wi-Fi):</strong>';
-                hint.style.color = 'var(--cyan)';
-            }
-        }
+        updateQRModeUI(currentQRNetworkMode);
 
         if (!container) return;
 
@@ -4599,18 +4770,47 @@ function toggleGameSound() {
             console.error("QR Error:", e);
             container.innerHTML = `<div style="color:#ef4444; padding:10px; font-size:0.8rem;">Lỗi sinh QR: ${e.message}</div>`;
         }
+        renderGroupQRCodes();
     }
 
-    function setQRMode(mode) {
-        let targetUrl = '';
-        if (mode === 'lan') {
-            targetUrl = `http://${DEFAULT_LAN_IP}:8080/index.html?view=student`;
-        } else if (mode === 'online') {
-            targetUrl = DEFAULT_ONLINE_URL;
+    function renderGroupQRCodes() {
+        document.querySelectorAll('[data-group-qr]').forEach(container => {
+            const groupId = Number.parseInt(container.dataset.groupQr, 10);
+            const url = buildStudentGroupUrl(groupId);
+            const preview = document.querySelector(`[data-group-link-preview="${groupId}"]`);
+            if (preview) {
+                preview.textContent = url;
+                preview.title = url;
+            }
+            try {
+                if (typeof qrcode !== 'undefined') {
+                    const qr = qrcode(0, 'M');
+                    qr.addData(url);
+                    qr.make();
+                    container.innerHTML = qr.createSvgTag(2, 1);
+                } else {
+                    container.textContent = 'QR';
+                }
+            } catch (error) {
+                console.error(`Lỗi sinh QR nhóm ${groupId}:`, error);
+                container.textContent = 'Lỗi QR';
+            }
+        });
+    }
+
+    function copyGroupLink(groupId) {
+        const url = buildStudentGroupUrl(groupId);
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(url).then(() => {
+                alert(`✅ Đã sao chép liên kết Nhóm ${formatGroupNumber(groupId)}:\n${url}`);
+            }).catch(() => prompt('Sao chép liên kết nhóm tại đây:', url));
+        } else {
+            prompt('Sao chép liên kết nhóm tại đây:', url);
         }
-        const input = document.getElementById('input-qr-target-url');
-        if (input) input.value = targetUrl;
-        renderRealQRCode(targetUrl);
+    }
+
+    function openStudentGroup(groupId) {
+        window.open(buildStudentGroupUrl(groupId), '_blank', 'noopener');
     }
 
     let qrDebounceTimer = null;
@@ -5501,23 +5701,29 @@ function renderSocratesChips() {
         classroomConfig.groups.forEach(g => {
             const card = document.createElement('div');
             card.className = 'group-card';
+            const groupUrl = buildStudentGroupUrl(g.id);
             card.innerHTML = `
                 <div class="qr-grp-header">
-                    <span class="qr-grp-num-tag">NHÓM 0${g.id}</span>
-                    <input type="text" class="qr-grp-name-input" value="${g.name}" onchange="updateGroupName(${g.id}, this.value)" title="Bấm để đổi tên">
+                    <span class="qr-grp-num-tag">NHÓM ${formatGroupNumber(g.id)}</span>
+                    <input type="text" class="qr-grp-name-input" value="${escapeHtml(g.name)}" onchange="updateGroupName(${g.id}, this.value)" title="Bấm để đổi tên">
                 </div>
-                <div style="font-size:0.72rem; color:#94a3b8; font-weight:700;">
-                    👥 Sĩ số: <strong style="color:var(--cyan);">${g.count} học sinh</strong>
-                </div>
-                <div class="role-pill-list">
-                    <div class="role-pill">👑 Trưởng nhóm</div>
-                    <div class="role-pill">📝 Thư ký A3</div>
-                    <div class="role-pill">💻 Kỹ thuật số</div>
-                    <div class="role-pill">⚖️ Phản biện</div>
+                <div class="group-link-layout">
+                    <div class="group-mini-qr" data-group-qr="${g.id}" aria-label="Mã QR Nhóm ${g.id}"></div>
+                    <div class="group-link-info">
+                        <div style="font-size:0.7rem; color:#cbd5e1; font-weight:700;">
+                            👥 <strong style="color:var(--cyan);">${g.count} HS</strong> · Quét vào đúng Nhóm ${formatGroupNumber(g.id)}
+                        </div>
+                        <div class="group-link-preview" data-group-link-preview="${g.id}" title="${escapeHtml(groupUrl)}">${escapeHtml(groupUrl)}</div>
+                        <div class="group-link-actions">
+                            <button class="btn-qr-action gold" onclick="copyGroupLink(${g.id})" aria-label="Sao chép link Nhóm ${g.id}">📋 Copy</button>
+                            <button class="btn-qr-action emerald" onclick="openStudentGroup(${g.id})" aria-label="Mở thử Nhóm ${g.id}">↗ Mở thử</button>
+                        </div>
+                    </div>
                 </div>
             `;
             grid.appendChild(card);
         });
+        renderGroupQRCodes();
     }
 
     function renderTeacherGroups() {
@@ -5603,7 +5809,9 @@ function renderSocratesChips() {
         if (targetView) targetView.classList.add('active');
         if (targetBtn) targetBtn.classList.add('active');
 
-        applySpotlightToView(viewName);
+        if (typeof applySpotlightToView === 'function') {
+            applySpotlightToView(viewName);
+        }
 
         if (viewName === 'qr') {
             renderRealQRCode();
@@ -5920,9 +6128,17 @@ function renderSocratesChips() {
 
         // Kiểm tra tham số URL điều hướng
         const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.get('view') === 'student') {
+        const viewParam = urlParams.get('view');
+        if (viewParam === 'student') {
             document.body.classList.add('student-mode');
             switchFunctionView('student');
+            const grp = Number.parseInt(urlParams.get('group'), 10);
+            if (grp) {
+                studentActiveGroup = grp;
+                onStudentGroupChange(grp);
+            }
+        } else if (viewParam) {
+            switchFunctionView(viewParam);
         }
 
         updateGeminiUIState();
